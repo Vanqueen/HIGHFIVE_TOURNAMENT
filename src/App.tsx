@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Header } from './components/ui';
+import { LandingPage } from './pages/LandingPage';
+import { LoginPage } from './pages/LoginPage';
 import { TournamentListPage } from './pages/TournamentListPage';
 import { TournamentCreatePage } from './pages/TournamentCreatePage';
 import { TournamentDetailPage } from './pages/TournamentDetailPage';
@@ -7,8 +9,9 @@ import { StandingsPage } from './pages/StandingsPage';
 import type { View } from './types';
 
 export default function App() {
-  const [view, setView] = useState<View>({ name: 'list' });
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [view, setView] = useState<View>({ name: 'landing' });
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [theme, setTheme] = useState<'dark' | 'light'>('light');
 
   useEffect(() => {
     const stored = window.localStorage.getItem('theme');
@@ -25,6 +28,40 @@ export default function App() {
 
   const toggleTheme = () => setTheme((current) => (current === 'dark' ? 'light' : 'dark'));
 
+  const handleLogin = () => {
+    setView({ name: 'login' });
+  };
+
+  const handleAuthenticate = () => {
+    setIsAdmin(true);
+    setView({ name: 'list' });
+  };
+
+  const handleLogout = () => {
+    setIsAdmin(false);
+    setView({ name: 'landing' });
+  };
+
+  // Landing page - pas de header personnalisé, elle a son propre header
+  if (view.name === 'landing') {
+    return (
+      <LandingPage 
+        onLogin={handleLogin}
+        onTournamentClick={(id) => setView({ name: 'detail', tournamentId: id })}
+      />
+    );
+  }
+
+  // Login page - page séparée
+  if (view.name === 'login') {
+    return (
+      <LoginPage 
+        onLogin={handleAuthenticate}
+        onBack={() => setView({ name: 'landing' })}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[color:var(--app-bg)] text-[color:var(--text-primary)] transition-colors duration-300">
       <Header theme={theme} onToggleTheme={toggleTheme} />
@@ -33,6 +70,8 @@ export default function App() {
           <TournamentListPage
             onNew={() => setView({ name: 'create' })}
             onOpen={(id) => setView({ name: 'detail', tournamentId: id })}
+            isAdmin={isAdmin}
+            onLogout={handleLogout}
           />
         )}
         {view.name === 'create' && (
