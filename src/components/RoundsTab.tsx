@@ -33,7 +33,7 @@ export function RoundsTab({ tournament, players, matches, onSetResult }: {
             className={`rounded-xl px-4 py-2 text-sm font-medium transition-all ${
               activeRound === r
                 ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/20'
-                : 'border border-slate-700/50 bg-slate-800/40 text-slate-400 hover:border-slate-600 hover:text-slate-200'
+                : 'border border-slate-700/50 bg-slate-800/40 text-slate-200 hover:border-slate-600 hover:text-slate-200'
             }`}
           >
             R{r}
@@ -125,7 +125,7 @@ function ResultSelector({ current, onChange, disabled }: { current: string; onCh
             current === o.value
               ? o.value === 'pending' ? 'bg-slate-700 text-slate-300'
               : 'bg-gradient-to-b from-violet-600 to-indigo-600 text-white'
-              : 'bg-slate-900/60 text-slate-500 hover:bg-slate-800 hover:text-slate-300'
+              : 'bg-slate-900/60 text-slate-300 dark:text-slate-500 hover:bg-slate-800 hover:text-slate-300'
           }`}
         >
           {o.label}
