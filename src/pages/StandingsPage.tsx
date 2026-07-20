@@ -33,7 +33,7 @@ export function StandingsPage({ tournamentId, onBack }: { tournamentId: string; 
           <BarChart3 className="h-5 w-5 text-violet-400" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-slate-100">Classement</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-400">Classement</h2>
           <p className="text-sm text-slate-500">Système suisse — points cumulés</p>
         </div>
       </div>
@@ -59,12 +59,12 @@ export function StandingsPage({ tournamentId, onBack }: { tournamentId: string; 
                   }
                 </td>
                 <td className="px-5 py-4">
-                  <span className={`font-medium ${i === 0 ? 'text-amber-300' : 'text-slate-200'}`}>{p.name}</span>
+                  <span className={`font-medium ${i === 0 ? 'text-amber-300' : 'text-slate-400'}`}>{p.name}</span>
                 </td>
                 <td className="hidden px-5 py-4 text-slate-500 sm:table-cell">{p.club || '—'}</td>
                 <td className="hidden px-5 py-4 font-mono text-slate-400 md:table-cell">{p.rating}</td>
                 <td className="px-5 py-4 text-right">
-                  <span className={`font-mono font-semibold ${i === 0 ? 'text-amber-300' : i < 3 ? 'text-slate-200' : 'text-slate-400'}`}>
+                  <span className={`font-mono font-semibold ${i === 0 ? 'text-amber-300' : i < 3 ? 'text-slate-300' : 'text-slate-500'}`}>
                     {Number(p.points).toFixed(1)}
                   </span>
                 </td>

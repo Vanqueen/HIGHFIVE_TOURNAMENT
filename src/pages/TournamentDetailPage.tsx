@@ -36,7 +36,7 @@ export function TournamentDetailPage({ tournamentId, onBack, onViewStandings }: 
           <div className="mb-2">
             <Badge status={tournament.status} />
           </div>
-          <h2 className="text-3xl font-bold tracking-tight text-slate-100">{tournament.name}</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-slate-300">{tournament.name}</h2>
           <div className="mt-2 flex flex-wrap items-center gap-4 text-xs text-slate-500">
             {tournament.location && (
               <span className="flex items-center gap-1.5"><MapPin className="h-3 w-3" /> {tournament.location}</span>

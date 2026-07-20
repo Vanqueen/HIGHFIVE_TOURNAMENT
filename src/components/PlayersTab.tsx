@@ -17,7 +17,7 @@ export function PlayersTab({ tournament, players, onChange, showAdd, setShowAdd 
     <div>
       <div className="mb-5 flex items-center justify-between">
         <div>
-          <h3 className="font-semibold text-slate-100">Joueurs inscrits</h3>
+          <h3 className="font-semibold text-slate-400">Joueurs inscrits</h3>
           <p className="text-xs text-slate-500 mt-0.5">{players.length} participant{players.length !== 1 ? 's' : ''}</p>
         </div>
         {canEdit && (
@@ -44,7 +44,7 @@ export function PlayersTab({ tournament, players, onChange, showAdd, setShowAdd 
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-800/60">
             <UserPlus className="h-5 w-5 text-slate-500" />
           </div>
-          <p className="text-sm text-slate-400">Aucun joueur inscrit.</p>
+          <p className="text-sm text-slate-500">Aucun joueur inscrit.</p>
           {canEdit && <p className="mt-1 text-xs text-slate-600">Ajoutez votre premier participant.</p>}
         </div>
       ) : (
@@ -64,7 +64,7 @@ export function PlayersTab({ tournament, players, onChange, showAdd, setShowAdd 
               {players.map((p, i) => (
                 <tr key={p.id} className="transition-colors hover:bg-slate-800/30">
                   <td className="px-5 py-4 font-mono text-xs text-slate-600">{i + 1}</td>
-                  <td className="px-5 py-4 font-medium text-slate-200">{p.name}</td>
+                  <td className="px-5 py-4 font-medium text-slate-300">{p.name}</td>
                   <td className="hidden px-5 py-4 text-slate-500 sm:table-cell">{p.club || '—'}</td>
                   <td className="px-5 py-4 font-mono text-slate-400">{p.rating}</td>
                   <td className="px-5 py-4 text-right font-mono font-semibold text-slate-300">{Number(p.points).toFixed(1)}</td>

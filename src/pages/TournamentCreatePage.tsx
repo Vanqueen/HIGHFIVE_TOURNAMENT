@@ -35,7 +35,7 @@ export function TournamentCreatePage({ onBack, onCreated }: { onBack: () => void
       <BackButton onClick={onBack} />
 
       <div className="mb-8">
-        <h2 className="text-3xl font-bold tracking-tight text-slate-100">Nouveau tournoi</h2>
+        <h2 className="text-3xl font-bold tracking-tight text-slate-400">Nouveau tournoi</h2>
         <p className="mt-1.5 text-slate-400">Configurez votre événement en quelques secondes.</p>
       </div>
 
@@ -57,20 +57,6 @@ export function TournamentCreatePage({ onBack, onCreated }: { onBack: () => void
 
           <Field label="Nombre de rondes">
             <div className="flex items-center gap-3">
-              {[3, 5, 7, 9].map((n) => (
-                <button
-                  key={n}
-                  type="button"
-                  onClick={() => setForm((f) => ({ ...f, total_rounds: n }))}
-                  className={`flex-1 rounded-xl py-2.5 text-sm font-medium transition-all ${
-                    form.total_rounds === n
-                      ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/20'
-                      : 'bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-slate-600 hover:text-slate-200'
-                  }`}
-                >
-                  {n}
-                </button>
-              ))}
               <input
                 type="number" min={1} max={20}
                 value={form.total_rounds}

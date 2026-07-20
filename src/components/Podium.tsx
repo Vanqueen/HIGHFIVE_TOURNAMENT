@@ -4,8 +4,8 @@ import { api } from '../lib/api';
 import type { Player } from '../types';
 
 const MEDALS = [
-  { emoji: '🥇', rank: '1er',  glow: 'shadow-amber-500/20',  border: 'border-amber-500/30',  bg: 'bg-amber-500/5',  text: 'text-amber-300',  sub: 'text-amber-400/60' },
-  { emoji: '🥈', rank: '2ème', glow: 'shadow-slate-400/10',  border: 'border-slate-500/20',  bg: 'bg-slate-800/40', text: 'text-slate-200',  sub: 'text-slate-400' },
+  { emoji: '🥇', rank: '1er',  glow: 'shadow-amber-500/20',  border: 'border-amber-500/30',  bg: 'bg-amber-500/5',  text: 'text-amber-400',  sub: 'text-amber-400/80' },
+  { emoji: '🥈', rank: '2ème', glow: 'shadow-slate-400/10',  border: 'border-slate-500/20',  bg: 'bg-slate-800/40', text: 'text-slate-200',  sub: 'text-slate-200' },
   { emoji: '🥉', rank: '3ème', glow: 'shadow-orange-500/10', border: 'border-orange-500/20', bg: 'bg-orange-500/5', text: 'text-orange-300', sub: 'text-orange-400/60' },
 ];
 
@@ -25,7 +25,7 @@ export function Podium({ tournamentId }: { tournamentId: string }) {
           <Trophy className="h-4 w-4 text-violet-400" />
         </div>
         <div>
-          <h3 className="font-semibold text-slate-100">Palmarès final</h3>
+          <h3 className="font-semibold text-slate-400">Palmarès final</h3>
           <p className="text-xs text-slate-500">Tournoi terminé</p>
         </div>
       </div>

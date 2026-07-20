@@ -15,7 +15,7 @@ export function TournamentListPage({ onNew, onOpen }: { onNew: () => void; onOpe
           <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/5 px-3 py-1 text-xs font-medium text-violet-400">
             <Trophy className="h-3 w-3" /> Système suisse
           </div>
-          <h2 className="text-4xl font-bold tracking-tight text-slate-100 sm:text-5xl">
+          <h2 className="text-4xl font-bold tracking-tight text-slate-300 sm:text-5xl">
             Vos tournois
             <span className="gradient-text"> d'échecs</span>
           </h2>
@@ -59,7 +59,7 @@ function TournamentCard({ tournament, onOpen }: { tournament: Tournament; onOpen
         <ArrowRight className="h-4 w-4 text-slate-600 transition-all group-hover:text-violet-400 group-hover:translate-x-0.5" />
       </div>
 
-      <h3 className="mb-3 text-base font-semibold text-slate-100 leading-snug">{tournament.name}</h3>
+      <h3 className="mb-3 text-base font-semibold text-slate-400 leading-snug">{tournament.name}</h3>
 
       <div className="space-y-1.5">
         {tournament.location && (
