@@ -37,7 +37,15 @@ export interface Match {
 }
 
 export type View =
+  | { name: 'landing' }
+  | { name: 'login' }
   | { name: 'list' }
   | { name: 'create' }
   | { name: 'detail'; tournamentId: string }
   | { name: 'standings'; tournamentId: string };
+
+export interface AdminUser {
+  id: string;
+  username: string;
+  email: string;
+}
