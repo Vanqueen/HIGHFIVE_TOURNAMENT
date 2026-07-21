@@ -18,6 +18,9 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        /* Display : condensé, emprunté aux bulletins de tournoi imprimés. */
+        display: ['Barlow Condensed', 'Inter', 'system-ui', 'sans-serif'],
+        /* Toute donnée chiffrée passe en mono : scores, Elo, ½, échiquiers. */
         mono: ['Geist Mono', 'Fira Code', 'monospace'],
       },
       backgroundImage: {

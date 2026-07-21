@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Search,
   Menu,
@@ -11,487 +11,529 @@ import {
   MapPin,
   Users,
   Trophy,
-  Crown,
   Globe2,
   ArrowRight,
   ChevronRight,
-  LogIn,
-  UserPlus,
+  User,
 } from 'lucide-react';
+import { Logo } from '../components/Logo';
 import { useTournaments } from '../hooks/useTournaments';
-import type { Tournament } from '../types';
+/* `User` est déjà pris par l'icône lucide importée plus haut. */
+import type { Tournament, User as AuthUser } from '../types';
 import chessHeroImage from '../assets/image.png';
 
 /* ------------------------------------------------------------------ */
-/*  Design tokens — pulled from the reference mock                     */
-/*  ink   : near-black text / primary buttons                          */
-/*  gold  : brand accent (crown, headline, icons, "open" states)       */
-/*  purple: "season / upcoming" badge accent                           */
-/*  green : "registration open" badge accent                           */
+/*  Design tokens — repris de la maquette                              */
+/*  ink   : texte quasi-noir / boutons primaires                       */
+/*  gold  : accent de marque (couronne, titre, icônes)                 */
+/*  purple: badge « saison / à venir »                                 */
+/*  green : badge « inscriptions ouvertes »                            */
 /* ------------------------------------------------------------------ */
 const INK = '#111114';
 const GOLD = '#C6963B';
 const GOLD_DARK = '#A87A2C';
 const PURPLE = '#5B3E96';
-const GREEN = '#1E9E5A';
+const GREEN = '#3E9B4F';
 
-const CARD_VARIANTS = [
-  { badge: 'INSCRIPTIONS OUVERTES', badgeColor: GREEN, art: GOLD, piece: 'king' as const },
-  { badge: 'À VENIR', badgeColor: PURPLE, art: INK, piece: 'knight' as const },
-  { badge: 'À VENIR', badgeColor: PURPLE, art: GOLD_DARK, piece: 'rook' as const },
-  { badge: 'À VENIR', badgeColor: PURPLE, art: INK, piece: 'pawn' as const },
-];
+const NAV_ITEMS = ['Accueil', 'Tournois', 'Compétitions', 'Classements', 'Joueurs', 'Actualités', 'À propos'];
+
+/* Une seule photo en asset : on la recadre différemment pour chaque
+   vignette de tournoi afin d'obtenir 4 visuels distincts. */
+const THUMB_CROPS = ['22% 62%', '62% 38%', '84% 70%', '44% 80%'];
 
 export function LandingPage({
+  user,
   onLogin,
+  onDashboard,
   onTournamentClick,
 }: {
+  /* null quand personne n'est connecté : l'en-tête bascule alors sur
+     les boutons « Se connecter » / « S'inscrire ». */
+  user: AuthUser | null;
   onLogin: () => void;
+  onDashboard: () => void;
   onTournamentClick: (id: string) => void;
 }) {
   const { tournaments, loading } = useTournaments();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const featuredTournament = tournaments.length > 0 ? tournaments[0] : null;
-  const upcomingTournaments = tournaments.slice(0, 4);
+  /* Verrouille le scroll du document tant que la landing est affichée
+     (uniquement en desktop — cf. media query dans index.css). */
+  useEffect(() => {
+    document.documentElement.classList.add('landing-lock');
+    return () => document.documentElement.classList.remove('landing-lock');
+  }, []);
+
+  const featured = tournaments.length > 0 ? tournaments[0] : null;
+  const upcoming = tournaments.slice(0, 4);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="landing-fixed flex flex-col" style={{ color: INK }}>
       {/* ============================= HEADER ============================= */}
-      <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm z-50 border-b border-gray-100">
-        <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12">
-          <div className="flex items-center justify-between h-20 mx-auto max-w-[1920px]">
-            {/* Logo */}
-            <div className="flex items-center gap-2.5">
-              <Crown className="w-8 h-8 shrink-0" style={{ color: GOLD }} strokeWidth={1.75} />
-              <div className="leading-tight">
-                <div className="text-lg sm:text-xl font-extrabold tracking-tight" style={{ color: INK }}>
-                  VIPP INTERSTIS
-                </div>
-                <div className="text-[10px] font-semibold tracking-[0.2em]" style={{ color: GOLD }}>
-                  L&apos;EXCELLENCE AUX ÉCHECS
-                </div>
-              </div>
-            </div>
+      <header className="relative z-40 flex-none border-b border-black/5 bg-white/95 backdrop-blur-sm">
+        <div className="mx-auto flex h-[8.8em] max-w-[192em] items-center justify-between px-[2.6em] lg:px-[3.2em]">
+          {/* Logo — il porte son propre nom, pas de wordmark à côté. */}
+          <Logo className="h-[7em] w-auto shrink-0" />
 
-            {/* Navigation Desktop */}
-            <nav className="hidden lg:flex items-center gap-8">
-              {['Accueil', 'Tournois', 'Compétitions', 'Classements', 'Joueurs', 'Actualités', 'À propos'].map(
-                (item, i) => (
-                  <a
-                    key={item}
-                    href="#"
-                    className="relative pb-1 text-sm font-medium transition-colors"
-                    style={{ color: i === 0 ? INK : '#4B5563' }}
-                  >
-                    {item}
-                    {i === 0 && (
-                      <span
-                        className="absolute -bottom-0.5 left-0 right-0 h-[2px] rounded-full"
-                        style={{ backgroundColor: GOLD }}
-                      />
-                    )}
-                  </a>
-                )
-              )}
-            </nav>
-
-            {/* Actions */}
-            <div className="hidden lg:flex items-center gap-3">
-              <button className="p-2.5 rounded-full text-gray-500 hover:bg-gray-100 transition-colors">
-                <Search className="w-4 h-4" />
-              </button>
-              <button
-                onClick={onLogin}
-                className="px-5 py-2.5 rounded-full border border-gray-300 text-sm font-semibold text-gray-800 hover:border-gray-400 transition-colors"
+          {/* Navigation */}
+          <nav className="hidden items-center gap-[2.6em] lg:flex">
+            {NAV_ITEMS.map((item, i) => (
+              <a
+                key={item}
+                href="#"
+                className="relative pb-[0.7em] text-[1.4em] font-medium transition-colors hover:text-black"
+                style={{ color: i === 0 ? GOLD : '#4B5563' }}
               >
-                Se connecter
-              </button>
+                {item}
+                {i === 0 && (
+                  <span
+                    className="absolute -bottom-[0.1em] left-0 right-0 h-[0.15em] rounded-full"
+                    style={{ backgroundColor: GOLD }}
+                  />
+                )}
+              </a>
+            ))}
+          </nav>
+
+          {/* Actions */}
+          <div className="hidden items-center gap-[1.1em] lg:flex">
+            <button className="flex h-[4.4em] w-[4.4em] items-center justify-center rounded-full border border-gray-200 text-gray-500 transition-colors hover:border-gray-300 hover:text-gray-800">
+              <Search className="h-[1.7em] w-[1.7em]" />
+            </button>
+            {user ? (
               <button
-                onClick={onLogin}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-colors hover:opacity-90"
+                onClick={onDashboard}
+                className="flex items-center gap-[0.8em] rounded-full py-[0.55em] pl-[0.55em] pr-[1.8em] text-[1.35em] font-semibold text-white transition-opacity hover:opacity-90"
                 style={{ backgroundColor: INK }}
               >
-                <UserPlus className="w-4 h-4" />
-                S&apos;inscrire
+                <span
+                  className="flex h-[2em] w-[2em] items-center justify-center rounded-full text-[0.85em] font-bold"
+                  style={{ backgroundColor: user.role === 'organizer' ? GOLD : PURPLE }}
+                >
+                  {user.full_name.slice(0, 1).toUpperCase()}
+                </span>
+                Mon espace
               </button>
-            </div>
-
-            {/* Mobile menu button */}
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-gray-700">
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile menu */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden bg-white border-t border-gray-100">
-            <div className="px-4 py-4 space-y-3">
-              {['Accueil', 'Tournois', 'Compétitions', 'Classements', 'Joueurs', 'Actualités', 'À propos'].map(
-                (item) => (
-                  <a key={item} href="#" className="block text-gray-700 font-medium">
-                    {item}
-                  </a>
-                )
-              )}
-              <div className="pt-4 border-t border-gray-100 flex gap-3">
+            ) : (
+              <>
                 <button
                   onClick={onLogin}
-                  className="flex-1 px-4 py-2 text-gray-700 border border-gray-300 rounded-full font-semibold text-sm"
+                  className="rounded-full border border-gray-300 px-[2.2em] py-[1.15em] text-[1.35em] font-semibold text-gray-800 transition-colors hover:border-gray-400"
                 >
                   Se connecter
                 </button>
                 <button
                   onClick={onLogin}
-                  className="flex-1 px-4 py-2 text-white rounded-full font-semibold text-sm"
+                  className="flex items-center gap-[0.7em] rounded-full px-[2.2em] py-[1.15em] text-[1.35em] font-semibold text-white transition-opacity hover:opacity-90"
                   style={{ backgroundColor: INK }}
                 >
+                  <User className="h-[1.35em] w-[1.35em]" />
                   S&apos;inscrire
                 </button>
+              </>
+            )}
+          </div>
+
+          {/* Menu mobile */}
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-[0.8em] text-gray-700 lg:hidden">
+            {mobileMenuOpen ? <X className="h-[2.4em] w-[2.4em]" /> : <Menu className="h-[2.4em] w-[2.4em]" />}
+          </button>
+        </div>
+
+        {mobileMenuOpen && (
+          <div className="border-t border-gray-100 bg-white lg:hidden">
+            <div className="space-y-[1.2em] px-[2em] py-[1.6em]">
+              {NAV_ITEMS.map((item) => (
+                <a key={item} href="#" className="block text-[1.5em] font-medium text-gray-700">
+                  {item}
+                </a>
+              ))}
+              <div className="flex gap-[1.2em] border-t border-gray-100 pt-[1.6em]">
+                {user ? (
+                  <button
+                    onClick={onDashboard}
+                    className="flex-1 rounded-full px-[1.6em] py-[1em] text-[1.4em] font-semibold text-white"
+                    style={{ backgroundColor: INK }}
+                  >
+                    Mon espace
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      onClick={onLogin}
+                      className="flex-1 rounded-full border border-gray-300 px-[1.6em] py-[1em] text-[1.4em] font-semibold text-gray-700"
+                    >
+                      Se connecter
+                    </button>
+                    <button
+                      onClick={onLogin}
+                      className="flex-1 rounded-full px-[1.6em] py-[1em] text-[1.4em] font-semibold text-white"
+                      style={{ backgroundColor: INK }}
+                    >
+                      S&apos;inscrire
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
         )}
       </header>
 
-      {/* ============================== HERO =============================== */}
-      <section className="pt-16 pb-20 bg-white relative overflow-hidden">
-        <div className="w-full pl-24">
-          <div className="mx-auto max-w-[1920px]">
-            {/* Copy */}
-            <div className="relative z-10 max-w-2xl">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05]" style={{ color: INK }}>
+      {/* ====================== CORPS — une seule vue ====================== */}
+      <div className="flex min-h-0 flex-1 flex-col">
+        {/* ============================== HERO ============================= */}
+        <section className="relative flex min-h-0 flex-1 items-center overflow-hidden bg-white">
+          {/* Visuel — plein cadre à droite, fondu vers le blanc */}
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-full lg:w-[65%]">
+            <img
+              src={chessHeroImage}
+              alt="Échiquier et pièces"
+              className="h-full w-full object-cover object-[center_46%]"
+              style={{
+                maskImage:
+                  'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.35) 20%, rgba(0,0,0,0.85) 38%, #000 52%)',
+                WebkitMaskImage:
+                  'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.35) 20%, rgba(0,0,0,0.85) 38%, #000 52%)',
+              }}
+            />
+            {/* Halo doré + fondu bas vers le blanc */}
+            <div
+              className="absolute inset-0"
+              style={{ background: `radial-gradient(circle at 62% 40%, ${GOLD}22 0%, transparent 58%)` }}
+            />
+            <div
+              className="absolute inset-x-0 bottom-0 h-[28%]"
+              style={{ background: 'linear-gradient(to top, #fff 6%, rgba(255,255,255,0) 20%)' }}
+            />
+          </div>
+
+          {/* Texte */}
+          <div className="relative z-10 mx-auto flex w-full max-w-[192em] items-center px-[2.6em] lg:px-[6em]">
+            <div className="max-w-[62em]">
+
+              <h1 className="mt-[0.55em] text-[5.4em] font-extrabold leading-[1.03] tracking-[-0.025em]">
                 LÀ OÙ LA STRATÉGIE
                 <br />
                 <span style={{ color: GOLD }}>CRÉE LA LÉGENDE</span>
               </h1>
 
-              <p className="mt-6 text-lg text-gray-500 max-w-xl">
-                VIPP Interstis est la plateforme dédiée aux passionnés d&apos;échecs. Participez, suivez et
-                vibrez au rythme des plus grandes compétitions.
+              <p className="mt-[2.2em] max-w-[52em] text-[1.6em] leading-[1.6] text-gray-500">
+                VIPP Digital Services est la plateforme dédiée aux passionnés d&apos;échecs. Participez, suivez et vibrez
+                au rythme des plus grandes compétitions.
               </p>
 
-              <div className="mt-9 flex flex-wrap gap-4">
+              <div className="mt-[2.6em] flex flex-wrap gap-[1.4em]">
                 <button
-                  className="flex items-center gap-2.5 px-7 py-3.5 rounded-full text-white text-sm font-bold tracking-wide transition-opacity hover:opacity-90"
+                  className="flex items-center gap-[0.8em] rounded-full px-[2.4em] py-[1.25em] text-[1.3em] font-bold tracking-[0.06em] text-white transition-opacity hover:opacity-90"
                   style={{ backgroundColor: INK }}
                 >
-                  <ChessKnightIcon className="w-4 h-4" />
+                  <ChessKnightIcon className="h-[1.5em] w-[1.5em]" />
                   DÉCOUVRIR LES TOURNOIS
                 </button>
-                <button
-                  className="flex items-center gap-2.5 px-7 py-3.5 rounded-full border border-gray-300 text-sm font-bold tracking-wide text-gray-800 hover:border-gray-400 transition-colors"
-                >
-                  <Trophy className="w-4 h-4" style={{ color: GOLD }} />
+                <button className="flex items-center gap-[0.8em] rounded-full border border-gray-300 px-[2.4em] py-[1.25em] text-[1.3em] font-bold tracking-[0.06em] text-gray-800 transition-colors hover:border-gray-400">
+                  <Trophy className="h-[1.5em] w-[1.5em]" style={{ color: GOLD }} />
                   VOIR LE CALENDRIER
                 </button>
               </div>
 
-              {/* Stats */}
-              <div className="mt-14 flex flex-wrap max-w-xl">
-                <StatItem icon={<Users className="w-6 h-6" />} value="1K+" label="JOUEURS" />
-                <div className="w-px h-8 bg-gray-200 mx-4" />
-                <StatItem icon={<Trophy className="w-6 h-6" />} value="25+" label="TOURNOIS" />
-                <div className="w-px h-8 bg-gray-200 mx-4" />
-                <StatItem icon={<Globe2 className="w-6 h-6" />} value="12" label="PAYS" />
-                <div className="w-px h-8 bg-gray-200 mx-4" />
-                <StatItem icon={<Calendar className="w-6 h-6" />} value="À VENIR" label="GRANDES ÉDITIONS" />
-              </div>
-            </div>
-
-            {/* Hero art - natural integration without block effect */}
-            <div className="absolute top-0 right-0 w-full lg:w-[75%] xl:w-[70%] h-[120%] -translate-y-[10%] pointer-events-none">
-              <div className="relative h-full">
-                {/* Image */}
-                <img 
-                  src={chessHeroImage} 
-                  alt="Échiquier avec pièces" 
-                  className="absolute inset-0 w-full h-full object-cover"
-                  style={{ 
-                    maskImage: 'linear-gradient(to left, black 20%, rgba(0,0,0,0.7) 35%, rgba(0,0,0,0.3) 50%, transparent 70%)',
-                    WebkitMaskImage: 'linear-gradient(to left, black 20%, rgba(0,0,0,0.7) 35%, rgba(0,0,0,0.3) 50%, transparent 70%)'
-                  }}
+              {/* Statistiques */}
+              <div className="mt-[3.4em] flex items-center">
+                <StatItem icon={<Users className="h-[2.4em] w-[2.4em]" />} value="1K+" label="JOUEURS" />
+                <Divider />
+                <StatItem icon={<Trophy className="h-[2.4em] w-[2.4em]" />} value="25+" label="TOURNOIS" />
+                <Divider />
+                <StatItem icon={<Globe2 className="h-[2.4em] w-[2.4em]" />} value="12" label="PAYS" />
+                <Divider />
+                <StatItem
+                  icon={<Calendar className="h-[2.4em] w-[2.4em]" />}
+                  value="À VENIR"
+                  label="DE GRANDES ÉDITIONS"
                 />
-                
-                {/* Subtle gradient overlay for depth */}
-                <div 
-                  className="absolute inset-0"
-                  style={{
-                    background: 'linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 25%, rgba(255,255,255,0.2) 45%, transparent 65%)'
-                  }}
-                />
-                
-                {/* radial gold glow overlay */}
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{ background: `radial-gradient(circle at 70% 45%, ${GOLD}25 0%, transparent 60%)` }}
-                />
-
-                {/* Floating featured card */}
-                {featuredTournament && (
-                  <div className="absolute bottom-12 right-12 lg:right-16 w-[280px] sm:w-[300px] bg-white rounded-2xl shadow-2xl p-6 border border-gray-100 z-30 pointer-events-auto">
-                    <span
-                      className="inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-wide text-white mb-4"
-                      style={{ backgroundColor: GOLD }}
-                    >
-                      ÉVÉNEMENT PHARE
-                    </span>
-                    <Trophy className="w-8 h-8 mb-3" style={{ color: GOLD }} />
-                    <h3 className="font-extrabold text-lg leading-snug" style={{ color: INK }}>
-                      {featuredTournament.name}
-                    </h3>
-                    <span
-                      className="inline-block mt-2 mb-3 px-2.5 py-1 rounded-full text-[10px] font-bold text-white"
-                      style={{ backgroundColor: PURPLE }}
-                    >
-                      SAISON 1
-                    </span>
-                    <div className="space-y-2 text-sm text-gray-600">
-                      {featuredTournament.start_date && (
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 shrink-0" style={{ color: GOLD }} />
-                          <span>
-                            {new Date(featuredTournament.start_date).toLocaleDateString('fr-FR', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })}
-                          </span>
-                        </div>
-                      )}
-                      {featuredTournament.location && (
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-4 h-4 shrink-0" style={{ color: GOLD }} />
-                          <span>{featuredTournament.location}</span>
-                        </div>
-                      )}
-                      <div className="flex items-center gap-2">
-                        <Trophy className="w-4 h-4 shrink-0" style={{ color: GOLD }} />
-                        <span>{featuredTournament.total_rounds} rondes</span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => onTournamentClick(featuredTournament.id)}
-                      className="mt-5 w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-white text-xs font-bold tracking-wide hover:opacity-90 transition-opacity"
-                      style={{ backgroundColor: INK }}
-                    >
-                      EN SAVOIR PLUS
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-                    <div className="flex justify-center gap-1.5 mt-4">
-                      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: INK }} />
-                      <span className="w-1.5 h-1.5 rounded-full bg-gray-300" />
-                      <span className="w-1.5 h-1.5 rounded-full bg-gray-300" />
-                      <span className="w-1.5 h-1.5 rounded-full bg-gray-300" />
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* ========================= PROCHAINS TOURNOIS ======================= */}
-      <section className="pt-16 pb-20 bg-white">
-        <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12">
-          <div className="mx-auto max-w-[1920px]">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="flex items-center gap-2 text-2xl sm:text-3xl font-extrabold" style={{ color: INK }}>
-                <ChevronRight className="w-6 h-6" style={{ color: GOLD }} />
+          {/* Carte « événement phare » */}
+          {featured && (
+            <div className="absolute right-[3.6em] top-1/2 z-20 hidden w-[25em] -translate-y-1/2 rounded-[1.6em] border border-black/5 bg-white p-[2em] text-center shadow-[0_2.4em_5em_-1.6em_rgba(17,17,20,0.35)] lg:block">
+              <span
+                className="inline-block rounded-full px-[1.2em] py-[0.5em] text-[1.05em] font-bold tracking-[0.1em] text-white"
+                style={{ backgroundColor: GOLD }}
+              >
+                ÉVÉNEMENT PHARE
+              </span>
+
+              <Trophy className="mx-auto mt-[1.6em] h-[3.4em] w-[3.4em]" style={{ color: GOLD }} strokeWidth={1.6} />
+
+              <h3 className="mt-[1em] text-[2em] font-extrabold leading-[1.15] tracking-[-0.01em]">
+                <SplitTitle name={featured.name} />
+              </h3>
+
+              <span
+                className="mt-[1.1em] inline-block rounded-full px-[1.2em] py-[0.45em] text-[1.05em] font-bold tracking-[0.08em] text-white"
+                style={{ backgroundColor: PURPLE }}
+              >
+                SAISON 1
+              </span>
+
+              <div className="mt-[1.4em] space-y-[0.8em] text-left text-[1.2em] text-gray-600">
+                {featured.start_date && (
+                  <div className="flex items-center gap-[0.8em]">
+                    <Calendar className="h-[1.35em] w-[1.35em] shrink-0" style={{ color: GOLD }} />
+                    <span>{formatDate(featured.start_date)}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-[0.8em]">
+                  <MapPin className="h-[1.35em] w-[1.35em] shrink-0" style={{ color: GOLD }} />
+                  <span>
+                    {(featured.location ?? 'À définir').toUpperCase()} — {featured.total_rounds} RONDES
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => onTournamentClick(featured.id)}
+                className="mt-[1.8em] flex w-full items-center justify-center gap-[0.7em] rounded-full py-[1.15em] text-[1.15em] font-bold tracking-[0.08em] text-white transition-opacity hover:opacity-90"
+                style={{ backgroundColor: INK }}
+              >
+                EN SAVOIR PLUS
+                <ArrowRight className="h-[1.3em] w-[1.3em]" />
+              </button>
+
+              <div className="mt-[1.4em] flex justify-center gap-[0.6em]">
+                {[0, 1, 2, 3].map((i) => (
+                  <span
+                    key={i}
+                    className="h-[0.6em] w-[0.6em] rounded-full"
+                    style={{ backgroundColor: i === 0 ? INK : '#D8D8DC' }}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* ======================= PROCHAINS TOURNOIS ======================= */}
+        <section className="flex-none px-[2.6em] lg:px-[3.2em]">
+          <div className="relative mx-auto max-w-[192em] rounded-[1.6em] border border-black/5 bg-[#FBFAF9] px-[2em] py-[1.6em]">
+            <div className="mb-[1.4em] flex items-center justify-between">
+              <h2 className="flex items-center gap-[0.4em] text-[1.7em] font-extrabold tracking-[-0.01em]">
+                <ChevronRight className="h-[1.1em] w-[1.1em]" style={{ color: GOLD }} strokeWidth={3} />
                 PROCHAINS TOURNOIS
               </h2>
               <a
                 href="#"
-                className="hidden sm:flex items-center gap-1 text-sm font-semibold text-gray-500 hover:text-gray-800 transition-colors"
+                className="flex items-center gap-[0.5em] text-[1.15em] font-semibold tracking-[0.06em] text-gray-500 transition-colors hover:text-gray-800"
               >
                 VOIR TOUS LES TOURNOIS
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="h-[1.2em] w-[1.2em]" />
               </a>
             </div>
 
             {loading ? (
-              <div className="text-center py-12">
-                <div
-                  className="inline-block w-8 h-8 border-4 border-t-transparent rounded-full animate-spin"
-                  style={{ borderColor: GOLD, borderTopColor: 'transparent' }}
-                />
+              <div className="grid grid-cols-1 gap-[1.4em] sm:grid-cols-2 lg:grid-cols-4">
+                {[0, 1, 2, 3].map((i) => (
+                  <div key={i} className="skeleton h-[13.5em] rounded-[1.2em]" />
+                ))}
               </div>
-            ) : upcomingTournaments.length > 0 ? (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {upcomingTournaments.map((tournament, i) => (
+            ) : upcoming.length > 0 ? (
+              <div className="grid grid-cols-1 gap-[1.4em] sm:grid-cols-2 lg:grid-cols-4">
+                {upcoming.map((tournament, i) => (
                   <TournamentCard
                     key={tournament.id}
                     tournament={tournament}
-                    variant={CARD_VARIANTS[i % CARD_VARIANTS.length]}
+                    crop={THUMB_CROPS[i % THUMB_CROPS.length]}
                     onClick={() => onTournamentClick(tournament.id)}
                   />
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12 text-gray-400">Aucun tournoi à venir pour le moment</div>
+              <div className="flex h-[13.5em] items-center justify-center text-[1.4em] text-gray-400">
+                Aucun tournoi à venir pour le moment
+              </div>
             )}
-          </div>
-        </div>
-      </section>
 
-      {/* ============================ INFO CARDS ============================ */}
-      <section className="py-16 bg-[#FAF9F6]">
-        <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12">
-          <div className="grid md:grid-cols-3 gap-6 mx-auto max-w-[1920px]">
+            {/* Flèche « suivant » */}
+            <button
+              className="absolute right-[-1.7em] top-[64%] hidden h-[3.4em] w-[3.4em] items-center justify-center rounded-full text-white shadow-[0_1em_2em_-0.6em_rgba(17,17,20,0.6)] transition-transform hover:scale-105 lg:flex"
+              style={{ backgroundColor: INK }}
+              aria-label="Tournois suivants"
+            >
+              <ChevronRight className="h-[1.6em] w-[1.6em]" />
+            </button>
+          </div>
+        </section>
+
+        {/* =========================== TROIS ACCÈS ========================== */}
+        <section className="flex-none px-[2.6em] pt-[1.6em] lg:px-[3.2em]">
+          <div className="mx-auto grid max-w-[192em] grid-cols-1 gap-[1.6em] md:grid-cols-3">
             <InfoCard
               iconBg={PURPLE}
-              icon={<Users className="w-5 h-5 text-white" />}
+              icon={<User className="h-[1.9em] w-[1.9em] text-white" />}
               title="POUR LES JOUEURS"
               description="Inscrivez-vous aux tournois, suivez vos parties, améliorez votre classement et défiez des joueurs du monde entier."
-              linkText="CRÉER UN COMPTE"
+              linkText={user ? 'MON ESPACE JOUEUR' : 'CRÉER UN COMPTE'}
+              onClick={user ? onDashboard : onLogin}
               accent={PURPLE}
             />
             <InfoCard
               iconBg={GOLD}
-              icon={<Trophy className="w-5 h-5 text-white" />}
+              icon={<Trophy className="h-[1.9em] w-[1.9em] text-white" />}
               title="POUR LES ORGANISATEURS"
-              description="Créez et gérez vos compétitions facilement grâce à nos outils professionnels d'appariement et de suivi."
-              linkText="CRÉER UNE COMPÉTITION"
+              description="Créez et gérez vos compétitions facilement. Notre plateforme s'occupe du reste."
+              /* Pas d'inscription publique vers ce rôle : on renvoie
+                 simplement vers la connexion. */
+              linkText={user?.role === 'organizer' ? 'CRÉER UNE COMPÉTITION' : 'ESPACE ORGANISATEUR'}
+              onClick={user?.role === 'organizer' ? onDashboard : onLogin}
               accent={GOLD_DARK}
             />
             <InfoCard
               iconBg={INK}
-              icon={<BarsIcon className="w-5 h-5 text-white" />}
+              icon={<BarsIcon className="h-[1.9em] w-[1.9em] text-white" />}
               title="CLASSEMENTS EN TEMPS RÉEL"
-              description="Suivez l'évolution des tournois et des joueurs en direct grâce à des statistiques détaillées."
+              description="Suivez l'évolution des tournois et des joueurs en direct avec des statistiques détaillées."
               linkText="VOIR LES CLASSEMENTS"
               accent={INK}
             />
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ============================= PARTNERS ============================= */}
-      <section className="py-10 bg-white border-t border-gray-100">
-        <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12">
-          <div className="mx-auto max-w-[1920px] flex flex-col lg:flex-row items-center justify-between gap-6">
-            <p className="text-xs font-bold tracking-[0.2em] text-gray-400 whitespace-nowrap">NOS PARTENAIRES</p>
-            <div className="flex flex-wrap justify-center items-center gap-x-10 gap-y-4">
-              <PartnerLogo name="Chess.com" />
-              <PartnerLogo name="Lichess.org" />
-              <PartnerLogo name="DGT" />
-              <PartnerLogo name="ChessBase" />
-              <PartnerLogo name="Académie des Échecs" />
+        {/* ============================ PARTENAIRES ========================= */}
+        <footer className="mt-[1.6em] flex-none border-t border-black/5 px-[2.6em] lg:px-[3.2em]">
+          <div className="mx-auto flex h-[6em] max-w-[192em] items-center justify-between gap-[2em]">
+            <p className="whitespace-nowrap text-[1.05em] font-bold tracking-[0.2em] text-gray-400">
+              NOS PARTENAIRES
+            </p>
+            <div className="hidden flex-1 items-center justify-center gap-[3.4em] md:flex">
+              {['Chess.com', 'Lichess.org', 'DGT', 'ChessBase', 'Académie des Échecs'].map((name) => (
+                <span
+                  key={name}
+                  className="whitespace-nowrap text-[1.4em] font-bold text-gray-400 transition-colors hover:text-gray-600"
+                >
+                  {name}
+                </span>
+              ))}
             </div>
-            <div className="flex gap-2">
+            <div className="flex items-center gap-[0.6em]">
               {[Facebook, Twitter, Instagram, Youtube].map((Icon, i) => (
                 <a
                   key={i}
                   href="#"
-                  className="p-2 rounded-full text-gray-400 hover:text-white transition-colors"
-                  style={{ backgroundColor: 'transparent' }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = INK)}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                  className="flex h-[3em] w-[3em] items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-800"
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="h-[1.5em] w-[1.5em]" />
                 </a>
               ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* ============================== FOOTER =============================== */}
-      <footer className="text-white py-10" style={{ backgroundColor: INK }}>
-        <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 mx-auto max-w-[1920px]">
-            <div className="flex items-center gap-2.5">
-              <Crown className="w-6 h-6" style={{ color: GOLD }} strokeWidth={1.75} />
-              <span className="text-lg font-extrabold">VIPP INTERSTIS</span>
-            </div>
-            <p className="text-sm text-gray-400">© 2026 VIPP INTERSTIS. Tous droits réservés.</p>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/*  Small building blocks                                              */
+/*  Briques                                                            */
 /* ------------------------------------------------------------------ */
+
+function Divider() {
+  return <div className="mx-[1.6em] h-[3.2em] w-px bg-gray-200" />;
+}
 
 function StatItem({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
   return (
-    <div className="flex items-center gap-3">
-      <div className="flex-shrink-0" style={{ color: GOLD }}>
+    <div className="flex items-center gap-[1em]">
+      <div className="shrink-0" style={{ color: GOLD }}>
         {icon}
       </div>
-      <div>
-        <div className="text-2xl font-extrabold leading-tight" style={{ color: INK }}>
-          {value}
-        </div>
-        <div className="text-[11px] font-semibold tracking-wide text-gray-500">{label}</div>
+      <div className="leading-none">
+        <div className="text-[1.9em] font-extrabold tracking-[-0.02em]">{value}</div>
+        <div className="mt-[0.5em] text-[1.05em] font-semibold tracking-[0.08em] text-gray-500">{label}</div>
       </div>
     </div>
   );
+}
+
+function SplitTitle({ name }: { name: string }) {
+  const [first, ...rest] = name.trim().split(' ');
+  return (
+    <>
+      <span className="block">{first.toUpperCase()}</span>
+      {rest.length > 0 && (
+        <span className="block" style={{ color: GOLD }}>
+          {rest.join(' ').toUpperCase()}
+        </span>
+      )}
+    </>
+  );
+}
+
+function statusBadge(status: Tournament['status']) {
+  switch (status) {
+    case 'registration':
+      return { label: 'INSCRIPTIONS OUVERTES', color: GREEN };
+    case 'in_progress':
+      return { label: 'EN COURS', color: GOLD_DARK };
+    case 'completed':
+      return { label: 'TERMINÉ', color: '#6B7280' };
+    default:
+      return { label: 'À VENIR', color: PURPLE };
+  }
+}
+
+function formatDate(value: string) {
+  return new Date(value)
+    .toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })
+    .toUpperCase();
 }
 
 function TournamentCard({
   tournament,
-  variant,
+  crop,
   onClick,
 }: {
   tournament: Tournament;
-  variant: { badge: string; badgeColor: string; art: string; piece: 'king' | 'knight' | 'rook' | 'pawn' };
+  crop: string;
   onClick: () => void;
 }) {
+  const badge = statusBadge(tournament.status);
+
   return (
     <button
       onClick={onClick}
-      className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow text-left border border-gray-100 overflow-hidden"
+      className="group flex overflow-hidden rounded-[1.2em] border border-black/5 bg-white text-left shadow-[0_0.6em_1.6em_-1.2em_rgba(17,17,20,0.4)] transition-shadow hover:shadow-[0_1.4em_2.8em_-1.4em_rgba(17,17,20,0.45)]"
     >
-      <div className="relative h-36" style={{ backgroundColor: variant.art }}>
-        <CheckerPattern />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <ChessPieceIcon piece={variant.piece} className="w-16 h-16 text-white/90" />
+      <img
+        src={chessHeroImage}
+        alt=""
+        aria-hidden="true"
+        className="h-auto w-[8.4em] shrink-0 self-stretch object-cover"
+        style={{ objectPosition: crop }}
+      />
+      <div className="flex min-w-0 flex-1 flex-col justify-between p-[1.2em]">
+        <div className="min-w-0">
+          <span
+            className="inline-block rounded-full px-[0.9em] py-[0.35em] text-[0.95em] font-bold tracking-[0.06em] text-white"
+            style={{ backgroundColor: badge.color }}
+          >
+            {badge.label}
+          </span>
+          <h3 className="mt-[0.9em] truncate text-[1.4em] font-extrabold tracking-[-0.01em]">{tournament.name}</h3>
+          {tournament.start_date && (
+            <p className="mt-[0.7em] text-[1.1em] text-gray-500">{formatDate(tournament.start_date)}</p>
+          )}
         </div>
-        <span
-          className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold text-white"
-          style={{ backgroundColor: variant.badgeColor }}
-        >
-          {variant.badge}
-        </span>
-      </div>
-      <div className="p-5">
-        <h3 className="font-extrabold mb-2.5 leading-snug" style={{ color: INK }}>
-          {tournament.name}
-        </h3>
-        {tournament.start_date && (
-          <div className="flex items-center gap-2 text-xs text-gray-500 mb-1.5">
-            <Calendar className="w-3.5 h-3.5" style={{ color: GOLD }} />
-            <span>
-              {new Date(tournament.start_date).toLocaleDateString('fr-FR', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric',
-              })}
+
+        <div className="mt-[0.9em] flex items-end justify-between gap-[0.8em]">
+          <div className="flex min-w-0 items-center gap-[0.5em] text-[1.05em] text-gray-500">
+            <MapPin className="h-[1.2em] w-[1.2em] shrink-0" style={{ color: GOLD }} />
+            <span className="truncate">
+              {(tournament.location ?? 'À définir').toUpperCase()} — {tournament.total_rounds} RONDES
             </span>
           </div>
-        )}
-        {tournament.location && (
-          <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
-            <MapPin className="w-3.5 h-3.5" style={{ color: GOLD }} />
-            <span>{tournament.location}</span>
-          </div>
-        )}
-        <div className="flex items-center justify-between pt-1">
-          <div className="flex items-center gap-1.5 text-xs text-gray-500">
-            <Trophy className="w-3.5 h-3.5" style={{ color: GOLD }} />
-            <span>{tournament.total_rounds} rondes</span>
-          </div>
-          <span
-            className="w-8 h-8 rounded-full flex items-center justify-center text-white transition-transform group-hover:translate-x-0.5"
-            style={{ backgroundColor: INK }}
-          >
-            <ArrowRight className="w-3.5 h-3.5" />
+          <span className="flex h-[3em] w-[3em] shrink-0 items-center justify-center rounded-full border border-gray-200 text-gray-800 transition-transform group-hover:translate-x-[0.15em]">
+            <ArrowRight className="h-[1.4em] w-[1.4em]" />
           </span>
         </div>
       </div>
@@ -506,6 +548,7 @@ function InfoCard({
   description,
   linkText,
   accent,
+  onClick,
 }: {
   iconBg: string;
   icon: React.ReactNode;
@@ -513,126 +556,36 @@ function InfoCard({
   description: string;
   linkText: string;
   accent: string;
+  onClick?: () => void;
 }) {
   return (
-    <div className="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm">
+    <div className="flex gap-[1.6em] rounded-[1.4em] border border-black/5 bg-white p-[1.8em] shadow-[0_0.6em_1.6em_-1.4em_rgba(17,17,20,0.35)]">
       <div
-        className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
+        className="flex h-[4.6em] w-[4.6em] shrink-0 items-center justify-center rounded-[1.1em]"
         style={{ backgroundColor: iconBg }}
       >
         {icon}
       </div>
-      <h3 className="font-extrabold mb-3 tracking-wide text-sm" style={{ color: INK }}>
-        {title}
-      </h3>
-      <p className="text-gray-500 text-sm leading-relaxed mb-5">{description}</p>
-      <a
-        href="#"
-        className="inline-flex items-center gap-1.5 text-xs font-bold tracking-wide"
-        style={{ color: accent }}
-      >
-        {linkText}
-        <ArrowRight className="w-3.5 h-3.5" />
-      </a>
-    </div>
-  );
-}
-
-function PartnerLogo({ name }: { name: string }) {
-  return (
-    <div className="text-gray-400 font-bold text-base sm:text-lg hover:text-gray-600 transition-colors whitespace-nowrap">
-      {name}
+      <div className="min-w-0">
+        <h3 className="text-[1.5em] font-extrabold tracking-[0.01em]">{title}</h3>
+        <p className="mt-[0.8em] text-[1.2em] leading-[1.45] text-gray-500">{description}</p>
+        <button
+          type="button"
+          onClick={onClick}
+          className="mt-[1em] inline-flex items-center gap-[0.5em] text-[1.1em] font-bold tracking-[0.06em] transition-opacity hover:opacity-70"
+          style={{ color: accent }}
+        >
+          {linkText}
+          <ArrowRight className="h-[1.2em] w-[1.2em]" />
+        </button>
+      </div>
     </div>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/*  Generated art — inline SVG so the page has no broken image links   */
+/*  Icônes maison                                                      */
 /* ------------------------------------------------------------------ */
-
-function HeroArt() {
-  return (
-    <div className="relative rounded-3xl overflow-hidden min-h-[440px] flex items-center justify-center">
-      <img 
-        src={chessHeroImage} 
-        alt="Échiquier avec pièces" 
-        className="w-full h-full object-cover"
-      />
-      {/* radial gold glow overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ background: `radial-gradient(circle at 65% 40%, ${GOLD}33 0%, transparent 55%)` }}
-      />
-    </div>
-  );
-}
-
-function CheckerPattern({ opacity = 0.12, size = 24 }: { opacity?: number; size?: number }) {
-  const id = `checker-${size}`;
-  return (
-    <svg className="absolute inset-0 w-full h-full" aria-hidden="true">
-      <defs>
-        <pattern id={id} width={size} height={size} patternUnits="userSpaceOnUse">
-          <rect width={size} height={size} fill="transparent" />
-          <rect width={size / 2} height={size / 2} fill="white" opacity={opacity} />
-          <rect x={size / 2} y={size / 2} width={size / 2} height={size / 2} fill="white" opacity={opacity} />
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill={`url(#${id})`} />
-    </svg>
-  );
-}
-
-function ChessPieceIcon({
-  piece,
-  className,
-  style,
-}: {
-  piece: 'king' | 'knight' | 'rook' | 'pawn';
-  className?: string;
-  style?: React.CSSProperties;
-}) {
-  const common = { className, style, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.2 };
-  switch (piece) {
-    case 'king':
-      return (
-        <svg {...common}>
-          <path
-            d="M12 2v3M10.5 3.5h3M7 22h10l-1-6H8l-1 6ZM6 16h12l-1.2-4.5c1.4-.6 2.2-2 2.2-3.5a4 4 0 0 0-6-3.46A4 4 0 0 0 7 8c0 1.5.8 2.9 2.2 3.5L8 16Z"
-            strokeLinejoin="round"
-          />
-        </svg>
-      );
-    case 'knight':
-      return (
-        <svg {...common}>
-          <path
-            d="M7 22h11l-1-3H9.5L9 16h6c1.5-3.5.5-7-2-9-1.6-1.3-2.5-2.5-2.5-4.5C8 4 6 6 6 9c0 1.8 1 2.7 2 3.5-1.3.3-3 1.5-3 4.5v2l-1 1v2h3Z"
-            strokeLinejoin="round"
-          />
-          <circle cx="9.3" cy="6.6" r=".6" fill="currentColor" stroke="none" />
-        </svg>
-      );
-    case 'rook':
-      return (
-        <svg {...common}>
-          <path
-            d="M7 22h10l-.7-5H7.7L7 22ZM8 17h8l-.5-6H8.5L8 17ZM7 11V4h2v2h2V4h2v2h2V4h2v7H7Z"
-            strokeLinejoin="round"
-          />
-        </svg>
-      );
-    case 'pawn':
-      return (
-        <svg {...common}>
-          <path
-            d="M8.5 22h7l-.8-4H9.3l-.8 4ZM9 18h6l-.7-3.3c1-.5 1.7-1.6 1.7-2.7a3 3 0 0 0-2-2.8 2.6 2.6 0 1 0-3.9-2.2c0 .5.15 1 .4 1.4a3 3 0 0 0-1.7 4.6c-.6.4-1 1.1-1 1.8L9 18Z"
-            strokeLinejoin="round"
-          />
-        </svg>
-      );
-  }
-}
 
 function ChessKnightIcon({ className }: { className?: string }) {
   return (

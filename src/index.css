@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..700;1,14..32,300..700&family=Geist+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..900;1,14..32,300..900&family=Barlow+Condensed:wght@500;600;700&family=Geist+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -166,6 +166,59 @@ input:-webkit-autofill:focus {
   to   { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-up { animation: fadeUp 0.3s ease forwards; }
+
+/* ------------------------------------------------------------------ */
+/*  Landing page — "une seule vue", zéro scroll                        */
+/*  Tout le layout est exprimé en `em`. La taille de base est pilotée  */
+/*  par le viewport (hauteur d'abord, largeur en garde-fou), donc la   */
+/*  page entière se met à l'échelle et tient toujours dans l'écran.    */
+/*  Référence de design : 1536 x 1036 → 1em = 10px.                    */
+/* ------------------------------------------------------------------ */
+.landing-fixed {
+  font-size: 10px;
+  background: #ffffff;
+}
+
+@media (min-width: 1024px) {
+  .landing-fixed {
+    font-size: clamp(6px, min(0.965vh, 0.651vw), 12px);
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  html.landing-lock,
+  html.landing-lock body {
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Espaces connectés — vocabulaire « feuille de résultats »           */
+/* ------------------------------------------------------------------ */
+
+/* Les chiffres d'un tableau doivent s'aligner en colonne : scores,
+   classements, Elo. Sans cela le ½ décale toute la ligne. */
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* Les cellules de résultat se posent une à une, comme un arbitre qui
+   affiche les scores de la ronde. Un seul moment orchestré sur la page. */
+@keyframes cellIn {
+  from { opacity: 0; transform: translateY(5px) scale(0.94); }
+  to   { opacity: 1; transform: none; }
+}
+.cell-in { animation: cellIn 280ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cell-in { animation: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* Focus clavier visible partout dans les espaces connectés. */
+.focus-ring:focus-visible {
+  outline: 2px solid #111114;
+  outline-offset: 2px;
+}
 
 @keyframes shimmer {
   0%   { background-position: -200% 0; }
