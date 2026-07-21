@@ -1,9 +1,14 @@
-import { Trophy, Plus, MapPin, Calendar, ArrowRight, Users } from 'lucide-react';
+import { Trophy, Plus, MapPin, Calendar, ArrowRight, Users, LogOut } from 'lucide-react';
 import { useTournaments } from '../hooks/useTournaments';
 import { Badge, PageWrapper, SkeletonGrid } from '../components/ui';
 import type { Tournament } from '../types';
 
-export function TournamentListPage({ onNew, onOpen }: { onNew: () => void; onOpen: (id: string) => void }) {
+export function TournamentListPage({ onNew, onOpen, isAdmin, onLogout }: { 
+  onNew: () => void; 
+  onOpen: (id: string) => void;
+  isAdmin?: boolean;
+  onLogout?: () => void;
+}) {
   const { tournaments, loading } = useTournaments();
 
   return (
@@ -12,8 +17,18 @@ export function TournamentListPage({ onNew, onOpen }: { onNew: () => void; onOpe
       <div className="relative mb-12 pt-8">
         <div className="pointer-events-none absolute inset-0 -top-8 bg-hero-glow" />
         <div className="relative">
-          <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/5 px-3 py-1 text-xs font-medium text-violet-400">
-            <Trophy className="h-3 w-3" /> Système suisse
+          <div className="mb-2 flex items-center justify-between">
+            <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/5 px-3 py-1 text-xs font-medium text-violet-400">
+              <Trophy className="h-3 w-3" /> Système suisse
+            </div>
+            {isAdmin && onLogout && (
+              <button
+                onClick={onLogout}
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-700/50 bg-slate-800/60 px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-all"
+              >
+                <LogOut className="h-3 w-3" /> Déconnexion
+              </button>
+            )}
           </div>
           <h2 className="text-4xl font-bold tracking-tight text-slate-100 sm:text-5xl">
             Vos tournois
@@ -23,14 +38,16 @@ export function TournamentListPage({ onNew, onOpen }: { onNew: () => void; onOpe
             Créez, gérez et suivez vos tournois en présentiel. Appariements automatiques, classements en temps réel.
           </p>
         </div>
-        <div className="mt-6">
-          <button
-            onClick={onNew}
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition-all hover:from-violet-500 hover:to-indigo-500 hover:shadow-violet-500/40 active:scale-[0.98]"
-          >
-            <Plus className="h-4 w-4" /> Nouveau tournoi
-          </button>
-        </div>
+        {isAdmin && (
+          <div className="mt-6">
+            <button
+              onClick={onNew}
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition-all hover:from-violet-500 hover:to-indigo-500 hover:shadow-violet-500/40 active:scale-[0.98]"
+            >
+              <Plus className="h-4 w-4" /> Nouveau tournoi
+            </button>
+          </div>
+        )}
       </div>
 
       {loading ? (
