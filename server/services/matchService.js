@@ -17,6 +17,12 @@ export const getByTournament = async (tournament_id) => {
   return docs.map(fmt);
 };
 
+export const getById = async (id) => {
+  const doc = await Match.findById(id);
+  if (!doc) throw Object.assign(new Error('Match introuvable'), { status: 404 });
+  return fmt(doc);
+};
+
 export const bulkCreate = async (rows) => {
   if (!Array.isArray(rows) || rows.length === 0)
     throw Object.assign(new Error('Tableau de matchs vide'), { status: 400 });

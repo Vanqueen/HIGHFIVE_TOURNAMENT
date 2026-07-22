@@ -1,0 +1,147 @@
+import { useEffect, useState } from 'react';
+import { useTournaments } from '../hooks/useTournaments';
+import type { User as AuthUser } from '../types';
+import { LandingHeader } from '../components/landing/LandingHeader';
+import { HeroSection } from '../components/landing/HeroSection';
+import { UpcomingTournamentsSection } from '../components/landing/UpcomingTournamentsSection';
+import { AccessCardsSection } from '../components/landing/AccessCardsSection';
+import { LandingFooter } from '../components/landing/LandingFooter';
+import { ClassementsPage } from './ClassementsPage';
+import { JoueursPage } from './JoueursPage';
+import { TournamentListPage } from './TournamentListPage';
+import { AboutPage } from './AboutPage';
+import { CalendarPage } from './CalendarPage';
+import { INK } from '../components/landing/tokens';
+import type { NavItem } from '../components/landing/tokens';
+
+export function LandingPage({
+  user,
+  onLogin,
+  onDashboard,
+  onTournamentClick,
+  theme, 
+  onToggleTheme,
+}: {
+  user: AuthUser | null;
+  onLogin: () => void;
+  onDashboard: () => void;
+  onTournamentClick: (id: string) => void;
+  theme: 'dark' | 'light'; 
+  onToggleTheme: () => void
+}) {
+  const { tournaments, loading } = useTournaments();
+  const [activeNav, setActiveNav] = useState<NavItem>('Accueil');
+  const [featuredIndex, setFeaturedIndex] = useState(0);
+  const [prevIndex, setPrevIndex] = useState<number | null>(null);
+  const [slideDir, setSlideDir] = useState<'left' | 'right'>('left');
+  const [animating, setAnimating] = useState(false);
+
+  const goTo = (next: number, dir: 'left' | 'right' = 'left') => {
+    if (animating || next === featuredIndex || tournaments.length <= 1) return;
+    setSlideDir(dir);
+    setPrevIndex(featuredIndex);
+    setFeaturedIndex(next);
+    setAnimating(true);
+    setTimeout(() => { setPrevIndex(null); setAnimating(false); }, 480);
+  };
+
+  /* landing-lock uniquement sur la page d'accueil */
+  useEffect(() => {
+    if (activeNav === 'Accueil') {
+      document.documentElement.classList.add('landing-lock');
+    } else {
+      document.documentElement.classList.remove('landing-lock');
+    }
+    return () => document.documentElement.classList.remove('landing-lock');
+  }, [activeNav]);
+
+  useEffect(() => {
+    if (tournaments.length <= 1) return;
+    const timer = setInterval(() => {
+      setFeaturedIndex((i) => {
+        const next = (i + 1) % tournaments.length;
+        setSlideDir('left');
+        setPrevIndex(i);
+        setAnimating(true);
+        setTimeout(() => { setPrevIndex(null); setAnimating(false); }, 480);
+        return next;
+      });
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [tournaments.length]);
+
+  const isHome = activeNav === 'Accueil';
+
+  return (
+    <div
+      className={
+        isHome
+          ? 'landing-scale landing-fixed flex flex-col'
+          : 'landing-scale min-h-screen bg-[#F7F6F4]'
+      }
+      style={{ color: INK }}
+    >
+      <LandingHeader
+        user={user}
+        onLogin={onLogin}
+        onDashboard={onDashboard}
+        activeNav={activeNav}
+        onNav={setActiveNav}
+        theme={theme}
+        onToggleTheme={onToggleTheme}
+      />
+
+      {activeNav === 'Accueil' && (
+        <div className="flex min-h-0 flex-1 flex-col">
+          <HeroSection
+            tournaments={tournaments}
+            featuredIndex={featuredIndex}
+            prevIndex={prevIndex}
+            slideDir={slideDir}
+            animating={animating}
+            goTo={goTo}
+            onTournamentClick={onTournamentClick}
+            onSeeCalendar={() => setActiveNav('Calendrier')}
+          />
+          <UpcomingTournamentsSection
+            tournaments={tournaments}
+            loading={loading}
+            featuredIndex={featuredIndex}
+            goTo={goTo}
+            onTournamentClick={onTournamentClick}
+          />
+          <AccessCardsSection user={user} onLogin={onLogin} onDashboard={onDashboard} />
+          <LandingFooter />
+        </div>
+      )}
+
+      {activeNav === 'Tournois' && (
+        <TournamentListPage
+          onNew={onLogin}
+          onOpen={onTournamentClick}
+        />
+      )}
+
+      {activeNav === 'Calendrier' && (
+        <CalendarPage onTournamentClick={onTournamentClick} />
+      )}
+
+      {activeNav === 'Classements' && (
+        <ClassementsPage onTournamentClick={onTournamentClick} />
+      )}
+
+      {activeNav === 'Joueurs' && (
+        <JoueursPage />
+      )}
+
+      {activeNav === 'À propos' && (
+        <AboutPage
+          user={user}
+          onLogin={onLogin}
+          onDashboard={onDashboard}
+          onSeeTournaments={() => setActiveNav('Tournois')}
+        />
+      )}
+    </div>
+  );
+}
