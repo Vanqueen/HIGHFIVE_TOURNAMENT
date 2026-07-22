@@ -174,14 +174,24 @@ input:-webkit-autofill:focus {
 /*  page entière se met à l'échelle et tient toujours dans l'écran.    */
 /*  Référence de design : 1536 x 1036 → 1em = 10px.                    */
 /* ------------------------------------------------------------------ */
-.landing-fixed {
+/*  `landing-scale` porte uniquement l'échelle : le header est dessiné en   */
+/*  `em`, il doit donc garder la même taille sur toutes les pages          */
+/*  publiques. `landing-fixed` n'ajoute que le verrouillage de hauteur,    */
+/*  réservé à l'accueil.                                                   */
+.landing-scale {
   font-size: 10px;
+}
+
+.landing-fixed {
   background: #ffffff;
 }
 
 @media (min-width: 1024px) {
-  .landing-fixed {
+  .landing-scale {
     font-size: clamp(6px, min(0.965vh, 0.651vw), 12px);
+  }
+
+  .landing-fixed {
     height: 100dvh;
     overflow: hidden;
   }
@@ -228,4 +238,23 @@ input:-webkit-autofill:focus {
   background: linear-gradient(90deg, var(--surface-card) 25%, var(--surface-muted) 50%, var(--surface-card) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.6s infinite;
+}
+
+/* Carousel hero — slide left (avancer) */
+@keyframes carousel-enter-left {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes carousel-exit-left {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+/* Carousel hero — slide right (reculer) */
+@keyframes carousel-enter-right {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes carousel-exit-right {
+  from { transform: translateX(0); }
+  to   { transform: translateX(100%); }
 }
