@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { UserPlus, Trash2, X, Loader2, AlertCircle } from 'lucide-react';
+import { UserPlus, Trash2, X, Loader2, AlertCircle, Upload } from 'lucide-react';
 import { api } from '../lib/api';
 import { qualifyingStandings } from '../lib/bracket';
 import { SectionHead, INK, GOLD, RULE } from './Scoreboard';
+import { ImportPlayersModal } from './ImportPlayersModal';
 import type { Player, Tournament } from '../types';
 
 const formatPoints = (points: number) => {
@@ -30,22 +31,40 @@ export function PlayersTab({
   const started = tournament.current_round > 0;
   const ranked = started ? qualifyingStandings(players) : players;
   const cut = tournament.format === 'swiss_playoff' ? tournament.qualifiers : 0;
+  const [showImport, setShowImport] = useState(false);
 
   return (
     <div>
+      {showImport && (
+        <ImportPlayersModal
+          tournamentId={tournament.id}
+          onClose={() => setShowImport(false)}
+          onImported={() => { setShowImport(false); onChange(); }}
+        />
+      )}
       <SectionHead
         title={started ? 'Classement de la poule' : 'Joueurs inscrits'}
         count={players.length}
         action={
           canEdit && (
-            <button
-              onClick={() => setShowAdd(!showAdd)}
-              className="focus-ring flex items-center gap-2 rounded-full border bg-white px-4 py-2 font-display text-[13px] font-semibold uppercase tracking-[0.12em] transition-colors hover:border-gray-400"
-              style={{ borderColor: RULE }}
-            >
-              {showAdd ? <X className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}
-              {showAdd ? 'Annuler' : 'Inscrire un joueur'}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowImport(true)}
+                className="focus-ring flex items-center gap-2 rounded-full border bg-white dark:bg-gray-700 px-4 py-2 font-display text-[13px] font-semibold uppercase tracking-[0.12em] transition-colors hover:border-gray-400"
+                style={{ borderColor: RULE }}
+              >
+                <Upload className="h-3.5 w-3.5" />
+                Importer
+              </button>
+              <button
+                onClick={() => setShowAdd(!showAdd)}
+                className="focus-ring flex items-center gap-2 rounded-full border bg-white dark:bg-gray-700 px-4 py-2 font-display text-[13px] font-semibold uppercase tracking-[0.12em] transition-colors hover:border-gray-400"
+                style={{ borderColor: RULE }}
+              >
+                {showAdd ? <X className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}
+                {showAdd ? 'Annuler' : 'Inscrire un joueur'}
+              </button>
+            </div>
           )
         }
       />
@@ -62,7 +81,7 @@ export function PlayersTab({
       )}
 
       {players.length === 0 ? (
-        <div className="rounded-2xl border border-dashed px-6 py-14 text-center" style={{ borderColor: RULE }}>
+        <div className="rounded-2xl border border-dashed border-gray-400 dark:border-gray-600 px-6 py-14 text-center">
           <p className="font-display text-lg font-bold uppercase">Aucun joueur inscrit</p>
           <p className="mx-auto mt-1.5 max-w-sm text-sm text-gray-500">
             {canEdit
@@ -71,7 +90,7 @@ export function PlayersTab({
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border bg-white" style={{ borderColor: RULE }}>
+        <div className="overflow-x-auto rounded-2xl border bg-white dark:bg-[#1e1535]" style={{ borderColor: RULE }}>
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr>
@@ -92,10 +111,8 @@ export function PlayersTab({
                 return (
                   <tr
                     key={player.id}
-                    style={{
-                      backgroundColor: i % 2 === 1 ? '#FBFAF9' : '#fff',
-                      borderBottom: isCutLine ? `2px solid ${GOLD}` : `1px solid ${RULE}`,
-                    }}
+                    className={i % 2 === 1 ? 'bg-[#FBFAF9] dark:bg-[#261d3e]' : 'bg-white dark:bg-[#1e1535]'}
+                    style={{ borderBottom: isCutLine ? `2px solid ${GOLD}` : `1px solid ${RULE}` }}
                   >
                     <td className="px-3 py-3 text-center">
                       <span
@@ -106,15 +123,15 @@ export function PlayersTab({
                       </span>
                     </td>
                     <td className="px-3 py-3">
-                      <p className="font-medium">{player.name}</p>
-                      {player.club && <p className="text-xs text-gray-400 sm:hidden">{player.club}</p>}
+                      <p className="font-medium text-gray-800 dark:text-gray-100">{player.name}</p>
+                      {player.club && <p className="text-xs text-gray-400 dark:text-gray-500 sm:hidden">{player.club}</p>}
                     </td>
-                    <td className="hidden px-3 py-3 text-gray-500 sm:table-cell">{player.club || '—'}</td>
-                    <td className="px-3 py-3 text-right font-mono text-gray-500 tabular">
+                    <td className="hidden px-3 py-3 text-gray-500 dark:text-gray-400 sm:table-cell">{player.club || '—'}</td>
+                    <td className="px-3 py-3 text-right font-mono text-gray-500 dark:text-gray-400 tabular">
                       {player.rating || '—'}
                     </td>
                     {started && (
-                      <td className="px-3 py-3 text-right font-mono text-base font-semibold tabular">
+                      <td className="px-3 py-3 text-right font-mono text-base font-semibold tabular text-gray-800 dark:text-gray-100">
                         {formatPoints(player.points ?? 0)}
                       </td>
                     )}
@@ -182,7 +199,7 @@ function AddPlayerForm({
   };
 
   return (
-    <form onSubmit={submit} className="mb-5 rounded-2xl border bg-white p-5" style={{ borderColor: RULE }}>
+    <form onSubmit={submit} className="mb-5 rounded-2xl border bg-white dark:bg-gray-700 p-5" style={{ borderColor: RULE }}>
       <p className="mb-4 font-display text-[11px] font-semibold uppercase tracking-[0.16em] text-gray-400">
         Nouveau joueur — dossard <span className="font-mono">{seed}</span>
       </p>
@@ -299,7 +316,7 @@ function DeletePlayerButton({
 }
 
 const inputCls =
-  'w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm outline-none transition-all placeholder:text-gray-400 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10';
+  'w-full rounded-xl border border-gray-200 bg-white dark:bg-gray-700 px-4 py-2.5 text-sm outline-none transition-all placeholder:text-gray-400 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10';
 
 function Field({
   label,

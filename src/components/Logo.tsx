@@ -18,5 +18,5 @@ export function Logo({
 
   if (!onDark) return image;
 
-  return <span className="inline-flex rounded-xl bg-white px-4 py-3">{image}</span>;
+  return <span className="inline-flex rounded-xl bg-white dark:bg-gray-700 px-4 py-3">{image}</span>;
 }

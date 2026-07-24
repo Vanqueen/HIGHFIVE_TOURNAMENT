@@ -13,7 +13,7 @@ function StatItem({ icon, value, label }: { icon: React.ReactNode; value: string
     <div className="flex items-center gap-[1em]">
       <div className="shrink-0" style={{ color: GOLD }}>{icon}</div>
       <div className="leading-none">
-        <div className="text-[1.9em] font-extrabold tracking-[-0.02em]">{value}</div>
+        <div className="text-[1.9em] font-extrabold tracking-[-0.02em] text-gray-700 dark:text-gray-300">{value}</div>
         <div className="mt-[0.5em] text-[1.05em] font-semibold tracking-[0.08em] text-gray-500">{label}</div>
       </div>
     </div>
@@ -54,7 +54,7 @@ export function HeroSection({
     document.getElementById('prochains-tournois')?.scrollIntoView({ behavior: 'smooth' });
 
   return (
-    <section className="relative flex min-h-0 flex-1 items-center overflow-hidden bg-white">
+    <section className="relative flex min-h-0 flex-1 items-center overflow-hidden bg-white dark:bg-gray-700">
       {/* Visuel */}
       <div className="pointer-events-none absolute inset-y-0 right-0 w-full lg:w-[65%]">
         <img
@@ -73,7 +73,7 @@ export function HeroSection({
       {/* Texte */}
       <div className="relative z-10 mx-auto flex w-full max-w-[192em] items-center px-[2.6em] lg:px-[6em]">
         <div className="max-w-[62em]">
-          <h1 className="mt-[0.55em] text-[5.4em] font-extrabold leading-[1.03] tracking-[-0.025em]">
+          <h1 className="mt-[0.55em] text-[5.4em] font-extrabold leading-[1.03] tracking-[-0.025em] text-[color:var(--text-primary)]">
             LÀ OÙ LA STRATÉGIE
             <br />
             <span style={{ color: GOLD }}>CRÉE LA LÉGENDE</span>

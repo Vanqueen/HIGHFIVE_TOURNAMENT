@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { AppShell } from './components/AppShell';
 import { AuthProvider, useAuth } from './hooks/useAuth';
@@ -22,30 +22,20 @@ export default function App() {
 function Router() {
   const { user, initializing } = useAuth();
   const [view, setView] = useState<View>({ name: 'landing' });
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-
-  useEffect(() => {
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof window === 'undefined') return 'dark';
     const stored = window.localStorage.getItem('theme');
-    const system = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    const nextTheme = stored === 'dark' || stored === 'light' ? stored : system;
-    setTheme(nextTheme);
-  }, []);
+    if (stored === 'dark' || stored === 'light') return stored;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     document.documentElement.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
     window.localStorage.setItem('theme', theme);
   }, [theme]);
 
   const toggleTheme = () => setTheme((current) => (current === 'dark' ? 'light' : 'dark'));
-
-
-  /* Le thème sombre n'est pas utilisé par les écrans publics : on force
-     le clair, qui correspond à la charte de la vitrine. */
-  useEffect(() => {
-    document.documentElement.classList.remove('dark');
-    document.documentElement.style.colorScheme = 'light';
-  }, []);
 
   /* À la déconnexion, on ne peut plus rester sur un écran protégé. */
   useEffect(() => {
@@ -62,7 +52,7 @@ function Router() {
   /* Restauration de session en cours : éviter le flash « déconnecté ». */
   if (initializing) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="flex min-h-screen items-center justify-center bg-[color:var(--app-bg)] text-[color:var(--text-primary)]">
         <Loader2 className="h-6 w-6 animate-spin" style={{ color: '#C6963B' }} />
       </div>
     );
@@ -99,7 +89,7 @@ function Router() {
   if (view.name === 'create') {
     if (user.role !== 'organizer') return <RoleHome onNavigate={setView} />;
     return (
-      <AppShell onHome={goHome}>
+      <AppShell onHome={goHome} theme={theme} onToggleTheme={toggleTheme}>
         <TournamentCreatePage
           onBack={goDashboard}
           onCreated={(id) => setView({ name: 'detail', tournamentId: id })}
@@ -112,7 +102,7 @@ function Router() {
     return (
       /* Console de gestion : pleine largeur, pleine hauteur, sans scroll de
          page — seul le panneau actif défile. */
-      <AppShell wide fill onHome={goHome}>
+      <AppShell wide fill onHome={goHome} theme={theme} onToggleTheme={toggleTheme}>
         <TournamentDetailPage
           tournamentId={view.tournamentId}
           onBack={goDashboard}
@@ -124,7 +114,7 @@ function Router() {
 
   if (view.name === 'standings') {
     return (
-      <AppShell onHome={goHome}>
+      <AppShell onHome={goHome} theme={theme} onToggleTheme={toggleTheme}>
         <StandingsPage
           tournamentId={view.tournamentId}
           onBack={() => setView({ name: 'detail', tournamentId: view.tournamentId })}
@@ -140,10 +130,26 @@ function Router() {
 function RoleHome({ onNavigate }: { onNavigate: (view: View) => void }) {
   const { user } = useAuth();
   const goHome = () => onNavigate({ name: 'landing' });
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof window === 'undefined') return 'dark';
+    const stored = window.localStorage.getItem('theme');
+    if (stored === 'dark' || stored === 'light') return stored;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
+
+  useLayoutEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    document.documentElement.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
+    window.localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme((current) => (current === 'dark' ? 'light' : 'dark'));
+
 
   if (user?.role === 'organizer') {
     return (
       <OrganizerDashboard
+        theme={theme} onToggleTheme={toggleTheme}
         onHome={goHome}
         onNewTournament={() => onNavigate({ name: 'create' })}
         onOpenTournament={(id) => onNavigate({ name: 'detail', tournamentId: id })}
@@ -153,6 +159,7 @@ function RoleHome({ onNavigate }: { onNavigate: (view: View) => void }) {
 
   return (
     <PlayerDashboard
+      theme={theme} onToggleTheme={toggleTheme}
       onHome={goHome}
       onOpenTournament={(id) => onNavigate({ name: 'detail', tournamentId: id })}
     />

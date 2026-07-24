@@ -88,7 +88,7 @@ export function TournamentDetailPage({
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       {/* ---------------------- Bandeau d'identité ---------------------- */}
-      <header className="flex-none overflow-hidden rounded-2xl border bg-white" style={{ borderColor: RULE }}>
+      <header className="flex-none overflow-hidden rounded-2xl border bg-white dark:bg-gray-700 dark:bg-slate-600" style={{ borderColor: RULE }}>
         <div className="flex flex-col gap-4 p-4 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex min-w-0 items-center gap-3">
             <button
@@ -141,18 +141,15 @@ export function TournamentDetailPage({
         </div>
 
         {/* Barre de pilotage : le message et l'unique action attendue. */}
-        <div
-          className="flex flex-col gap-3 border-t px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between"
-          style={{ borderColor: RULE, backgroundColor: '#FBFAF9' }}
-        >
-          <p className="min-w-0 text-xs text-gray-600">
+        <div className="flex flex-col gap-3 border-t bg-[#FBFAF9] px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between">
+          <p className="min-w-0 text-xs text-gray-600 dark:text-gray-50">
             {control?.detail ?? 'Consultation seule — vous n’êtes pas l’organisateur de ce tournoi.'}
           </p>
 
           <div className="flex shrink-0 items-center gap-2">
             <button
               onClick={() => onViewStandings(tournamentId)}
-              className="focus-ring flex items-center gap-2 rounded-full border bg-white px-3.5 py-2 font-display text-[12px] font-semibold uppercase tracking-[0.12em] transition-colors hover:border-gray-400"
+              className="focus-ring flex items-center gap-2 rounded-full border bg-white dark:bg-gray-700 px-3.5 py-2 font-display text-[12px] font-semibold uppercase tracking-[0.12em] transition-colors hover:border-gray-400"
               style={{ borderColor: RULE }}
             >
               <BarChart3 className="h-3.5 w-3.5" />

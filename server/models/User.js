@@ -20,6 +20,9 @@ const userSchema = new mongoose.Schema({
      commande via `npm run create-organizer`. */
   created_by: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
 
+  /* true tant que le mot de passe temporaire n'a pas été changé */
+  temp_password_used: { type: Boolean, default: false },
+
   created_at: { type: Date, default: Date.now },
   last_login_at: { type: Date, default: null },
 });

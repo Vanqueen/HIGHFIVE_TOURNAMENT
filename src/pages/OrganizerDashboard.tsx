@@ -34,10 +34,14 @@ export function OrganizerDashboard({
   onHome,
   onNewTournament,
   onOpenTournament,
+  theme, 
+  onToggleTheme,
 }: {
   onHome: () => void;
   onNewTournament: () => void;
   onOpenTournament: (id: string) => void;
+  theme: 'dark' | 'light'; 
+  onToggleTheme: () => void
 }) {
   const { user } = useAuth();
   const { desks, loading, error, reload } = useOrganizerBoard();
@@ -68,7 +72,7 @@ export function OrganizerDashboard({
   };
 
   return (
-    <AppShell wide onHome={onHome}>
+    <AppShell wide onHome={onHome} theme={theme} onToggleTheme={onToggleTheme}>
       <DataBar
         role="Organisateur"
         name={user?.full_name ?? ''}
@@ -126,7 +130,7 @@ export function OrganizerDashboard({
                 action={
                   <button
                     onClick={onNewTournament}
-                    className="focus-ring flex items-center gap-2 rounded-full border bg-white px-3.5 py-2 font-display text-[13px] font-semibold uppercase tracking-[0.12em] transition-colors hover:border-gray-400"
+                    className="focus-ring flex items-center gap-2 rounded-full border bg-white dark:bg-gray-700 px-3.5 py-2 font-display text-[13px] font-semibold uppercase tracking-[0.12em] transition-colors hover:border-gray-400"
                     style={{ borderColor: RULE }}
                   >
                     <Plus className="h-3.5 w-3.5" />
@@ -219,7 +223,7 @@ function DeskCard({
 
   return (
     <li
-      className="flex flex-col overflow-hidden rounded-2xl border bg-white"
+      className="flex flex-col overflow-hidden rounded-2xl border bg-white dark:bg-gray-700"
       style={{ borderColor: RULE }}
     >
       {/* Le bord d'échiquier reprend le motif du bandeau d'identité,

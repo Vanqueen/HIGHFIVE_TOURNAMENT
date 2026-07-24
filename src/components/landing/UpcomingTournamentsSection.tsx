@@ -20,15 +20,15 @@ export function UpcomingTournamentsSection({
 
   return (
     <section id="prochains-tournois" className="flex-none px-[2.6em] lg:px-[3.2em]">
-      <div className="relative mx-auto max-w-[192em] rounded-[1.6em] border border-black/5 bg-[#FBFAF9] px-[2em] py-[1.6em]">
+      <div className="relative mx-auto max-w-[192em] rounded-[1.6em] border border-black/5 bg-[#FBFAF9] dark:bg-[#251c3a] px-[2em] py-[1.6em]">
         <div className="mb-[1.4em] flex items-center justify-between">
-          <h2 className="flex items-center gap-[0.4em] text-[1.7em] font-extrabold tracking-[-0.01em]">
+          <h2 className="flex items-center gap-[0.4em] text-[1.7em] font-extrabold tracking-[-0.01em] text-gray-700 dark:text-gray-200">
             <ChevronRight className="h-[1.1em] w-[1.1em]" style={{ color: GOLD }} strokeWidth={3} />
             PROCHAINS TOURNOIS
           </h2>
           <a
             href="#"
-            className="flex items-center gap-[0.5em] text-[1.15em] font-semibold tracking-[0.06em] text-gray-500 transition-colors hover:text-gray-800"
+            className="flex items-center gap-[0.5em] text-[1.15em] font-semibold tracking-[0.06em] text-gray-500 dark:text-gray-100 transition-colors hover:text-gray-800"
           >
             VOIR TOUS LES TOURNOIS
             <ArrowRight className="h-[1.2em] w-[1.2em]" />
@@ -53,14 +53,14 @@ export function UpcomingTournamentsSection({
             ))}
           </div>
         ) : (
-          <div className="flex h-[13.5em] items-center justify-center text-[1.4em] text-gray-400">
+          <div className="flex h-[13.5em] items-center justify-center text-[1.4em] text-gray-400 *:dark:text-gray-500">
             Aucun tournoi à venir pour le moment
           </div>
         )}
 
         <button
           onClick={() => goTo((featuredIndex + 1) % Math.max(tournaments.length, 1), 'left')}
-          className="absolute right-[-1.7em] top-[64%] hidden h-[3.4em] w-[3.4em] items-center justify-center rounded-full text-white shadow-[0_1em_2em_-0.6em_rgba(17,17,20,0.6)] transition-transform hover:scale-105 lg:flex"
+          className="absolute right-[-1.7em] top-[64%] hidden h-[3.4em] w-[3.4em] items-center justify-center rounded-full text-white dark:text-gray-600 shadow-[0_1em_2em_-0.6em_rgba(17,17,20,0.6)] transition-transform hover:scale-105 lg:flex"
           style={{ backgroundColor: INK }}
           aria-label="Tournoi suivant"
         >

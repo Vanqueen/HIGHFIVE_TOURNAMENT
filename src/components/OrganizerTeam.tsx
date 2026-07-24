@@ -105,7 +105,7 @@ export function OrganizerTeam() {
               setError(null);
               setCreated(null);
             }}
-            className="focus-ring flex items-center gap-2 rounded-full border bg-white px-3.5 py-2 font-display text-[13px] font-semibold uppercase tracking-[0.12em] transition-colors hover:border-gray-400"
+            className="focus-ring flex items-center gap-2 rounded-full border bg-white dark:bg-gray-700 px-3.5 py-2 font-display text-[13px] font-semibold uppercase tracking-[0.12em] transition-colors hover:border-gray-400"
             style={{ borderColor: RULE }}
           >
             {formOpen ? <X className="h-3.5 w-3.5" /> : <UserPlus className="h-3.5 w-3.5" />}
@@ -146,7 +146,7 @@ export function OrganizerTeam() {
       {formOpen && (
         <form
           onSubmit={submit}
-          className="mb-5 space-y-4 rounded-2xl border bg-white p-5"
+          className="mb-5 space-y-4 rounded-2xl border bg-white dark:bg-gray-700 p-5"
           style={{ borderColor: RULE }}
         >
           <Field
@@ -219,7 +219,7 @@ export function OrganizerTeam() {
                     <div className="mt-3 flex gap-2">
                       <button
                         onClick={() => setConfirmingId(null)}
-                        className="focus-ring flex-1 rounded-full border bg-white px-3 py-2 font-display text-[12px] font-semibold uppercase tracking-[0.12em] transition-colors hover:border-gray-400"
+                        className="focus-ring flex-1 rounded-full border bg-white dark:bg-gray-700 px-3 py-2 font-display text-[12px] font-semibold uppercase tracking-[0.12em] transition-colors hover:border-gray-400"
                         style={{ borderColor: RULE }}
                       >
                         Annuler
@@ -240,7 +240,7 @@ export function OrganizerTeam() {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-3 p-4">
+                  <div className="flex items-center gap-3 p-4 bg-[color:var(--surface-card)]">
                     <span
                       className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-display text-base font-bold text-white"
                       style={{ backgroundColor: GOLD }}
@@ -271,7 +271,7 @@ export function OrganizerTeam() {
                           setConfirmingId(organizer.id);
                           setError(null);
                         }}
-                        className="focus-ring flex h-9 w-9 shrink-0 items-center justify-center rounded-full border bg-white text-gray-400 transition-colors hover:border-red-300 hover:text-red-600"
+                        className="focus-ring flex h-9 w-9 shrink-0 items-center justify-center rounded-full border bg-white dark:bg-gray-700 text-gray-400 transition-colors hover:border-red-300 hover:text-red-600"
                         style={{ borderColor: RULE }}
                         aria-label={`Retirer ${organizer.full_name}`}
                       >
@@ -303,7 +303,7 @@ function Field({
         <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">{icon}</span>
         <input
           {...inputProps}
-          className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-11 pr-4 text-sm outline-none transition-all placeholder:text-gray-400 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10"
+          className="w-full rounded-xl border border-gray-200 bg-white dark:bg-gray-700 py-2.5 pl-11 pr-4 text-sm outline-none transition-all placeholder:text-gray-400 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10"
         />
       </span>
     </label>

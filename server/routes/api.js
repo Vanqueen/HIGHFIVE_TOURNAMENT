@@ -23,6 +23,8 @@ router.post('/auth/logout', auth.logout);
 router.get('/auth/me', auth.me);
 router.patch('/auth/profile', requireAuth, auth.updateProfile);
 router.post('/auth/password', requireAuth, auth.changePassword);
+/* Inscription au tournoi depuis la landing (crée un compte + inscrit + envoie mdp par mail) */
+router.post('/auth/register-and-join/:tournamentId', auth.registerAndJoin);
 
 /* -------------------------- Organisateurs -------------------------- */
 /* Seul un organisateur peut en coopter un autre : il n'existe aucune
@@ -50,6 +52,7 @@ router.delete('/tournaments/:id/register', ...playerOnly, player.unregisterSelf)
 router.get('/players', player.getByTournament);
 router.get('/tournaments/:tournament_id/podium', player.getTop);
 router.post('/players', ...organizerOnly, player.create);
+router.post('/tournaments/:tournament_id/players/import', ...organizerOnly, player.bulkImport);
 router.patch('/players/:id', ...organizerOnly, player.update);
 router.delete('/players/:id', ...organizerOnly, player.remove);
 

@@ -33,9 +33,13 @@ const formatPoints = (points: number) => {
 export function PlayerDashboard({
   onHome,
   onOpenTournament,
+  theme, 
+  onToggleTheme,
 }: {
   onHome: () => void;
   onOpenTournament: (id: string) => void;
+  theme: 'dark' | 'light'; 
+  onToggleTheme: () => void
 }) {
   const { user } = useAuth();
   const { boards, open, next, loading, error, reload } = usePlayerBoard();
@@ -60,7 +64,7 @@ export function PlayerDashboard({
   };
 
   return (
-    <AppShell onHome={onHome}>
+    <AppShell onHome={onHome} theme={theme} onToggleTheme={onToggleTheme}>
       <DataBar
         role="Joueur"
         name={user?.full_name ?? ''}
@@ -101,7 +105,7 @@ export function PlayerDashboard({
                 text="Choisissez une compétition ouverte ci-dessous pour entrer en lice."
               />
             ) : (
-              <ul className="overflow-hidden rounded-2xl border bg-white" style={{ borderColor: RULE }}>
+              <ul className="overflow-hidden rounded-2xl border bg-white dark:bg-gray-700" style={{ borderColor: RULE }}>
                 {boards.map((board, i) => (
                   <TournamentRow
                     key={board.registration.id}
@@ -124,7 +128,7 @@ export function PlayerDashboard({
                 text="Les prochaines compétitions apparaîtront ici dès leur publication."
               />
             ) : (
-              <ul className="overflow-hidden rounded-2xl border bg-white" style={{ borderColor: RULE }}>
+              <ul className="overflow-hidden rounded-2xl border bg-white dark:bg-gray-700" style={{ borderColor: RULE }}>
                 {open.map((tournament, i) => (
                   <OpenRow
                     key={tournament.id}

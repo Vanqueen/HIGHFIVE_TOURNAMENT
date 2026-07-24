@@ -1,8 +1,11 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import User, { ROLES } from '../models/User.js';
 import Tournament from '../models/Tournament.js';
+import Player from '../models/Player.js';
 import { getJwtSecret, TOKEN_TTL_SECONDS } from '../utils/authConfig.js';
+import { sendTempPassword } from './emailService.js';
 
 const BCRYPT_ROUNDS = 12;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -122,25 +125,88 @@ export const login = async (data) => {
 
   if (!email || !password) throw fail('E-mail et mot de passe requis.');
 
-  /* password_hash est `select: false` : il faut le demander explicitement. */
-  const doc = await User.findOne({ email }).select('+password_hash');
+  const doc = await User.findOne({ email }).select('+password_hash +temp_password_used');
 
-  /* Message identique dans les deux cas, pour ne pas révéler quels
-     e-mails existent en base (énumération de comptes). */
   const invalid = fail('E-mail ou mot de passe incorrect.', 401);
   if (!doc) {
-    /* Comparaison à vide quand même, pour que le temps de réponse ne
-       trahisse pas l'absence du compte. */
     await bcrypt.compare(password, '$2a$12$invalidinvalidinvalidinvalidinvalidinvalidinvalidinvalidinv');
     throw invalid;
   }
 
   if (!(await bcrypt.compare(password, doc.password_hash))) throw invalid;
 
+  /* Mot de passe temporaire déjà utilisé : on refuse la connexion. */
+  if (doc.temp_password_used) {
+    throw fail('Ce mot de passe temporaire a déjà été utilisé. Veuillez utiliser votre nouveau mot de passe ou réinitialiser votre accès.', 401);
+  }
+
+  /* Si c'était un mdp temporaire, on le marque comme utilisé dès cette connexion. */
+  const wasTemp = doc.temp_password_used === false && doc.created_by === null && doc.last_login_at === null;
   doc.last_login_at = new Date();
+  if (wasTemp && doc.temp_password) doc.temp_password_used = true;
   await doc.save();
 
-  return fmt(doc);
+  return { ...fmt(doc), must_change_password: wasTemp && !!doc.temp_password };
+};
+
+/* Inscription au tournoi depuis la landing page (utilisateur non connecté).
+   Crée un compte joueur avec mdp temporaire à usage unique, inscrit au tournoi
+   et envoie le mdp par email. */
+export const registerAndJoin = async ({ email, full_name, club, rating, tournament_id }) => {
+  email = String(email ?? '').trim().toLowerCase();
+  full_name = String(full_name ?? '').trim();
+
+  if (!EMAIL_RE.test(email)) throw fail('Adresse e-mail invalide.');
+  if (full_name.length < 2) throw fail('Le nom complet est requis (minimum 2 caractères).');
+
+  const tournament = await Tournament.findById(tournament_id);
+  if (!tournament) throw fail('Tournoi introuvable.', 404);
+  if (tournament.status === 'completed') throw fail('Ce tournoi est terminé.', 409);
+
+  /* Compte existant : on notifie sans créer de doublon. */
+  if (await User.exists({ email })) {
+    throw fail(
+      'Un compte existe déjà avec cette adresse e-mail. Connectez-vous pour vous inscrire au tournoi. Si vous avez oublié votre mot de passe, modifiez-le depuis votre espace.',
+      409
+    );
+  }
+
+  /* Génère un mdp temporaire lisible : 3 groupes de 4 caractères alphanumériques. */
+  const tempPassword = [
+    crypto.randomBytes(3).toString('hex'),
+    crypto.randomBytes(3).toString('hex'),
+    crypto.randomBytes(3).toString('hex'),
+  ].join('-');
+
+  const userDoc = await User.create({
+    email,
+    password_hash: await bcrypt.hash(tempPassword, BCRYPT_ROUNDS),
+    full_name,
+    role: 'player',
+    club: club?.trim() || null,
+    rating: Number(rating) || 0,
+    temp_password_used: false,
+  });
+
+  /* Inscription au tournoi. */
+  await Player.create({
+    tournament_id,
+    user_id: userDoc._id,
+    name: full_name,
+    email,
+    club: club?.trim() || null,
+    rating: Number(rating) || 0,
+    points: 0,
+  });
+
+  /* Envoi du mail — on ne bloque pas si ça échoue. */
+  try {
+    await sendTempPassword({ to: email, full_name, tournamentName: tournament.name, tempPassword });
+  } catch (e) {
+    console.error('[email] Échec envoi mdp temporaire:', e.message);
+  }
+
+  return fmt(userDoc);
 };
 
 export const getById = async (id) => fmt(await User.findById(id));

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTournaments } from '../hooks/useTournaments';
 import type { User as AuthUser } from '../types';
+import type { Tournament } from '../types';
 import { LandingHeader } from '../components/landing/LandingHeader';
 import { HeroSection } from '../components/landing/HeroSection';
 import { UpcomingTournamentsSection } from '../components/landing/UpcomingTournamentsSection';
@@ -11,6 +12,7 @@ import { JoueursPage } from './JoueursPage';
 import { TournamentListPage } from './TournamentListPage';
 import { AboutPage } from './AboutPage';
 import { CalendarPage } from './CalendarPage';
+import { TournamentRegisterModal } from '../components/TournamentRegisterModal';
 import { INK } from '../components/landing/tokens';
 import type { NavItem } from '../components/landing/tokens';
 
@@ -35,6 +37,17 @@ export function LandingPage({
   const [prevIndex, setPrevIndex] = useState<number | null>(null);
   const [slideDir, setSlideDir] = useState<'left' | 'right'>('left');
   const [animating, setAnimating] = useState(false);
+  const [registerTournament, setRegisterTournament] = useState<Tournament | null>(null);
+
+  /* Si non connecté, ouvre le modal d'inscription au tournoi au lieu de naviguer. */
+  const handleTournamentClick = (id: string) => {
+    if (user) {
+      onTournamentClick(id);
+    } else {
+      const t = tournaments.find((t) => t.id === id) ?? null;
+      setRegisterTournament(t);
+    }
+  };
 
   const goTo = (next: number, dir: 'left' | 'right' = 'left') => {
     if (animating || next === featuredIndex || tournaments.length <= 1) return;
@@ -74,13 +87,16 @@ export function LandingPage({
 
   return (
     <div
-      className={
-        isHome
-          ? 'landing-scale landing-fixed flex flex-col'
-          : 'landing-scale min-h-screen bg-[#F7F6F4]'
-      }
+      className={isHome ? 'landing-scale landing-fixed flex flex-col bg-[color:var(--app-bg)] dark:bg-[#251c3a]' : 'landing-scale min-h-screen bg-[color:var(--app-bg)] dark:bg-[#251c3a]'}
       style={{ color: INK }}
     >
+      {registerTournament && (
+        <TournamentRegisterModal
+          tournament={registerTournament}
+          onClose={() => setRegisterTournament(null)}
+          onLogin={() => { setRegisterTournament(null); onLogin(); }}
+        />
+      )}
       <LandingHeader
         user={user}
         onLogin={onLogin}
@@ -92,7 +108,7 @@ export function LandingPage({
       />
 
       {activeNav === 'Accueil' && (
-        <div className="flex min-h-0 flex-1 flex-col">
+        <div className="flex min-h-0 flex-1 flex-col bg-[color:var(--app-bg)] dark:bg-[#251c3a]">
           <HeroSection
             tournaments={tournaments}
             featuredIndex={featuredIndex}
@@ -100,7 +116,7 @@ export function LandingPage({
             slideDir={slideDir}
             animating={animating}
             goTo={goTo}
-            onTournamentClick={onTournamentClick}
+            onTournamentClick={handleTournamentClick}
             onSeeCalendar={() => setActiveNav('Calendrier')}
           />
           <UpcomingTournamentsSection
@@ -108,7 +124,7 @@ export function LandingPage({
             loading={loading}
             featuredIndex={featuredIndex}
             goTo={goTo}
-            onTournamentClick={onTournamentClick}
+            onTournamentClick={handleTournamentClick}
           />
           <AccessCardsSection user={user} onLogin={onLogin} onDashboard={onDashboard} />
           <LandingFooter />
@@ -118,12 +134,12 @@ export function LandingPage({
       {activeNav === 'Tournois' && (
         <TournamentListPage
           onNew={onLogin}
-          onOpen={onTournamentClick}
+          onOpen={handleTournamentClick}
         />
       )}
 
       {activeNav === 'Calendrier' && (
-        <CalendarPage onTournamentClick={onTournamentClick} />
+        <CalendarPage onTournamentClick={handleTournamentClick} />
       )}
 
       {activeNav === 'Classements' && (

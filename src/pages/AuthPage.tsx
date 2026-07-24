@@ -92,7 +92,7 @@ export function AuthPage({
   };
 
   return (
-    <div className="flex min-h-screen bg-white" style={{ color: INK }}>
+    <div className="flex min-h-screen bg-[color:var(--app-bg)] text-[color:var(--text-primary)]">
       {/* ---------------------- Colonne visuelle ---------------------- */}
       <aside className="relative hidden w-[42%] shrink-0 overflow-hidden lg:block" style={{ backgroundColor: INK }}>
         <img
@@ -150,7 +150,7 @@ export function AuthPage({
         <div className="w-full max-w-[26rem]">
           <button
             onClick={onBack}
-            className="group mb-8 inline-flex items-center gap-2 text-sm font-medium text-gray-500 transition-colors hover:text-gray-900"
+            className="group mb-8 inline-flex items-center gap-2 text-sm font-medium text-[color:var(--text-secondary)] transition-colors hover:text-[color:var(--text-primary)]"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
             Retour à l’accueil
@@ -163,14 +163,14 @@ export function AuthPage({
           <h1 className="text-3xl font-extrabold tracking-tight">
             {mode === 'login' ? 'Content de vous revoir' : 'Créer un compte'}
           </h1>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-[color:var(--text-secondary)]">
             {mode === 'login'
               ? 'Connectez-vous pour accéder à votre espace, joueur ou organisateur.'
               : 'Créez votre compte joueur en moins d’une minute.'}
           </p>
 
           {/* Bascule connexion / inscription */}
-          <div className="mt-7 flex rounded-full bg-gray-100 p-1">
+          <div className="mt-7 flex rounded-full bg-[color:var(--surface-card-strong)] p-1">
             {(['login', 'register'] as Mode[]).map((value) => (
               <button
                 key={value}
@@ -205,7 +205,7 @@ export function AuthPage({
                   </span>
                   <div>
                     <p className="text-sm font-bold">Compte joueur</p>
-                    <p className="mt-0.5 text-[11px] leading-snug text-gray-500">
+                    <p className="mt-0.5 text-[11px] leading-snug text-[color:var(--text-secondary)]">
                       Inscrivez-vous aux tournois et suivez votre classement. Les accès organisateur sont
                       créés par l’organisation, pas à l’inscription.
                     </p>
@@ -245,7 +245,7 @@ export function AuthPage({
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="text-gray-400 transition-colors hover:text-gray-700"
+                  className="text-[color:var(--text-tertiary)] transition-colors hover:text-[color:var(--text-primary)]"
                   aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -291,7 +291,7 @@ export function AuthPage({
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-gray-500">
+          <p className="mt-6 text-center text-sm text-[color:var(--text-secondary)]">
             {mode === 'login' ? 'Pas encore de compte ? ' : 'Vous avez déjà un compte ? '}
             <button
               type="button"
@@ -320,12 +320,12 @@ function TextField({
 } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-500">{label}</span>
+      <span className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-[color:var(--text-secondary)]">{label}</span>
       <span className="relative block">
-        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">{icon}</span>
+        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[color:var(--text-tertiary)]">{icon}</span>
         <input
           {...inputProps}
-          className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-11 text-sm outline-none transition-all placeholder:text-gray-400 focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10"
+          className="w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-card-strong)] py-3 pl-11 pr-11 text-sm outline-none transition-all placeholder:text-[color:var(--text-tertiary)] focus:border-[color:var(--accent)] focus:ring-2 focus:ring-[color:var(--accent)]"
         />
         {trailing && <span className="absolute right-4 top-1/2 -translate-y-1/2">{trailing}</span>}
       </span>

@@ -49,7 +49,7 @@ export function JoueursPage() {
       </div>
 
       {/* Barre de recherche */}
-      <div className="mb-5 flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+      <div className="mb-5 flex items-center gap-3 rounded-xl border border-gray-200 bg-white dark:bg-gray-700 px-4 py-3 shadow-sm">
         <Search className="h-4 w-4 shrink-0 text-gray-400" />
         <input
           type="text"
@@ -66,13 +66,13 @@ export function JoueursPage() {
       {/* Stats */}
       {!loading && (
         <div className="mb-5 flex gap-6">
-          <div className="flex items-center gap-2 text-sm text-gray-500">
+          <div className="flex items-center gap-2 text-sm">
             <Users className="h-4 w-4" style={{ color: GOLD }} />
-            <span><strong className="font-bold" style={{ color: INK }}>{players.length}</strong> joueurs</span>
+            <span><strong className="font-bold text-gray-600">{players.length}</strong> <span className="text-gray-500 dark:text-gray-400">joueurs</span></span>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <Trophy className="h-4 w-4" style={{ color: GOLD }} />
-            <span><strong className="font-bold" style={{ color: INK }}>{tournaments.length}</strong> tournois</span>
+            <span><strong className="font-bold text-gray-600">{tournaments.length}</strong> <span className="text-gray-500 dark:text-gray-400">tournois</span></span>
           </div>
         </div>
       )}
@@ -90,7 +90,7 @@ export function JoueursPage() {
           {filtered.map((p) => (
             <div
               key={`${p.id}-${p.tournament?.id}`}
-              className="flex flex-col gap-3 rounded-2xl border border-black/5 bg-white p-5 shadow-sm"
+              className="flex flex-col gap-3 rounded-2xl border border-black/5 bg-white dark:bg-gray-700 p-5 shadow-sm"
             >
               <div className="flex items-center gap-3">
                 <div
@@ -100,7 +100,7 @@ export function JoueursPage() {
                   {p.name.slice(0, 1).toUpperCase()}
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-extrabold">{p.name}</p>
+                  <p className="truncate text-sm font-extrabold text-gray-900 dark:text-gray-400">{p.name}</p>
                   {p.club && (
                     <p className="flex items-center gap-1 truncate text-xs text-gray-500">
                       <MapPin className="h-3 w-3 shrink-0" style={{ color: GOLD }} />

@@ -67,7 +67,7 @@ function EventRow({ tournament, date, today, onOpen }: {
   return (
     <button
       onClick={() => onOpen(tournament.id)}
-      className="group w-full rounded-2xl border border-black/5 bg-white p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-[0_18px_36px_-28px_rgba(17,17,20,0.6)]"
+      className="group w-full rounded-2xl border border-black/5 bg-white dark:bg-gray-700 p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-[0_18px_36px_-28px_rgba(17,17,20,0.6)]"
     >
       <div className="flex items-start gap-4">
         {/* Pastille date : le repère chiffré, comme sur une feuille de ronde */}
@@ -216,7 +216,7 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
             </h1>
 
             {nextUp && (
-              <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-6 py-5 backdrop-blur-sm">
+              <div className="rounded-2xl border border-white/10 bg-white dark:bg-gray-700/[0.04] px-6 py-5 backdrop-blur-sm">
                 <p className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-white/40">
                   Prochain rendez-vous
                 </p>
@@ -238,7 +238,7 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
       <div className="mx-auto -mt-16 max-w-7xl px-6 pb-24 lg:px-12">
         <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
           {/* ---------------------------- Mois ---------------------------- */}
-          <div className="overflow-hidden rounded-[1.75rem] border border-black/5 bg-white shadow-[0_30px_60px_-45px_rgba(17,17,20,0.7)]">
+          <div className="overflow-hidden rounded-[1.75rem] border border-black/5 bg-white dark:bg-gray-700 shadow-[0_30px_60px_-45px_rgba(17,17,20,0.7)]">
             <div className="flex items-center justify-between border-b border-black/5 px-7 py-6">
               <div>
                 <h2 className="font-display text-4xl font-bold uppercase leading-none tracking-tight">
@@ -371,7 +371,7 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
                 <div className="skeleton h-32 rounded-2xl" />
               </>
             ) : selectedDate ? (
-              <section className="rounded-[1.75rem] border border-black/5 bg-white p-6 shadow-[0_24px_50px_-42px_rgba(17,17,20,0.6)]">
+              <section className="rounded-[1.75rem] border border-black/5 bg-white dark:bg-gray-700 p-6 shadow-[0_24px_50px_-42px_rgba(17,17,20,0.6)]">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-gray-400">

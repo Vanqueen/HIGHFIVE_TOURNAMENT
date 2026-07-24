@@ -221,7 +221,7 @@ export function AboutPage({
       {/* ============================================================
           2 — MANIFESTE
           ============================================================ */}
-      <section className="relative overflow-hidden bg-white">
+      <section className="relative overflow-hidden bg-white dark:bg-gray-700">
         <div className="mx-auto grid max-w-7xl items-center gap-16 px-6 py-24 lg:grid-cols-[1.05fr_0.95fr] lg:px-12 lg:py-32">
           <div>
             <Reveal>
@@ -259,7 +259,7 @@ export function AboutPage({
                   { k: 'Départages', v: 'BH · SB' },
                   { k: 'Diffusion', v: 'Temps réel' },
                 ].map((cell) => (
-                  <div key={cell.k} className="bg-white px-5 py-5">
+                  <div key={cell.k} className="bg-white dark:bg-gray-700 px-5 py-5">
                     <p className="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-gray-400">{cell.k}</p>
                     <p className="mt-2 font-display text-2xl font-bold uppercase tracking-tight">{cell.v}</p>
                   </div>
@@ -312,11 +312,11 @@ export function AboutPage({
           <Reveal>
             <div className="flex items-center gap-4">
               <Overline>La plateforme en chiffres</Overline>
-              <span className="h-px flex-1 bg-white/15" />
+              <span className="h-px flex-1 bg-white dark:bg-gray-700/15" />
             </div>
           </Reveal>
 
-          <div className="mt-10 grid gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-px overflow-hidden rounded-2xl bg-white dark:bg-gray-700/10 sm:grid-cols-2 lg:grid-cols-4">
             {STATS.map((stat, i) => (
               <Reveal key={stat.label} delay={i * 90}>
                 <div className="h-full px-7 py-9" style={{ backgroundColor: INK }}>
@@ -348,7 +348,7 @@ export function AboutPage({
           <div className="mt-14 grid gap-6 lg:grid-cols-3">
             {VALUES.map((value, i) => (
               <Reveal key={value.n} delay={i * 110}>
-                <article className="group relative h-full overflow-hidden rounded-[1.75rem] border border-black/5 bg-white p-9 shadow-[0_24px_50px_-40px_rgba(17,17,20,0.55)] transition-transform duration-300 hover:-translate-y-1.5">
+                <article className="group relative h-full overflow-hidden rounded-[1.75rem] border border-black/5 bg-white dark:bg-gray-700 p-9 shadow-[0_24px_50px_-40px_rgba(17,17,20,0.55)] transition-transform duration-300 hover:-translate-y-1.5">
                   <span
                     className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"
                     style={{ backgroundColor: value.bg }}
@@ -374,7 +374,7 @@ export function AboutPage({
       {/* ============================================================
           5 — PARCOURS
           ============================================================ */}
-      <section className="relative overflow-hidden bg-white">
+      <section className="relative overflow-hidden bg-white dark:bg-gray-700">
         <div className="mx-auto grid max-w-7xl gap-16 px-6 py-24 lg:grid-cols-[0.85fr_1.15fr] lg:px-12 lg:py-32">
           {/* Roi détouré, en veille sur la colonne de gauche */}
           <Reveal className="relative hidden lg:block">

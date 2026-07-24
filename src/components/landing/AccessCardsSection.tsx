@@ -1,5 +1,5 @@
 import { Trophy, User, ArrowRight } from 'lucide-react';
-import { INK, GOLD, GOLD_DARK, PURPLE } from './tokens';
+import { INK, GOLD, GOLD_DARK, PURPLE, GRAY } from './tokens';
 import type { User as AuthUser } from '../../types';
 
 function BarsIcon({ className }: { className?: string }) {
@@ -20,7 +20,7 @@ function InfoCard({ iconBg, icon, title, description, linkText, accent, onClick 
   onClick?: () => void;
 }) {
   return (
-    <div className="flex gap-[1.6em] rounded-[1.4em] border border-black/5 bg-white p-[1.8em] shadow-[0_0.6em_1.6em_-1.4em_rgba(17,17,20,0.35)]">
+    <div className="flex gap-[1.6em] rounded-[1.4em] border border-black/5 bg-white dark:bg-gray-700 p-[1.8em] shadow-[0_0.6em_1.6em_-1.4em_rgba(17,17,20,0.35)]">
       <div
         className="flex h-[4.6em] w-[4.6em] shrink-0 items-center justify-center rounded-[1.1em]"
         style={{ backgroundColor: iconBg }}
@@ -28,8 +28,8 @@ function InfoCard({ iconBg, icon, title, description, linkText, accent, onClick 
         {icon}
       </div>
       <div className="min-w-0">
-        <h3 className="text-[1.5em] font-extrabold tracking-[0.01em]">{title}</h3>
-        <p className="mt-[0.8em] text-[1.2em] leading-[1.45] text-gray-500">{description}</p>
+        <h3 className="text-[1.5em] font-extrabold tracking-[0.01em] text-gray-700 dark:text-gray-300">{title}</h3>
+        <p className="mt-[0.8em] text-[1.2em] leading-[1.45] text-gray-500 dark:text-gray-400">{description}</p>
         <button
           type="button"
           onClick={onClick}
@@ -76,7 +76,7 @@ export function AccessCardsSection({ user, onLogin, onDashboard }: {
           title="CLASSEMENTS EN TEMPS RÉEL"
           description="Suivez l'évolution des tournois et des joueurs en direct avec des statistiques détaillées."
           linkText="VOIR LES CLASSEMENTS"
-          accent={INK}
+          accent={GRAY}
         />
       </div>
     </section>

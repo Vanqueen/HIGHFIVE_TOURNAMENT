@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
-import { LogOut, ChevronDown, Trophy, Users } from 'lucide-react';
+import { LogOut, ChevronDown, Trophy, Users, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { Logo } from './Logo';
 
@@ -21,12 +21,16 @@ export function AppShell({
   /* Mode console : la page occupe exactement la hauteur de l'écran et ne
      défile pas. C'est au contenu de gérer son propre débordement. */
   fill = false,
+  theme, 
+  onToggleTheme,
 }: {
   children: ReactNode;
   onHome: () => void;
   actions?: ReactNode;
   wide?: boolean;
   fill?: boolean;
+  theme: 'dark' | 'light'; 
+  onToggleTheme: () => void
 }) {
   const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -37,11 +41,10 @@ export function AppShell({
 
   return (
     <div
-      className={`bg-[#FBFAF9] ${fill ? 'flex h-[100dvh] flex-col overflow-hidden' : 'min-h-screen'}`}
-      style={{ color: INK }}
+      className={` border-black/5 bg-white/95 dark:bg-gradient-to-t dark:from-gray-600 dark:to-gray-800 ${fill ? 'flex h-[100dvh] flex-col overflow-hidden' : 'min-h-screen'}`}
     >
       <header
-        className={`z-40 border-b border-black/5 bg-white/95 backdrop-blur-sm ${
+        className={`z-40 border-b border-[color:var(--border)] bg-[color:var(--surface-card)]/95 backdrop-blur-sm ${
           fill ? 'flex-none' : 'sticky top-0'
         }`}
       >
@@ -56,7 +59,14 @@ export function AppShell({
 
           <div className="flex items-center gap-3">
             {actions}
-
+            <button
+              type="button"
+              onClick={onToggleTheme}
+              className="inline-flex items-center gap-2 rounded-full border border-[color:var(--border)] bg-[color:var(--surface-card-strong)] px-3 py-2 text-sm font-medium text-[color:var(--text-secondary)] transition-all hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]"
+            >
+              {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              {theme === 'dark' ? 'Clair' : 'Sombre'}
+            </button>
             {user && (
               <div className="relative">
                 <button
@@ -64,7 +74,7 @@ export function AppShell({
                   className="flex items-center gap-2.5 rounded-full border border-gray-200 py-1.5 pl-1.5 pr-3 transition-colors hover:border-gray-300"
                 >
                   <span
-                    className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white"
+                    className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white dark:text-slate-700"
                     style={{ backgroundColor: roleColor }}
                   >
                     {user.full_name.slice(0, 1).toUpperCase()}
@@ -82,12 +92,12 @@ export function AppShell({
                       tabIndex={-1}
                       onClick={() => setMenuOpen(false)}
                     />
-                    <div className="absolute right-0 z-20 mt-2 w-60 overflow-hidden rounded-2xl border border-black/5 bg-white shadow-xl">
-                      <div className="border-b border-gray-100 px-4 py-3">
+                    <div className="absolute right-0 z-20 mt-2 w-60 overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-card)] shadow-xl">
+                      <div className="border-b border-[color:var(--border)] px-4 py-3">
                         <p className="truncate text-sm font-bold">{user.full_name}</p>
-                        <p className="truncate text-xs text-gray-500">{user.email}</p>
+                        <p className="truncate text-xs text-[color:var(--text-secondary)]">{user.email}</p>
                         <span
-                          className="mt-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wide text-white"
+                          className="mt-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wide text-white dark:text-slate-700"
                           style={{ backgroundColor: roleColor }}
                         >
                           <RoleIcon className="h-3 w-3" />
@@ -96,7 +106,7 @@ export function AppShell({
                       </div>
                       <button
                         onClick={logout}
-                        className="flex w-full items-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                        className="flex w-full items-center gap-2 px-4 py-3 text-sm font-medium text-[color:var(--text-primary)] transition-colors hover:bg-[color:var(--surface-card-strong)]"
                       >
                         <LogOut className="h-4 w-4" />
                         Se déconnecter
@@ -134,7 +144,7 @@ export function StatTile({
   accent?: string;
 }) {
   return (
-    <div className="flex items-center gap-4 rounded-2xl border border-black/5 bg-white p-5 shadow-sm">
+    <div className="flex items-center gap-4 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-card)] p-5 shadow-sm">
       <span
         className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
         style={{ backgroundColor: `${accent}14`, color: accent }}
@@ -158,7 +168,7 @@ export function StatusPill({ status }: { status: 'registration' | 'in_progress' 
 
   return (
     <span
-      className="inline-block rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wide text-white"
+      className="inline-block rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wide text-white dark:text-slate-700"
       style={{ backgroundColor: config.color }}
     >
       {config.label}

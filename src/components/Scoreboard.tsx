@@ -18,6 +18,13 @@ export const PURPLE = '#5B3E96';
 export const GREEN = '#3E9B4F';
 export const RULE = 'rgba(17,17,20,0.09)';
 
+// Dark
+export const DARK_INK = '#F5F4F8';           // Texte principal
+export const DARK_GOLD = '#E4B85C';          // Or plus lumineux
+export const DARK_PURPLE = '#9B7CFF';        // Violet plus éclatant
+export const DARK_GREEN = '#56C271';         // Vert plus lumineux
+export const DARK_RULE = 'rgba(245,244,248,0.12)'; // Séparateurs
+
 export type PieceColor = 'white' | 'black';
 export type Outcome = 'win' | 'draw' | 'loss';
 
@@ -120,7 +127,7 @@ export function DataBar({
   accent?: string;
 }) {
   return (
-    <div className="mb-8 overflow-hidden rounded-2xl border bg-white" style={{ borderColor: RULE }}>
+    <div className="mb-8 overflow-hidden rounded-2xl border bg-white dark:bg-gray-700" style={{ borderColor: RULE }}>
       <div className="flex flex-col gap-5 p-5 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
         <div className="min-w-0">
           <p
@@ -167,7 +174,7 @@ export function SectionHead({
 }) {
   return (
     <div className="mb-4 flex items-center gap-4">
-      <h2 className="font-display text-xl font-bold uppercase tracking-[0.02em]">{title}</h2>
+      <h2 className="font-display text-xl font-bold uppercase tracking-[0.02em] text-slate-900 dark:text-slate-400">{title}</h2>
       {count !== undefined && (
         <span className="font-mono text-xs font-semibold text-gray-400 tabular">{String(count).padStart(2, '0')}</span>
       )}

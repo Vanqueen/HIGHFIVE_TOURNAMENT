@@ -30,7 +30,7 @@ export function LandingHeader({
   };
 
   return (
-    <header className="relative z-40 flex-none border-b border-black/5 bg-white/95 backdrop-blur-sm">
+    <header className="relative z-40 flex-none border-b border-black/5 bg-white/95 dark:bg-gradient-to-t dark:from-gray-600 dark:to-gray-800 backdrop-blur-sm">
       <div className="mx-auto flex h-[8.8em] max-w-[192em] items-center justify-between px-[2.6em] lg:px-[3.2em]">
         <button onClick={() => handleNav('Accueil')}>
           <Logo className="h-[7em] w-auto shrink-0" />
@@ -95,7 +95,7 @@ export function LandingHeader({
               </button>
               <button
                 onClick={onLogin}
-                className="rounded-full border border-gray-300 px-[2.2em] py-[1.15em] text-[1.35em] font-semibold text-gray-800 transition-colors hover:border-gray-400"
+                className="rounded-full border border-[color:var(--border)] px-[2.2em] py-[1.15em] text-[1.35em] font-semibold text-[color:var(--text-primary)] transition-colors hover:border-[color:var(--accent)]"
               >
                 Se connecter
               </button>
@@ -111,13 +111,13 @@ export function LandingHeader({
           )}
         </div>
 
-        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-[0.8em] text-gray-700 lg:hidden">
+        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-[0.8em] text-[color:var(--text-secondary)] lg:hidden">
           {mobileMenuOpen ? <X className="h-[2.4em] w-[2.4em]" /> : <Menu className="h-[2.4em] w-[2.4em]" />}
         </button>
       </div>
 
       {mobileMenuOpen && (
-        <div className="border-t border-gray-100 bg-white lg:hidden">
+        <div className="border-t border-[color:var(--border)] bg-[color:var(--surface-card)] lg:hidden">
           <div className="space-y-[1.2em] px-[2em] py-[1.6em]">
             {NAV_ITEMS.map((item) => (
               <button
@@ -129,7 +129,7 @@ export function LandingHeader({
                 {item}
               </button>
             ))}
-            <div className="flex gap-[1.2em] border-t border-gray-100 pt-[1.6em]">
+            <div className="flex gap-[1.2em] border-t border-[color:var(--border)] pt-[1.6em]">
               {user ? (
                 <button
                   onClick={onDashboard}

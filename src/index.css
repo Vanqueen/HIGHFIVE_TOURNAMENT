@@ -25,12 +25,14 @@
   --shadow-color: rgba(73, 44, 107, 0.18);
 }
 
+html.dark,
 :root.dark {
   color-scheme: dark;
-  --app-bg: radial-gradient(circle at top left, rgba(123, 76, 230, 0.28), transparent 30%), linear-gradient(135deg, #06030d 0%, #120b22 48%, #1a1230 100%);
+  /* --app-bg: radial-gradient(circle at top left, rgba(123, 76, 230, 0.28), transparent 30%), linear-gradient(135deg, #06030d 0%, #120b22 48%, #1a1230 100%); */
   --surface-card: rgba(18, 12, 34, 0.82);
   --surface-card-strong: rgba(29, 21, 49, 0.96);
   --surface-muted: #211638;
+  --surface-muted: #FBFAF9;
   --text-primary: #f8efe7;
   --text-secondary: #cbb9d8;
   --text-tertiary: #8a7aa6;
@@ -43,6 +45,67 @@
   --accent-soft-2: rgba(242, 185, 107, 0.16);
   --ring-color: rgba(157, 124, 255, 0.26);
   --shadow-color: rgba(0, 0, 0, 0.38);
+}
+
+html.dark [class*="bg-white"],
+.dark [class*="bg-white"] {
+  background-color: var(--surface-card-strong) !important;
+}
+
+html.dark [class*="bg-gray-100"],
+.dark [class*="bg-gray-100"] {
+  background-color: var(--surface-card) !important;
+}
+
+html.dark [class*="bg-gray-50"],
+.dark [class*="bg-gray-50"] {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+html.dark [class*="bg-[#FBFAF9]"],
+html.dark [class*="bg-[#F7F6F4]"],
+html.dark [class*="bg-[#f7ebde]"],
+html.dark [class*="bg-[#fffaf1]"],
+.dark [class*="bg-[#FBFAF9]"],
+.dark [class*="bg-[#F7F6F4]"],
+.dark [class*="bg-[#f7ebde]"],
+.dark [class*="bg-[#fffaf1]"] {
+  background-color: var(--surface-card) !important;
+}
+
+html.dark [class*="border-black/5"],
+html.dark [class*="border-black/10"],
+html.dark [class*="border-gray-200"],
+html.dark [class*="border-gray-100"],
+html.dark [class*="border-white/10"],
+.dark [class*="border-black/5"],
+.dark [class*="border-black/10"],
+.dark [class*="border-gray-200"],
+.dark [class*="border-gray-100"],
+.dark [class*="border-white/10"] {
+  border-color: var(--border) !important;
+}
+
+html.dark [class*="text-gray-500"],
+html.dark [class*="text-gray-400"],
+html.dark [class*="text-gray-600"],
+html.dark [class*="text-gray-700"],
+html.dark [class*="text-gray-800"],
+html.dark [class*="text-gray-900"],
+html.dark [class*="text-black"],
+.dark [class*="text-gray-500"],
+.dark [class*="text-gray-400"],
+.dark [class*="text-gray-600"],
+.dark [class*="text-gray-700"],
+.dark [class*="text-gray-800"],
+.dark [class*="text-gray-900"],
+.dark [class*="text-black"] {
+  color: var(--text-secondary) !important;
+}
+
+html.dark [class*="placeholder:text-gray-400"],
+.dark [class*="placeholder:text-gray-400"] {
+  color: var(--text-tertiary) !important;
 }
 
 html { scroll-behavior: smooth; }

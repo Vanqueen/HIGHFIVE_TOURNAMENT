@@ -52,7 +52,7 @@ export function TournamentListPage({ onNew, onOpen, isAdmin }: {
           ))}
         </div>
       ) : tournaments.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-white px-8 py-20 text-center">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-white dark:bg-gray-700 px-8 py-20 text-center">
           <Trophy className="mb-4 h-10 w-10" style={{ color: GOLD }} />
           <h3 className="mb-1 text-base font-extrabold">Aucun tournoi pour l'instant</h3>
           <p className="mb-6 text-sm text-gray-500">Les tournois apparaîtront ici dès leur création.</p>
@@ -74,7 +74,7 @@ export function TournamentListPage({ onNew, onOpen, isAdmin }: {
               <button
                 key={t.id}
                 onClick={() => onOpen(t.id)}
-                className="group flex flex-col gap-3 rounded-2xl border border-black/5 bg-white p-6 text-left shadow-sm transition-shadow hover:shadow-md"
+                className="group flex flex-col gap-3 rounded-2xl border border-black/5 bg-white dark:bg-gray-700 p-6 text-left shadow-sm transition-shadow hover:shadow-md"
               >
                 <div className="flex items-start justify-between">
                   <span
@@ -86,7 +86,7 @@ export function TournamentListPage({ onNew, onOpen, isAdmin }: {
                   <ChevronRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" style={{ color: GOLD }} />
                 </div>
 
-                <h3 className="text-base font-extrabold leading-snug">{t.name}</h3>
+                <h3 className="text-base font-extrabold leading-snug text-gray-900 dark:text-gray-400">{t.name}</h3>
 
                 <div className="space-y-1 text-xs text-gray-500">
                   {t.location && (

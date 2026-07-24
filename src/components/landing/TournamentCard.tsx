@@ -28,7 +28,7 @@ export function TournamentCard({ tournament, crop, onClick }: {
   return (
     <button
       onClick={onClick}
-      className="group flex overflow-hidden rounded-[1.2em] border border-black/5 bg-white text-left shadow-[0_0.6em_1.6em_-1.2em_rgba(17,17,20,0.4)] transition-shadow hover:shadow-[0_1.4em_2.8em_-1.4em_rgba(17,17,20,0.45)]"
+      className="group flex overflow-hidden rounded-[1.2em] border border-black/5 bg-white dark:bg-gray-700 dark:bg-gray-600 text-left shadow-[0_0.6em_1.6em_-1.2em_rgba(17,17,20,0.4)] transition-shadow hover:shadow-[0_1.4em_2.8em_-1.4em_rgba(17,17,20,0.45)]"
     >
       <img
         src={chessHeroImage}
@@ -45,7 +45,7 @@ export function TournamentCard({ tournament, crop, onClick }: {
           >
             {badge.label}
           </span>
-          <h3 className="mt-[0.9em] truncate text-[1.4em] font-extrabold tracking-[-0.01em]">{tournament.name}</h3>
+          <h3 className="mt-[0.9em] truncate text-[1.4em] font-extrabold tracking-[-0.01em] text-gray-700 dark:text-gray-300">{tournament.name}</h3>
           {tournament.start_date && (
             <p className="mt-[0.7em] text-[1.1em] text-gray-500">{formatDate(tournament.start_date)}</p>
           )}

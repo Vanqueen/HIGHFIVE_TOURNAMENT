@@ -6,7 +6,7 @@ function SplitTitle({ name }: { name: string }) {
   const [first, ...rest] = name.trim().split(' ');
   return (
     <>
-      <span className="block">{first.toUpperCase()}</span>
+      <span className="block text-gray-950 dark:text-gray-400">{first.toUpperCase()}</span>
       {rest.length > 0 && (
         <span className="block" style={{ color: GOLD }}>
           {rest.join(' ').toUpperCase()}
@@ -109,7 +109,7 @@ export function FeaturedCarousel({
 
   return (
     <div
-      className="absolute right-[3.6em] top-1/2 z-20 hidden w-[25em] -translate-y-1/2 rounded-[1.6em] border border-black/5 bg-white shadow-[0_2.4em_5em_-1.6em_rgba(17,17,20,0.35)] lg:block"
+      className="absolute right-[3.6em] top-1/2 z-20 hidden w-[25em] -translate-y-1/2 rounded-[1.6em] border border-black/5 bg-white dark:bg-gray-700 shadow-[0_2.4em_5em_-1.6em_rgba(17,17,20,0.35)] lg:block"
       style={{ overflow: 'hidden' }}
     >
       {prevIndex !== null && (

@@ -1,5 +1,6 @@
 import * as playerService from '../services/playerService.js';
 import * as tournamentService from '../services/tournamentService.js';
+import * as importService from '../services/importService.js';
 
 export const getByTournament = async (req, res, next) => {
   try {
@@ -35,6 +36,14 @@ export const remove = async (req, res, next) => {
     await tournamentService.assertOwnership(player.tournament_id, req.user);
     await playerService.remove(req.params.id);
     res.status(204).end();
+  } catch (err) { next(err); }
+};
+
+export const bulkImport = async (req, res, next) => {
+  try {
+    await tournamentService.assertOwnership(req.params.tournament_id, req.user);
+    const report = await importService.bulkImport(req.params.tournament_id, req.body.players, req.user);
+    res.status(201).json(report);
   } catch (err) { next(err); }
 };
 

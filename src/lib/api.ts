@@ -59,6 +59,8 @@ export const api = {
       req<{ user: User }>('PATCH', '/auth/profile', body),
     changePassword: (current_password: string, new_password: string) =>
       req<void>('POST', '/auth/password', { current_password, new_password }),
+    registerAndJoin: (tournamentId: string, body: { email: string; full_name: string; club?: string; rating?: number }) =>
+      req<{ user: User }>('POST', `/auth/register-and-join/${tournamentId}`, body),
   },
   /* Cooptation : réservé aux organisateurs connectés. */
   organizers: {
@@ -86,6 +88,10 @@ export const api = {
     create: (body: Partial<Player>) => req<Player>('POST', '/players', body),
     update: (id: string, body: Partial<Player>) => req<Player>('PATCH', `/players/${id}`, body),
     delete: (id: string) => req<void>('DELETE', `/players/${id}`),
+    bulkImport: (tournament_id: string, players: unknown[]) =>
+      req<{ created: number; linked: number; anonymous: number; skipped: number; errors: { row: number; name?: string; reason: string }[] }>(
+        'POST', `/tournaments/${tournament_id}/players/import`, { players }
+      ),
   },
   podium: {
     get: (tournament_id: string) => req<Player[]>('GET', `/tournaments/${tournament_id}/podium`),

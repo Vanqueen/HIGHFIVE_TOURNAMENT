@@ -72,3 +72,13 @@ export const changePassword = async (req, res, next) => {
     res.status(204).end();
   } catch (err) { next(err); }
 };
+
+export const registerAndJoin = async (req, res, next) => {
+  try {
+    const user = await authService.registerAndJoin({
+      ...req.body,
+      tournament_id: req.params.tournamentId,
+    });
+    res.status(201).json({ user });
+  } catch (err) { next(err); }
+};

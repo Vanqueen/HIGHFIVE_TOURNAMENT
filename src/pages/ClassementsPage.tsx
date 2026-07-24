@@ -44,11 +44,11 @@ function StandingsPanel({ tournament, onBack }: { tournament: Tournament; onBack
         Retour aux tournois
       </button>
 
-      <div className="rounded-2xl border border-black/5 bg-white p-8 shadow-sm">
+      <div className="rounded-2xl border border-black/5 bg-white dark:bg-gray-700 p-8 shadow-sm">
         <div className="mb-6 flex items-center gap-3">
           <Trophy className="h-7 w-7 shrink-0" style={{ color: GOLD }} />
           <div>
-            <h2 className="text-2xl font-extrabold tracking-tight" style={{ color: INK }}>{tournament.name}</h2>
+            <h2 className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-gray-700">{tournament.name}</h2>
             <p className="text-sm text-gray-500">Classement — système suisse</p>
           </div>
         </div>
@@ -132,7 +132,7 @@ export function ClassementsPage({ onTournamentClick }: { onTournamentClick?: (id
                   <button
                     key={t.id}
                     onClick={() => setSelected(t)}
-                    className="group flex flex-col gap-3 rounded-2xl border border-black/5 bg-white p-6 text-left shadow-sm transition-shadow hover:shadow-md"
+                    className="group flex flex-col gap-3 rounded-2xl border border-black/5 bg-white dark:bg-gray-700 p-6 text-left shadow-sm transition-shadow hover:shadow-md"
                   >
                     <div className="flex items-start justify-between">
                       <span
@@ -143,7 +143,7 @@ export function ClassementsPage({ onTournamentClick }: { onTournamentClick?: (id
                       </span>
                       <ChevronRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" style={{ color: GOLD }} />
                     </div>
-                    <h3 className="text-base font-extrabold leading-tight">{t.name}</h3>
+                    <h3 className="text-base font-extrabold leading-tight text-gray-900 dark:text-gray-400">{t.name}</h3>
                     <div className="space-y-1 text-xs text-gray-500">
                       {t.start_date && (
                         <div className="flex items-center gap-1.5">
