@@ -11,6 +11,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const FROM = process.env.EMAIL_FROM ?? `HIGHFIVE Tournament <${process.env.SMTP_USER}>`;
+console.log(`Email sender: ${FROM}`);
 
 export const sendTempPassword = async ({ to, full_name, tournamentName, tempPassword }) => {
   await transporter.sendMail({
