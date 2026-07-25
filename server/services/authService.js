@@ -161,7 +161,8 @@ export const registerAndJoin = async ({ email, full_name, club, rating, tourname
 
   const tournament = await Tournament.findById(tournament_id);
   if (!tournament) throw fail('Tournoi introuvable.', 404);
-  if (tournament.status === 'completed') throw fail('Ce tournoi est terminé.', 409);
+  if (tournament.status === 'in_progress') throw fail('Ce tournoi est déjà en cours. Les inscriptions sont closes.', 409);
+  if (tournament.status === 'completed') throw fail('Ce tournoi est terminé. Les inscriptions sont closes.', 409);
 
   /* Compte existant : on notifie sans créer de doublon. */
   if (await User.exists({ email })) {

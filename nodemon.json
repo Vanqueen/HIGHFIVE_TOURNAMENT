@@ -1,0 +1,13 @@
+{
+  "watch": [
+    "."
+  ],
+  "ext": "*",
+  "ignore": [
+    "node_modules",
+    "public/upload"
+  ],
+  "events": {
+    "restart": "node pre-restart.js"
+  }
+}

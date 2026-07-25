@@ -21,6 +21,32 @@ interface ImportReport {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Détection d'encodage                                               */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Détecte l'encodage du buffer et retourne une string décodée.
+ * Priorité : BOM UTF-8 → UTF-8 valide → windows-1252 (fallback Excel/FR)
+ */
+function decodeBuffer(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+
+  // BOM UTF-8 : EF BB BF
+  if (bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) {
+    return new TextDecoder('utf-8').decode(buffer.slice(3));
+  }
+
+  // Tenter UTF-8 strict
+  try {
+    const text = new TextDecoder('utf-8', { fatal: true }).decode(buffer);
+    return text;
+  } catch {
+    // Fallback windows-1252 (encodage par défaut d'Excel en France)
+    return new TextDecoder('windows-1252').decode(buffer);
+  }
+}
+
+/* ------------------------------------------------------------------ */
 /*  Parseurs                                                            */
 /* ------------------------------------------------------------------ */
 
@@ -80,7 +106,8 @@ export function ImportPlayersModal({
     setFileName(file.name);
     const reader = new FileReader();
     reader.onload = (e) => {
-      const text = e.target?.result as string;
+      const buffer = e.target?.result as ArrayBuffer;
+      const text = decodeBuffer(buffer);
       try {
         const parsed = file.name.endsWith('.json') ? parseJSON(text) : parseCSV(text);
         if (parsed.length === 0) {
@@ -90,10 +117,10 @@ export function ImportPlayersModal({
         setRows(parsed);
         setStep('preview');
       } catch {
-        setParseError('Impossible de lire le fichier. Vérifiez qu\'il est bien formaté.');
+        setParseError("Impossible de lire le fichier. Vérifiez qu'il est bien formaté.");
       }
     };
-    reader.readAsText(file, 'utf-8');
+    reader.readAsArrayBuffer(file);
   };
 
   const handleDrop = (e: React.DragEvent) => {

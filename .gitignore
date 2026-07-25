@@ -14,21 +14,13 @@ dist-ssr
 # production
 /build
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files — ne pas committer les secrets
 .env
 .env.development
 .env.production
 
-server/config/*
-
-server.js
-
 # vercel
 .vercel
-
-pre-restart.js
-nodemon.json
 
 .vscode/*
 !.vscode/extensions.json

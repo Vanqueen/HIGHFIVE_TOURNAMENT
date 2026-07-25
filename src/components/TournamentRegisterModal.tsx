@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Trophy, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { X, Trophy, Loader2, CheckCircle2, AlertCircle, Lock } from 'lucide-react';
 import { api, ApiError } from '../lib/api';
 import { inputCls, Field } from './ui';
 import type { Tournament } from '../types';
@@ -20,6 +20,8 @@ export function TournamentRegisterModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({ full_name: '', email: '', club: '', rating: '' });
+
+  const isClosed = tournament.status === 'in_progress' || tournament.status === 'completed';
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -66,7 +68,28 @@ export function TournamentRegisterModal({
         </div>
 
         <div className="px-6 py-5">
-          {step === 'form' && (
+          {/* Tournoi fermé : message bloquant */}
+          {isClosed && (
+            <div className="flex flex-col items-center gap-3 py-4 text-center">
+              <Lock className="h-12 w-12 text-gray-300 dark:text-gray-600" />
+              <h3 className="text-lg font-bold text-gray-800 dark:text-white">
+                {tournament.status === 'in_progress' ? 'Tournoi en cours' : 'Tournoi terminé'}
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {tournament.status === 'in_progress'
+                  ? 'Ce tournoi a déjà démarré. Il n’est plus possible de s’y inscrire.'
+                  : 'Ce tournoi est terminé. Les inscriptions sont définitivement closes.'}
+              </p>
+              <button
+                onClick={onClose}
+                className="mt-2 w-full rounded-xl py-3 text-sm font-bold text-white transition-opacity hover:opacity-90"
+                style={{ backgroundColor: INK }}
+              >
+                Fermer
+              </button>
+            </div>
+          )}
+          {!isClosed && step === 'form' && (
             <>
               <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
                 Vous n'êtes pas connecté(e). Renseignez vos informations pour vous inscrire à ce tournoi.
