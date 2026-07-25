@@ -135,20 +135,39 @@ export const login = async (data) => {
 
   if (!(await bcrypt.compare(password, doc.password_hash))) throw invalid;
 
-  /* Mot de passe temporaire déjà utilisé : on refuse la connexion. */
-  if (doc.temp_password_used) {
-    throw fail('Ce mot de passe temporaire a déjà été utilisé. Veuillez utiliser votre nouveau mot de passe ou réinitialiser votre accès.', 401);
+  /* Logique mdp temporaire : uniquement pour les comptes créés via
+     registerAndJoin, identifiables par last_login_at === null.
+     Les comptes d'inscription directe ont last_login_at renseigné
+     dès la création, donc cette branche ne les touche jamais. */
+  if (doc.last_login_at === null) {
+    /* Mdp temporaire déjà consommé (changé) mais hash correspond encore :
+       cas théoriquement impossible, on bloque par sécurité. */
+    if (doc.temp_password_used) {
+      throw fail('Ce mot de passe temporaire a déjà été utilisé. Connectez-vous avec votre nouveau mot de passe.', 401);
+    }
+
+    /* Première connexion avec mdp temporaire : on laisse passer
+       et on demande le changement de mdp. */
+    doc.last_login_at = new Date();
+    await doc.save();
+    return { ...fmt(doc), must_change_password: true };
   }
 
-  /* Si c'est la première connexion avec un mdp temporaire (compte créé
-     par registerAndJoin : created_by null, jamais connecté). */
-  const isFirstLogin = doc.last_login_at === null;
-  const isTemp = doc.temp_password_used === false && isFirstLogin;
+  /* Compte avec mdp temporaire déjà utilisé une fois (last_login_at renseigné
+     par la 1ère connexion) mais mdp pas encore changé : on bloque. */
+  if (!doc.temp_password_used && doc.last_login_at !== null) {
+    /* Vérifie que ce compte vient bien de registerAndJoin et non d'une
+       inscription directe. L'inscription directe met temp_password_used
+       à false aussi (valeur par défaut), mais elle renseigne last_login_at
+       immédiatement — ce qui est déjà géré par la branche au-dessus.
+       Ici on est dans le cas : 1ère connexion faite, mdp pas changé. */
+    throw fail('Vous devez changer votre mot de passe temporaire avant de vous reconnecter.', 401);
+  }
 
   doc.last_login_at = new Date();
   await doc.save();
 
-  return { ...fmt(doc), must_change_password: isTemp };
+  return { ...fmt(doc), must_change_password: false };
 };
 
 /* Inscription au tournoi depuis la landing page (utilisateur non connecté).
