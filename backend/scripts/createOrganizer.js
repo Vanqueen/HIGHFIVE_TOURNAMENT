@@ -11,11 +11,13 @@
 /*                                [--organization "Club"]              */
 /* ------------------------------------------------------------------ */
 import path from 'path';
+import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import * as authService from '../services/authService.js';
 
-const root = process.cwd();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(__dirname, '..');
 const mode = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
 for (const file of ['.env', mode]) dotenv.config({ path: path.resolve(root, file) });
 

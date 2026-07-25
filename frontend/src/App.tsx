@@ -4,6 +4,7 @@ import { AppShell } from './components/AppShell';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { LandingPage } from './pages/LandingPage';
 import { AuthPage } from './pages/AuthPage';
+import { ChangePasswordPage } from './pages/ChangePasswordPage';
 import { PlayerDashboard } from './pages/PlayerDashboard';
 import { OrganizerDashboard } from './pages/OrganizerDashboard';
 import { TournamentCreatePage } from './pages/TournamentCreatePage';
@@ -73,7 +74,20 @@ function Router() {
   if (view.name === 'auth') {
     /* Déjà connecté : l'écran d'auth n'a plus lieu d'être. */
     if (user) return <RoleHome onNavigate={setView} />;
-    return <AuthPage onBack={goHome} onAuthenticated={goDashboard} />;
+    return (
+      <AuthPage
+        onBack={goHome}
+        onAuthenticated={(u) => {
+          if (u.must_change_password) setView({ name: 'change-password' });
+          else goDashboard();
+        }}
+      />
+    );
+  }
+
+  if (view.name === 'change-password') {
+    if (!user) return <AuthPage onBack={goHome} onAuthenticated={goDashboard} />;
+    return <ChangePasswordPage onDone={goDashboard} />;
   }
 
   /* Tout ce qui suit exige une session. */

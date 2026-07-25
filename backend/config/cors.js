@@ -1,8 +1,10 @@
 import path from 'path';
+import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { setOrigin } from './setOrigin.js';
 
-const rootDir = process.cwd();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const rootDir = path.resolve(__dirname, '..');
 const mode = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
 
 for (const envFile of ['.env', mode]) {

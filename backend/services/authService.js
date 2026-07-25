@@ -140,13 +140,15 @@ export const login = async (data) => {
     throw fail('Ce mot de passe temporaire a déjà été utilisé. Veuillez utiliser votre nouveau mot de passe ou réinitialiser votre accès.', 401);
   }
 
-  /* Si c'était un mdp temporaire, on le marque comme utilisé dès cette connexion. */
-  const wasTemp = doc.temp_password_used === false && doc.created_by === null && doc.last_login_at === null;
+  /* Si c'est la première connexion avec un mdp temporaire (compte créé
+     par registerAndJoin : created_by null, jamais connecté). */
+  const isFirstLogin = doc.last_login_at === null;
+  const isTemp = doc.temp_password_used === false && isFirstLogin;
+
   doc.last_login_at = new Date();
-  if (wasTemp && doc.temp_password) doc.temp_password_used = true;
   await doc.save();
 
-  return { ...fmt(doc), must_change_password: wasTemp && !!doc.temp_password };
+  return { ...fmt(doc), must_change_password: isTemp };
 };
 
 /* Inscription au tournoi depuis la landing page (utilisateur non connecté).
@@ -230,8 +232,18 @@ export const changePassword = async (id, current_password, new_password) => {
   if (String(new_password ?? '').length < 8) {
     throw fail('Le nouveau mot de passe doit contenir au moins 8 caractères.');
   }
-  const doc = await User.findById(id).select('+password_hash');
+  const doc = await User.findById(id).select('+password_hash +temp_password_used');
   if (!doc) throw fail('Utilisateur introuvable.', 404);
+
+  /* Si le compte a encore un mdp temporaire non utilisé, on autorise
+     le changement sans vérifier l'ancien mdp. */
+  if (!doc.temp_password_used) {
+    doc.password_hash = await bcrypt.hash(String(new_password), BCRYPT_ROUNDS);
+    doc.temp_password_used = true;
+    await doc.save();
+    return;
+  }
+
   if (!(await bcrypt.compare(String(current_password ?? ''), doc.password_hash))) {
     throw fail('Mot de passe actuel incorrect.', 401);
   }

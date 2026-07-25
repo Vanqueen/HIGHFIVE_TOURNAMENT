@@ -24,6 +24,7 @@ export interface User {
   organization: string | null;
   created_at: string;
   last_login_at?: string | null;
+  must_change_password?: boolean;
 }
 
 export interface Tournament {
@@ -84,5 +85,6 @@ export type View =
   | { name: 'dashboard' }
   | { name: 'list' }
   | { name: 'create' }
+  | { name: 'change-password' }
   | { name: 'detail'; tournamentId: string }
   | { name: 'standings'; tournamentId: string };
