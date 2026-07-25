@@ -10,8 +10,6 @@ const connectDB = async () => {
 
   try {
     const parsedUri = new URL(uri);
-    console.log(`📡 ..: ${parsedUri.protocol}//${parsedUri.host}${parsedUri.pathname}`);
-    console.log(`📡 MongoDB target: ${parsedUri.protocol}//${parsedUri.host}${parsedUri.pathname}`);
     mongoose.set('strictQuery', true);
     await mongoose.connect(uri, {
       serverApi: ServerApiVersion.v1,
