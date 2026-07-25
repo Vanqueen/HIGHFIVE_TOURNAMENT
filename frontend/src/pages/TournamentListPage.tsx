@@ -190,7 +190,7 @@ export function TournamentListPage({ onNew, onOpen, isAdmin }: {
                   </div>
 
                   {/* footer */}
-                  <div className="mt-auto flex items-center justify-between border-t border-black/5 dark:border-white/10 pt-3 text-xs text-gray-400 dark:text-gray-500 mt-4">
+                  <div className="flex items-center justify-between border-t border-black/5 dark:border-white/10 pt-3 text-xs text-gray-400 dark:text-gray-500 mt-4">
                     <span className="font-mono">{t.total_rounds} rondes</span>
                     {t.status === 'in_progress' && (
                       <span className="font-mono font-bold" style={{ color: GOLD_DARK }}>
