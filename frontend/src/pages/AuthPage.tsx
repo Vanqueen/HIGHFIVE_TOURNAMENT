@@ -15,6 +15,8 @@ import { Logo } from '../components/Logo';
 import { useAuth } from '../hooks/useAuth';
 import type { User } from '../types';
 import chessHeroImage from '../assets/image.png';
+import pageBackgroundImage from '../assets/image8.jpg';
+import kingCutout from '../assets/image14.png';
 
 const INK = '#111114';
 const GOLD = '#C6963B';
@@ -92,218 +94,221 @@ export function AuthPage({
   };
 
   return (
-    <div className="flex min-h-screen bg-[color:var(--app-bg)] text-[color:var(--text-primary)]">
-      {/* ---------------------- Colonne visuelle ---------------------- */}
-      <aside className="relative hidden w-[42%] shrink-0 overflow-hidden lg:block" style={{ backgroundColor: INK }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Background de la page avec image */}
+      <div className="absolute inset-0">
         <img
-          src={chessHeroImage}
+          src={pageBackgroundImage}
           alt=""
-          aria-hidden="true"
-          className="absolute inset-0 h-full w-full object-cover opacity-60"
+          className="h-full w-full object-cover"
         />
-        <div
-          className="absolute inset-0"
-          style={{ background: `linear-gradient(160deg, ${INK}D9 0%, ${INK}A6 45%, ${INK}F2 100%)` }}
-        />
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      </div>
 
-        <div className="relative flex h-full flex-col justify-between p-12 text-white">
-          {/* Une partie du lettrage du logo est sombre : sur ce panneau
-              encre, il lui faut une pastille claire. */}
-          <Logo className="h-16 w-auto" onDark />
+      {/* Modal centré avec deux colonnes */}
+      <div className="relative w-full max-w-6xl min-h-[600px] h-[80vh] overflow-hidden rounded-3xl shadow-2xl">
+        <div className="flex h-full flex-col md:flex-row">
+          {/* Colonne gauche - partie visuelle */}
+          <div className="relative hidden h-full w-2/5 overflow-hidden md:block" style={{ backgroundColor: INK }}>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <img
+                src={kingCutout}
+                alt=""
+                className="h-[90%] w-auto object-contain"
+                style={{
+                  transform: 'perspective(2000px) rotateY(-19deg) rotateX(15deg)',
+                  filter: 'drop-shadow(0 10px 30px rgba(0, 0, 0, 0.84))'
+                }}
+              />
+            </div>
+            <div
+              className="absolute inset-0"
+              style={{ background: `linear-gradient(160deg, ${INK}D9 0%, ${INK}A6 45%, ${INK}F2 100%)` }}
+            />
 
-          <div>
-            <h2 className="max-w-sm text-4xl font-extrabold leading-[1.1] tracking-tight">
-              LÀ OÙ LA STRATÉGIE
-              <br />
-              <span style={{ color: GOLD }}>CRÉE LA LÉGENDE</span>
-            </h2>
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/70">
-              Rejoignez la plateforme dédiée aux passionnés d’échecs : inscrivez-vous aux tournois ou organisez
-              vos propres compétitions.
-            </p>
+            <div className="relative flex h-full flex-col justify-end p-8 text-white">
+              <div className="flex justify-center pt-65">
+                <Logo className="h-25 w-auto" onDark />
+              </div>
 
-            <ul className="mt-8 space-y-3">
-              {[
-                'Inscription en ligne aux tournois',
-                'Appariements et rondes automatisés',
-                'Classements en temps réel',
-              ].map((item) => (
-                <li key={item} className="flex items-center gap-3 text-sm text-white/80">
-                  <span
-                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
-                    style={{ backgroundColor: `${GOLD}33`, color: GOLD }}
-                  >
-                    <ArrowRight className="h-3 w-3" />
-                  </span>
-                  {item}
-                </li>
-              ))}
-            </ul>
+              {/* <div className="mt-auto mb-8">
+                <h2 className="text-3xl font-extrabold leading-[1.1] tracking-tight text-center">
+                  LÀ OÙ LA STRATÉGIE
+                  <br />
+                  <span style={{ color: GOLD }}>CRÉE LA LÉGENDE</span>
+                </h2>
+                <p className="mt-4 text-base leading-relaxed text-center text-white/80">
+                  Rejoignez la plateforme dédiée aux passionnés d'échecs.
+                </p>
+
+                <ul className="mt-8 space-y-3">
+                  {[
+                    'Inscription en ligne aux tournois',
+                    'Appariements automatisés',
+                    'Classements en temps réel',
+                  ].map((item) => (
+                    <li key={item} className="flex items-center gap-3 text-sm text-white/90">
+                      <span
+                        className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
+                        style={{ backgroundColor: `${GOLD}33`, color: GOLD }}
+                      >
+                        <ArrowRight className="h-3 w-3" />
+                      </span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div> */}
+
+              <p className="text-xs text-white/50 text-center">© 2026 VIPP Digital Services.</p>
+            </div>
           </div>
 
-          <p className="text-xs text-white/40">© 2026 VIPP Digital Services. Tous droits réservés.</p>
-        </div>
-      </aside>
+          {/* Colonne droite - formulaire */}
+          <div className="relative flex h-full flex-1 flex-col items-center justify-center p-8 md:p-12 backdrop-blur-xl">
+            {/* Bouton fermer */}
+            <button
+              onClick={onBack}
+              className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-[color:var(--surface-card-strong)] text-[color:var(--text-secondary)] transition-colors hover:bg-[color:var(--border)] hover:text-[color:var(--text-primary)]"
+              aria-label="Fermer"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </button>
 
-      {/* ---------------------- Colonne formulaire ---------------------- */}
-      <main className="flex flex-1 items-center justify-center px-5 py-10 sm:px-10">
-        <div className="w-full max-w-[26rem]">
-          <button
-            onClick={onBack}
-            className="group mb-8 inline-flex items-center gap-2 text-sm font-medium text-[color:var(--text-secondary)] transition-colors hover:text-[color:var(--text-primary)]"
-          >
-            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
-            Retour à l’accueil
-          </button>
+            {/* Logo mobile */}
+            <div className="mb-6 md:hidden">
+              <Logo className="h-20 w-auto" />
+            </div>
 
-          {/* Le panneau visuel disparaît sous 1024px : le logo doit alors
-              apparaître ici, sinon la page n'est plus identifiée. */}
-          <Logo className="mb-7 h-14 w-auto lg:hidden" />
+            {/* En-tête */}
+            <div className="w-full max-w-md text-center">
+              <h1 className="text-3xl font-extrabold tracking-tight text-white">
+                {mode === 'login' ? 'Content de vous revoir' : 'Créer un compte'}
+              </h1>
+              <p className="mt-3 text-base text-white/80">
+                {mode === 'login'
+                  ? 'Connectez-vous pour accéder à votre espace'
+                  : 'Créez votre compte joueur en moins d\'une minute'}
+              </p>
+            </div>
 
-          <h1 className="text-3xl font-extrabold tracking-tight">
-            {mode === 'login' ? 'Content de vous revoir' : 'Créer un compte'}
-          </h1>
-          <p className="mt-2 text-sm text-[color:var(--text-secondary)]">
-            {mode === 'login'
-              ? 'Connectez-vous pour accéder à votre espace, joueur ou organisateur.'
-              : 'Créez votre compte joueur en moins d’une minute.'}
-          </p>
-
-          {/* Bascule connexion / inscription */}
-          <div className="mt-7 flex rounded-full bg-[color:var(--surface-card-strong)] p-1">
-            {(['login', 'register'] as Mode[]).map((value) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => switchMode(value)}
-                className="flex-1 rounded-full px-4 py-2 text-sm font-semibold transition-all"
-                style={
-                  mode === value
-                    ? { backgroundColor: '#fff', color: INK, boxShadow: '0 1px 3px rgba(17,17,20,0.12)' }
-                    : { color: '#6B7280' }
-                }
-              >
-                {value === 'login' ? 'Connexion' : 'Inscription'}
-              </button>
-            ))}
-          </div>
-
-          <form onSubmit={submit} className="mt-7 space-y-4">
-            {mode === 'register' && (
-              <>
-                {/* La plateforme n'ouvre à l'inscription que le compte joueur :
-                    les accès organisateur sont délivrés par l'organisation. */}
-                <div
-                  className="flex items-start gap-3 rounded-2xl border p-3.5"
-                  style={{ borderColor: `${PURPLE}33`, backgroundColor: `${PURPLE}0A` }}
-                >
-                  <span
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
-                    style={{ backgroundColor: PURPLE }}
+            {/* Contenu du formulaire */}
+            <div className="w-full max-w-md">
+              {/* Bascule connexion / inscription */}
+              <div className="flex rounded-full bg-white/20 p-1">
+                {(['login', 'register'] as Mode[]).map((value) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => switchMode(value)}
+                    className="flex-1 rounded-full px-4 py-2.5 text-sm font-semibold transition-all"
+                    style={
+                      mode === value
+                        ? { backgroundColor: '#fff', color: INK, boxShadow: '0 1px 3px rgba(17,17,20,0.12)' }
+                        : { color: 'white' }
+                    }
                   >
-                    <Users className="h-4 w-4 text-white" />
-                  </span>
-                  <div>
-                    <p className="text-sm font-bold">Compte joueur</p>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[color:var(--text-secondary)]">
-                      Inscrivez-vous aux tournois et suivez votre classement. Les accès organisateur sont
-                      créés par l’organisation, pas à l’inscription.
-                    </p>
-                  </div>
-                </div>
+                    {value === 'login' ? 'Connexion' : 'Inscription'}
+                  </button>
+                ))}
+              </div>
+
+              <form onSubmit={submit} className="mt-8 space-y-5">
+                {mode === 'register' && (
+                  <>
+                    <TextField
+                      label="Nom complet"
+                      icon={<UserIcon className="h-4 w-4" />}
+                      value={form.full_name}
+                      onChange={set('full_name')}
+                      placeholder="Jean Dupont"
+                      autoComplete="name"
+                    />
+                  </>
+                )}
 
                 <TextField
-                  label="Nom complet"
-                  icon={<UserIcon className="h-4 w-4" />}
-                  value={form.full_name}
-                  onChange={set('full_name')}
-                  placeholder="Jean Dupont"
-                  autoComplete="name"
+                  label="Adresse e-mail"
+                  icon={<Mail className="h-4 w-4" />}
+                  type="email"
+                  value={form.email}
+                  onChange={set('email')}
+                  placeholder="vous@exemple.com"
+                  autoComplete="email"
                 />
-              </>
-            )}
 
-            <TextField
-              label="Adresse e-mail"
-              icon={<Mail className="h-4 w-4" />}
-              type="email"
-              value={form.email}
-              onChange={set('email')}
-              placeholder="vous@exemple.com"
-              autoComplete="email"
-            />
+                <TextField
+                  label="Mot de passe"
+                  icon={<Lock className="h-4 w-4" />}
+                  type={showPassword ? 'text' : 'password'}
+                  value={form.password}
+                  onChange={set('password')}
+                  placeholder={mode === 'register' ? '8 caractères minimum' : '••••••••'}
+                  autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                  trailing={
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="text-[color:var(--text-tertiary)] transition-colors hover:text-[color:var(--text-primary)]"
+                      aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  }
+                />
 
-            <TextField
-              label="Mot de passe"
-              icon={<Lock className="h-4 w-4" />}
-              type={showPassword ? 'text' : 'password'}
-              value={form.password}
-              onChange={set('password')}
-              placeholder={mode === 'register' ? '8 caractères minimum' : '••••••••'}
-              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-              trailing={
+                {mode === 'register' && (
+                  <TextField
+                    label="Club (facultatif)"
+                    icon={<Users className="h-4 w-4" />}
+                    value={form.club}
+                    onChange={set('club')}
+                    placeholder="Échiquier de Lyon"
+                  />
+                )}
+
+                {error && (
+                  <div
+                    role="alert"
+                    className="flex items-start gap-2 rounded-xl border px-4 py-3 text-sm"
+                    style={{ borderColor: '#FCA5A5', backgroundColor: '#FEF2F2', color: '#B91C1C' }}
+                  >
+                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex w-full items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                  style={{ backgroundColor: INK }}
+                >
+                  {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {loading
+                    ? mode === 'login'
+                      ? 'CONNEXION…'
+                      : 'CRÉATION DU COMPTE…'
+                    : mode === 'login'
+                      ? 'SE CONNECTER'
+                      : 'CRÉER MON COMPTE'}
+                </button>
+              </form>
+
+              <p className="mt-6 text-center text-sm text-white/80">
+                {mode === 'login' ? 'Pas encore de compte ? ' : 'Vous avez déjà un compte ? '}
                 <button
                   type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  className="text-[color:var(--text-tertiary)] transition-colors hover:text-[color:var(--text-primary)]"
-                  aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                  onClick={() => switchMode(mode === 'login' ? 'register' : 'login')}
+                  className="font-bold underline-offset-4 hover:underline text-white"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {mode === 'login' ? 'Inscrivez-vous' : 'Connectez-vous'}
                 </button>
-              }
-            />
-
-            {mode === 'register' && (
-              <TextField
-                label="Club (facultatif)"
-                icon={<Users className="h-4 w-4" />}
-                value={form.club}
-                onChange={set('club')}
-                placeholder="Échiquier de Lyon"
-              />
-            )}
-
-            {error && (
-              <div
-                role="alert"
-                className="flex items-start gap-2 rounded-xl border px-3.5 py-3 text-sm"
-                style={{ borderColor: '#FCA5A5', backgroundColor: '#FEF2F2', color: '#B91C1C' }}
-              >
-                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-                <span>{error}</span>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-              style={{ backgroundColor: INK }}
-            >
-              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {loading
-                ? mode === 'login'
-                  ? 'CONNEXION…'
-                  : 'CRÉATION DU COMPTE…'
-                : mode === 'login'
-                  ? 'SE CONNECTER'
-                  : 'CRÉER MON COMPTE'}
-            </button>
-          </form>
-
-          <p className="mt-6 text-center text-sm text-[color:var(--text-secondary)]">
-            {mode === 'login' ? 'Pas encore de compte ? ' : 'Vous avez déjà un compte ? '}
-            <button
-              type="button"
-              onClick={() => switchMode(mode === 'login' ? 'register' : 'login')}
-              className="font-bold underline-offset-4 hover:underline"
-              style={{ color: GOLD }}
-            >
-              {mode === 'login' ? 'Inscrivez-vous' : 'Connectez-vous'}
-            </button>
-          </p>
+              </p>
+            </div>
+          </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
@@ -320,14 +325,14 @@ function TextField({
 } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-[color:var(--text-secondary)]">{label}</span>
+      <span className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-white/90">{label}</span>
       <span className="relative block">
-        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[color:var(--text-tertiary)]">{icon}</span>
+        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/60">{icon}</span>
         <input
           {...inputProps}
-          className="w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-card-strong)] py-3 pl-11 pr-11 text-sm outline-none transition-all placeholder:text-[color:var(--text-tertiary)] focus:border-[color:var(--accent)] focus:ring-2 focus:ring-[color:var(--accent)]"
+          className="w-full rounded-xl border border-white/30 bg-white/10 py-3 pl-11 pr-11 text-sm outline-none transition-all placeholder:text-white/50 text-white focus:border-white/50 focus:ring-2 focus:ring-white/20"
         />
-        {trailing && <span className="absolute right-4 top-1/2 -translate-y-1/2">{trailing}</span>}
+        {trailing && <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60">{trailing}</span>}
       </span>
     </label>
   );

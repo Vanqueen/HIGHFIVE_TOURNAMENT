@@ -266,6 +266,22 @@ input:-webkit-autofill:focus {
   }
 }
 
+/* Pages secondaires de la landing : pleine hauteur, pas de scroll de page */
+.landing-scale:not(.landing-fixed) {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* Scaling du header uniquement (espaces connectés) */
+.header-scale {
+  font-size: 10px;
+}
+@media (min-width: 1024px) {
+  .header-scale {
+    font-size: clamp(6px, min(0.965vh, 0.651vw), 12px);
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /*  Espaces connectés — vocabulaire « feuille de résultats »           */
 /* ------------------------------------------------------------------ */
@@ -320,4 +336,14 @@ input:-webkit-autofill:focus {
 @keyframes carousel-exit-right {
   from { transform: translateX(0); }
   to   { transform: translateX(100%); }
+}
+
+/* Animation 3D flottante pour l'image du roi */
+@keyframes float3d {
+  0%, 100% {
+    transform: perspective(1000px) rotateY(-15deg) rotateX(5deg) translateY(0);
+  }
+  50% {
+    transform: perspective(1000px) rotateY(15deg) rotateX(-5deg) translateY(-10px);
+  }
 }

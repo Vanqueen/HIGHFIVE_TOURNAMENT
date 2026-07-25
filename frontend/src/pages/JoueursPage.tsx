@@ -42,79 +42,81 @@ export function JoueursPage() {
   });
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-10" style={{ color: INK }}>
-      <div className="mb-8">
-        <h1 className="text-3xl font-extrabold tracking-tight">JOUEURS</h1>
-        <p className="mt-2 text-sm text-gray-500">Tous les joueurs inscrits aux tournois de la plateforme.</p>
+    <div className="mx-auto w-full max-w-[120em] px-[3.2em] py-[3.6em]" style={{ color: INK }}>
+      <div className="mb-[2.8em]">
+        <h1 className="text-[3.2em] font-extrabold tracking-[-0.02em]">JOUEURS</h1>
+        <p className="mt-[0.6em] text-[1.4em] text-gray-500">
+          Tous les joueurs inscrits aux tournois de la plateforme.
+        </p>
       </div>
 
       {/* Barre de recherche */}
-      <div className="mb-5 flex items-center gap-3 rounded-xl border border-gray-200 bg-white dark:bg-gray-700 px-4 py-3 shadow-sm">
-        <Search className="h-4 w-4 shrink-0 text-gray-400" />
+      <div className="mb-[2em] flex items-center gap-[1em] rounded-[1.2em] border border-gray-200 bg-white px-[1.6em] py-[1.2em] shadow-[0_0.2em_0.8em_-0.4em_rgba(17,17,20,0.1)]">
+        <Search className="h-[1.6em] w-[1.6em] shrink-0 text-gray-400" />
         <input
           type="text"
           placeholder="Rechercher un joueur ou un club…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 bg-transparent text-sm outline-none placeholder:text-gray-400"
+          className="flex-1 bg-transparent text-[1.3em] outline-none placeholder:text-gray-400"
         />
         {search && (
-          <button onClick={() => setSearch('')} className="text-xs text-gray-400 hover:text-gray-700">✕</button>
+          <button onClick={() => setSearch('')} className="text-[1.2em] text-gray-400 hover:text-gray-700">✕</button>
         )}
       </div>
 
       {/* Stats */}
       {!loading && (
-        <div className="mb-5 flex gap-6">
-          <div className="flex items-center gap-2 text-sm">
-            <Users className="h-4 w-4" style={{ color: GOLD }} />
-            <span><strong className="font-bold text-gray-600">{players.length}</strong> <span className="text-gray-500 dark:text-gray-400">joueurs</span></span>
+        <div className="mb-[2em] flex gap-[2.4em]">
+          <div className="flex items-center gap-[0.7em] text-[1.3em] text-gray-500">
+            <Users className="h-[1.4em] w-[1.4em]" style={{ color: GOLD }} />
+            <span><strong className="font-bold" style={{ color: INK }}>{players.length}</strong> joueurs</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-gray-500">
-            <Trophy className="h-4 w-4" style={{ color: GOLD }} />
-            <span><strong className="font-bold text-gray-600">{tournaments.length}</strong> <span className="text-gray-500 dark:text-gray-400">tournois</span></span>
+          <div className="flex items-center gap-[0.7em] text-[1.3em] text-gray-500">
+            <Trophy className="h-[1.4em] w-[1.4em]" style={{ color: GOLD }} />
+            <span><strong className="font-bold" style={{ color: INK }}>{tournaments.length}</strong> tournois</span>
           </div>
         </div>
       )}
 
       {loading ? (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {[...Array(8)].map((_, i) => <div key={i} className="skeleton h-28 rounded-2xl" />)}
+        <div className="grid gap-[1.4em] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {[...Array(8)].map((_, i) => <div key={i} className="skeleton h-[11em] rounded-[1.6em]" />)}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="flex h-48 items-center justify-center rounded-2xl border border-dashed border-gray-200 text-sm text-gray-400">
+        <div className="flex h-[20em] items-center justify-center rounded-[1.6em] border border-dashed border-gray-200 text-[1.4em] text-gray-400">
           {search ? 'Aucun résultat' : 'Aucun joueur pour le moment'}
         </div>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-[1.4em] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filtered.map((p) => (
             <div
               key={`${p.id}-${p.tournament?.id}`}
-              className="flex flex-col gap-3 rounded-2xl border border-black/5 bg-white dark:bg-gray-700 p-5 shadow-sm"
+              className="flex flex-col gap-[1em] rounded-[1.6em] border border-black/5 bg-white p-[1.8em] shadow-[0_0.4em_1.6em_-0.8em_rgba(17,17,20,0.12)]"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-[1em]">
                 <div
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-extrabold text-white"
+                  className="flex h-[4em] w-[4em] shrink-0 items-center justify-center rounded-full text-[1.4em] font-extrabold text-white"
                   style={{ backgroundColor: INK }}
                 >
                   {p.name.slice(0, 1).toUpperCase()}
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-extrabold text-gray-900 dark:text-gray-400">{p.name}</p>
+                  <p className="truncate text-[1.4em] font-extrabold">{p.name}</p>
                   {p.club && (
-                    <p className="flex items-center gap-1 truncate text-xs text-gray-500">
-                      <MapPin className="h-3 w-3 shrink-0" style={{ color: GOLD }} />
+                    <p className="flex items-center gap-[0.4em] truncate text-[1.1em] text-gray-500">
+                      <MapPin className="h-[1em] w-[1em] shrink-0" style={{ color: GOLD }} />
                       {p.club}
                     </p>
                   )}
                 </div>
               </div>
-              <div className="flex items-center justify-between border-t border-gray-50 pt-3 text-xs">
+              <div className="flex items-center justify-between border-t border-gray-50 pt-[1em] text-[1.15em]">
                 <span className="font-mono font-bold" style={{ color: GOLD }}>
                   {p.rating > 0 ? `Elo ${p.rating}` : 'Non classé'}
                 </span>
                 {p.tournament && (
-                  <span className="truncate text-right text-gray-400">{p.tournament.name}</span>
+                  <span className="truncate text-right text-[0.95em] text-gray-400">{p.tournament.name}</span>
                 )}
               </div>
             </div>

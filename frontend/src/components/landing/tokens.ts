@@ -5,6 +5,6 @@ export const PURPLE = '#5B3E96';
 export const GREEN = '#3E9B4F';
 export const GRAY = '#6B7280';
 
-export const NAV_ITEMS = ['Accueil', 'Tournois', 'Calendrier', 'Classements', 'Joueurs', 'À propos'] as const;
+export const NAV_ITEMS = ['Accueil', 'Tournois', 'Calendrier', 'Classements', 'À propos'] as const;
 export type NavItem = typeof NAV_ITEMS[number];
 export const THUMB_CROPS = ['22% 62%', '62% 38%', '84% 70%', '44% 80%'];

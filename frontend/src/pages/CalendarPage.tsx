@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import bgImage from '../assets/image6.jpg';
 import {
   ChevronLeft,
   ChevronRight,
@@ -67,16 +68,13 @@ function EventRow({ tournament, date, today, onOpen }: {
   return (
     <button
       onClick={() => onOpen(tournament.id)}
-      className="group w-full rounded-2xl border border-black/5 bg-white dark:bg-gray-700 p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-[0_18px_36px_-28px_rgba(17,17,20,0.6)]"
+      className="group w-full rounded-2xl border border-black/5 dark:border-white/10 bg-white dark:bg-gray-800/90 p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-[0_18px_36px_-28px_rgba(17,17,20,0.6)]"
     >
       <div className="flex items-start gap-4">
         {/* Pastille date : le repère chiffré, comme sur une feuille de ronde */}
         {date && (
-          <div
-            className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl border border-black/5"
-            style={{ backgroundColor: '#F7F6F4' }}
-          >
-            <span className="tabular font-mono text-xl font-semibold leading-none">{date.getDate()}</span>
+          <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl border border-black/5 dark:border-white/10 bg-black/5 dark:bg-white/10">
+            <span className="tabular font-mono text-xl font-semibold leading-none dark:text-gray-100">{date.getDate()}</span>
             <span className="mt-1 font-mono text-[0.6rem] uppercase tracking-[0.14em] text-gray-400">
               {MONTHS[date.getMonth()].slice(0, 3)}
             </span>
@@ -99,7 +97,7 @@ function EventRow({ tournament, date, today, onOpen }: {
             )}
           </div>
 
-          <h4 className="mt-2 truncate font-display text-2xl font-bold uppercase leading-none tracking-tight">
+          <h4 className="mt-2 truncate font-display text-2xl font-bold uppercase leading-none tracking-tight dark:text-white">
             {tournament.name}
           </h4>
 
@@ -184,11 +182,23 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
   };
 
   return (
-    <div style={{ color: INK }}>
+    <div
+      className="relative flex flex-col dark:text-gray-100"
+      style={{
+        fontSize: '16px',
+        color: INK,
+        height: '100%',
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+      {/* overlay flouté */}
+      <div className="pointer-events-none absolute inset-0 dark:bg-black/60 bg-white/55" style={{ backdropFilter: 'blur(6px)' }} />
       {/* ============================================================
-          Bandeau — le calendrier s'annonce avant de se lire
+          Bandeau
           ============================================================ */}
-      <section className="relative overflow-hidden" style={{ backgroundColor: INK }}>
+      <section className="relative z-10 flex-none overflow-hidden" style={{ backgroundColor: INK }}>
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.06]"
           style={{
@@ -204,26 +214,24 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
           style={{ background: `radial-gradient(ellipse 60% 100% at 82% 0%, ${GOLD}2b 0%, transparent 62%)` }}
         />
 
-        <div className="relative mx-auto max-w-7xl px-6 pb-24 pt-16 lg:px-12 lg:pb-28">
-          <p className="font-mono text-[0.7rem] font-semibold uppercase tracking-[0.34em]" style={{ color: GOLD }}>
-            Calendrier des compétitions
-          </p>
-          <div className="mt-6 flex flex-wrap items-end justify-between gap-8">
-            <h1 className="font-display text-6xl font-bold uppercase leading-[0.9] tracking-tight text-white sm:text-7xl">
-              Chaque ronde
-              <br />
-              <span style={{ color: GOLD }}>a son heure</span>
-            </h1>
+        <div className="relative mx-auto max-w-7xl px-6 py-5 lg:px-12">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.34em]" style={{ color: GOLD }}>
+                Calendrier des compétitions
+              </p>
+              <h1 className="mt-1 font-display text-2xl font-bold uppercase leading-tight tracking-tight text-white sm:text-3xl">
+                Chaque ronde <span style={{ color: GOLD }}>a son heure</span>
+              </h1>
+            </div>
 
             {nextUp && (
-              <div className="rounded-2xl border border-white/10 bg-white dark:bg-gray-700/[0.04] px-6 py-5 backdrop-blur-sm">
-                <p className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-white/40">
-                  Prochain rendez-vous
-                </p>
-                <p className="mt-2 font-display text-2xl font-bold uppercase leading-none tracking-tight text-white">
+              <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm">
+                <p className="font-mono text-[0.58rem] uppercase tracking-[0.2em] text-white/40">Prochain rendez-vous</p>
+                <p className="mt-1 font-display text-base font-bold uppercase leading-none tracking-tight text-white">
                   {nextUp.tournament.name}
                 </p>
-                <p className="tabular mt-2 font-mono text-xs" style={{ color: GOLD }}>
+                <p className="tabular mt-1 font-mono text-[0.65rem]" style={{ color: GOLD }}>
                   {longDate(nextUp.date)} · {countdown(daysFromToday(nextUp.date, today))}
                 </p>
               </div>
@@ -233,15 +241,16 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
       </section>
 
       {/* ============================================================
-          Grille + panneau latéral
+          Grille + panneau latéral — remplit tout l'espace restant
           ============================================================ */}
-      <div className="mx-auto -mt-16 max-w-7xl px-6 pb-24 lg:px-12">
-        <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
+      <div className="relative z-10 min-h-0 flex-1 overflow-hidden">
+        <div className="h-full w-full px-6 py-4 lg:px-10">
+          <div className="grid h-full gap-4 lg:grid-cols-[1.5fr_1fr]">
           {/* ---------------------------- Mois ---------------------------- */}
-          <div className="overflow-hidden rounded-[1.75rem] border border-black/5 bg-white dark:bg-gray-700 shadow-[0_30px_60px_-45px_rgba(17,17,20,0.7)]">
-            <div className="flex items-center justify-between border-b border-black/5 px-7 py-6">
+          <div className="flex flex-col overflow-hidden rounded-[1.75rem] border border-black/5 dark:border-white/10 bg-white dark:bg-gray-800/90 shadow-[0_30px_60px_-45px_rgba(17,17,20,0.7)]">
+            <div className="flex items-center justify-between border-b border-black/5 dark:border-white/10 px-5 py-3">
               <div>
-                <h2 className="font-display text-4xl font-bold uppercase leading-none tracking-tight">
+                <h2 className="font-display text-2xl font-bold uppercase leading-none tracking-tight dark:text-white">
                   {MONTHS[month]}
                 </h2>
                 <p className="tabular mt-1.5 font-mono text-xs tracking-[0.2em] text-gray-400">{year}</p>
@@ -250,21 +259,21 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
               <div className="flex items-center gap-2">
                 <button
                   onClick={goToday}
-                  className="rounded-full border border-black/10 px-4 py-2 text-[0.7rem] font-bold uppercase tracking-[0.12em] transition-colors hover:border-black/30"
+                  className="rounded-full border border-black/10 dark:border-white/20 dark:text-gray-200 px-4 py-2 text-[0.7rem] font-bold uppercase tracking-[0.12em] transition-colors hover:border-black/30 dark:hover:border-white/40"
                 >
                   Aujourd&apos;hui
                 </button>
                 <button
                   onClick={() => shiftMonth(-1)}
                   aria-label="Mois précédent"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 transition-colors hover:border-black/30"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 dark:border-white/20 dark:text-gray-200 transition-colors hover:border-black/30 dark:hover:border-white/40"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => shiftMonth(1)}
                   aria-label="Mois suivant"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 transition-colors hover:border-black/30"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 dark:border-white/20 dark:text-gray-200 transition-colors hover:border-black/30 dark:hover:border-white/40"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>
@@ -272,7 +281,7 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
             </div>
 
             {/* En-tête des jours */}
-            <div className="grid grid-cols-7 border-b border-black/5 px-3 py-3">
+            <div className="grid grid-cols-7 border-b border-black/5 dark:border-white/10 px-3 py-1.5">
               {WEEKDAYS.map((d) => (
                 <div
                   key={d}
@@ -284,7 +293,7 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
             </div>
 
             {/* Cellules */}
-            <div key={`${year}-${month}`} className="grid grid-cols-7 gap-1.5 p-3">
+            <div key={`${year}-${month}`} className="grid flex-1 grid-cols-7 gap-1 p-2" style={{ gridTemplateRows: 'repeat(6, 1fr)' }}>
               {cells.map((date, i) => {
                 const key = dayKey(date);
                 const outside = date.getMonth() !== month;
@@ -299,18 +308,18 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
                     key={key}
                     onClick={() => setSelected(isSelected ? null : key)}
                     disabled={events.length === 0}
-                    className="cell-in relative flex aspect-square flex-col items-center justify-center rounded-xl transition-colors disabled:cursor-default"
+                    className={`cell-in relative flex h-full flex-col items-center justify-center rounded-xl transition-colors disabled:cursor-default${!isSelected && events.length ? ' bg-black/5 dark:bg-white/10' : ''}`}
                     style={{
                       animationDelay: `${i * 6}ms`,
-                      backgroundColor: isSelected ? INK : events.length ? '#F7F6F4' : 'transparent',
+                      backgroundColor: isSelected ? INK : undefined,
                       boxShadow: isToday && !isSelected ? `inset 0 0 0 1.5px ${GOLD}` : undefined,
                       opacity: outside ? 0.32 : 1,
                     }}
                   >
                     <span
-                      className="tabular font-mono text-sm"
+                      className={`tabular font-mono text-sm ${!isSelected && !outside ? 'text-gray-800 dark:text-gray-100' : ''}`}
                       style={{
-                        color: isSelected ? '#fff' : outside ? '#9CA3AF' : INK,
+                        color: isSelected ? '#fff' : outside ? '#9CA3AF' : undefined,
                         fontWeight: events.length ? 600 : 400,
                       }}
                     >
@@ -345,7 +354,7 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
             </div>
 
             {/* Légende */}
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-black/5 px-7 py-5">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-1.5 border-t border-black/5 dark:border-white/10 px-5 py-3">
               {[
                 { label: 'Inscriptions ouvertes', color: GREEN },
                 { label: 'En cours', color: GOLD_DARK },
@@ -364,27 +373,27 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
           </div>
 
           {/* -------------------------- Panneau -------------------------- */}
-          <aside className="space-y-5">
+          <aside className="overflow-y-auto space-y-5 pb-4">
             {loading ? (
               <>
                 <div className="skeleton h-32 rounded-2xl" />
                 <div className="skeleton h-32 rounded-2xl" />
               </>
             ) : selectedDate ? (
-              <section className="rounded-[1.75rem] border border-black/5 bg-white dark:bg-gray-700 p-6 shadow-[0_24px_50px_-42px_rgba(17,17,20,0.6)]">
+              <section className="rounded-[1.75rem] border border-black/5 dark:border-white/10 bg-white dark:bg-gray-800/90 p-6 shadow-[0_24px_50px_-42px_rgba(17,17,20,0.6)]">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-gray-400">
                       Journée sélectionnée
                     </p>
-                    <h3 className="mt-2 font-display text-3xl font-bold uppercase leading-none tracking-tight">
+                    <h3 className="mt-2 font-display text-3xl font-bold uppercase leading-none tracking-tight dark:text-white">
                       {longDate(selectedDate)}
                     </h3>
                   </div>
                   <button
                     onClick={() => setSelected(null)}
                     aria-label="Fermer la journée"
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-black/10 text-gray-400 transition-colors hover:border-black/30 hover:text-gray-700"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-black/10 dark:border-white/20 text-gray-400 dark:text-gray-300 transition-colors hover:border-black/30 dark:hover:border-white/40 hover:text-gray-700 dark:hover:text-white"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
@@ -445,7 +454,7 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
                   </div>
 
                   {upcoming.length === 0 ? (
-                    <div className="rounded-2xl border border-dashed border-black/10 px-6 py-12 text-center">
+                    <div className="rounded-2xl border border-dashed border-black/10 dark:border-white/20 px-6 py-12 text-center">
                       <Radio className="mx-auto mb-3 h-6 w-6" style={{ color: GOLD }} />
                       <p className="text-sm text-gray-400">
                         Aucune date annoncée pour l&apos;instant. Les prochaines éditions s&apos;afficheront ici.
@@ -489,6 +498,7 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
               </>
             )}
           </aside>
+        </div>
         </div>
       </div>
     </div>

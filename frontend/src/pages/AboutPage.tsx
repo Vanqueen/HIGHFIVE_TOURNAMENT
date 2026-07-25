@@ -4,7 +4,7 @@ import { ArrowRight, Trophy, Users, ShieldCheck, Radio, Sparkles } from 'lucide-
 import { INK, GOLD, GOLD_DARK, PURPLE, GREEN } from '../components/landing/tokens';
 import type { User as AuthUser } from '../types';
 import boardImage from '../assets/image.png';
-import kingCutout from '../assets/image2.jpg';
+import kingCutout from '../assets/image2.png';
 import knightCutout from '../assets/image3.jpg';
 import queenBoard from '../assets/image4.jpg';
 import kingsDuel from '../assets/image5.jpg';

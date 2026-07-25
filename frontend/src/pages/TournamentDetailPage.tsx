@@ -428,8 +428,9 @@ function TabLink({
   return (
     <button
       onClick={onClick}
-      className="focus-ring relative flex items-center gap-2 px-4 py-2.5 font-display text-sm font-semibold uppercase tracking-[0.1em] transition-colors"
-      style={{ color: active ? INK : '#9A9AA0' }}
+      className={`focus-ring relative flex items-center gap-2 px-4 py-2.5 font-display text-sm font-semibold uppercase tracking-[0.1em] transition-colors ${
+        active ? 'text-[#111114] dark:text-[#F5F4F8]' : 'text-[#9A9AA0] dark:text-[#6B6B75]'
+      }`}
     >
       {icon}
       {label}

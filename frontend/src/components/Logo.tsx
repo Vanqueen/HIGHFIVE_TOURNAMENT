@@ -1,4 +1,5 @@
 import logoImage from '../assets/logo.png';
+import logoDarkImage from '../assets/logo4.png';
 
 /* Le logo porte déjà son propre texte : on ne lui accole jamais de
    wordmark, sinon deux noms cohabitent dans le même bloc.
@@ -13,10 +14,8 @@ export function Logo({
   onDark?: boolean;
 }) {
   const image = (
-    <img src={logoImage} alt="VIPP Digital Services" className={className} draggable={false} />
+    <img src={onDark ? logoDarkImage : logoImage} alt="VIPP Digital Services" className={className} draggable={false} />
   );
 
-  if (!onDark) return image;
-
-  return <span className="inline-flex rounded-xl bg-white dark:bg-gray-700 px-4 py-3">{image}</span>;
+  return image;
 }
