@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTournaments } from '../hooks/useTournaments';
+import { useAuth } from '../hooks/useAuth';
 import type { User as AuthUser } from '../types';
 import type { Tournament } from '../types';
 import { LandingHeader } from '../components/landing/LandingHeader';
@@ -23,15 +24,20 @@ export function LandingPage({
   onTournamentClick,
   theme, 
   onToggleTheme,
+  initialNav,
+  onNavConsumed,
 }: {
   user: AuthUser | null;
   onLogin: () => void;
   onDashboard: () => void;
   onTournamentClick: (id: string) => void;
   theme: 'dark' | 'light'; 
-  onToggleTheme: () => void
+  onToggleTheme: () => void;
+  initialNav?: NavItem;
+  onNavConsumed?: () => void;
 }) {
   const { tournaments, loading } = useTournaments();
+  const { logout } = useAuth();
   const [activeNav, setActiveNav] = useState<NavItem>('Accueil');
   const [featuredIndex, setFeaturedIndex] = useState(0);
   const [prevIndex, setPrevIndex] = useState<number | null>(null);
@@ -48,6 +54,14 @@ export function LandingPage({
       setRegisterTournament(t);
     }
   };
+
+  /* Consommer initialNav au montage ou quand il change */
+  useEffect(() => {
+    if (initialNav) {
+      setActiveNav(initialNav);
+      onNavConsumed?.();
+    }
+  }, [initialNav]);
 
   const goTo = (next: number, dir: 'left' | 'right' = 'left') => {
     if (animating || next === featuredIndex || tournaments.length <= 1) return;
@@ -87,7 +101,7 @@ export function LandingPage({
 
   return (
     <div
-      className={isHome ? 'landing-scale landing-fixed flex flex-col bg-[color:var(--app-bg)] dark:bg-[#251c3a]' : 'landing-scale min-h-screen bg-[color:var(--app-bg)] dark:bg-[#251c3a]'}
+      className={isHome ? 'landing-scale landing-fixed flex flex-col' : 'landing-scale flex flex-col overflow-hidden'}
       style={{ color: INK }}
     >
       {registerTournament && (
@@ -101,6 +115,7 @@ export function LandingPage({
         user={user}
         onLogin={onLogin}
         onDashboard={onDashboard}
+        onLogout={logout}
         activeNav={activeNav}
         onNav={setActiveNav}
         theme={theme}
@@ -118,6 +133,7 @@ export function LandingPage({
             goTo={goTo}
             onTournamentClick={handleTournamentClick}
             onSeeCalendar={() => setActiveNav('Calendrier')}
+            onSeeTournaments={() => setActiveNav('Tournois')}
           />
           <UpcomingTournamentsSection
             tournaments={tournaments}
@@ -131,32 +147,26 @@ export function LandingPage({
         </div>
       )}
 
-      {activeNav === 'Tournois' && (
-        <TournamentListPage
-          onNew={onLogin}
-          onOpen={handleTournamentClick}
-        />
-      )}
-
-      {activeNav === 'Calendrier' && (
-        <CalendarPage onTournamentClick={handleTournamentClick} />
-      )}
-
-      {activeNav === 'Classements' && (
-        <ClassementsPage onTournamentClick={onTournamentClick} />
-      )}
-
-      {activeNav === 'Joueurs' && (
-        <JoueursPage />
-      )}
-
-      {activeNav === 'À propos' && (
-        <AboutPage
-          user={user}
-          onLogin={onLogin}
-          onDashboard={onDashboard}
-          onSeeTournaments={() => setActiveNav('Tournois')}
-        />
+      {activeNav !== 'Accueil' && (
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          {activeNav === 'Tournois' && (
+            <TournamentListPage onNew={onLogin} onOpen={handleTournamentClick} />
+          )}
+          {activeNav === 'Calendrier' && (
+            <CalendarPage onTournamentClick={handleTournamentClick} />
+          )}
+          {activeNav === 'Classements' && (
+            <ClassementsPage onTournamentClick={onTournamentClick} />
+          )}
+          {activeNav === 'À propos' && (
+            <AboutPage
+              user={user}
+              onLogin={onLogin}
+              onDashboard={onDashboard}
+              onSeeTournaments={() => setActiveNav('Tournois')}
+            />
+          )}
+        </div>
       )}
     </div>
   );

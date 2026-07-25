@@ -1,4 +1,4 @@
-import { Trophy, Users, Globe2, Calendar, ChevronRight } from 'lucide-react';
+import { Trophy, Users, Globe2, Calendar, ChevronRight, MapPin } from 'lucide-react';
 import { INK, GOLD } from './tokens';
 import { FeaturedCarousel } from './FeaturedCarousel';
 import type { Tournament } from '../../types';
@@ -40,6 +40,7 @@ export function HeroSection({
   goTo,
   onTournamentClick,
   onSeeCalendar,
+  onSeeTournaments,
 }: {
   tournaments: Tournament[];
   featuredIndex: number;
@@ -49,9 +50,8 @@ export function HeroSection({
   goTo: (next: number, dir: 'left' | 'right') => void;
   onTournamentClick: (id: string) => void;
   onSeeCalendar: () => void;
+  onSeeTournaments: () => void;
 }) {
-  const scrollToTournaments = () =>
-    document.getElementById('prochains-tournois')?.scrollIntoView({ behavior: 'smooth' });
 
   return (
     <section className="relative flex min-h-0 flex-1 items-center overflow-hidden bg-white dark:bg-gray-700">
@@ -86,7 +86,7 @@ export function HeroSection({
 
           <div className="mt-[2.6em] flex flex-wrap gap-[1.4em]">
             <button
-              onClick={scrollToTournaments}
+              onClick={onSeeTournaments}
               className="flex items-center gap-[0.8em] rounded-full px-[2.4em] py-[1.25em] text-[1.3em] font-bold tracking-[0.06em] text-white transition-opacity hover:opacity-90"
               style={{ backgroundColor: INK }}
             >
@@ -103,11 +103,11 @@ export function HeroSection({
           </div>
 
           <div className="mt-[3.4em] flex items-center">
-            <StatItem icon={<Users className="h-[2.4em] w-[2.4em]" />} value="" label="JOUEURS" />
+            <StatItem icon={<Users className="h-[2.4em] w-[2.4em]" />} value="PLUSIEURS" label="JOUEURS" />
             <Divider />
             <StatItem icon={<Trophy className="h-[2.4em] w-[2.4em]" />} value="1er" label="TOURNOIS" />
             <Divider />
-            <StatItem icon={<Globe2 className="h-[2.4em] w-[2.4em]" />} value="12" label="PAYS" />
+            <StatItem icon={<MapPin className="h-[2.4em] w-[2.4em]" />} value="À" label="VIPP" />
             <Divider />
             <StatItem icon={<Calendar className="h-[2.4em] w-[2.4em]" />} value="À VENIR" label="DE GRANDES ÉDITIONS" />
           </div>

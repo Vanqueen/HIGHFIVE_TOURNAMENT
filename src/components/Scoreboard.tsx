@@ -178,7 +178,7 @@ export function SectionHead({
       {count !== undefined && (
         <span className="font-mono text-xs font-semibold text-gray-400 tabular">{String(count).padStart(2, '0')}</span>
       )}
-      <span className="h-px flex-1" style={{ backgroundColor: RULE }} />
+      <span className="h-px flex-1 bg-black/[0.09] dark:bg-white/[0.12]" />
       {action}
     </div>
   );

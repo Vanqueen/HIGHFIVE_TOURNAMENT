@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { Upload, X, FileText, AlertCircle, CheckCircle2, Loader2, Download } from 'lucide-react';
 import { api } from '../lib/api';
 import { GOLD, INK, RULE } from './Scoreboard';
+import ExcelJS from 'exceljs';
 
 interface ImportRow {
   name: string;
@@ -143,18 +144,131 @@ export function ImportPlayersModal({
     }
   };
 
-  const downloadTemplate = (format: 'csv' | 'json') => {
-    const csv = 'name,email,club,rating\nCamille Rousset,camille@exemple.com,Échiquier de Lyon,1800\nMarc Dupont,,Club de Paris,1500';
-    const json = JSON.stringify([
-      { name: 'Camille Rousset', email: 'camille@exemple.com', club: 'Échiquier de Lyon', rating: 1800 },
-      { name: 'Marc Dupont', club: 'Club de Paris', rating: 1500 },
-    ], null, 2);
-    const content = format === 'csv' ? csv : json;
-    const mime = format === 'csv' ? 'text/csv' : 'application/json';
+  const downloadTemplate = async (format: 'xlsx' | 'csv' | 'json') => {
+    const players = [
+      { name: 'John Doe',  email: 'john.doe@exemple.com',  club: 'john doe club',    rating: 1000 }
+    
+    ];
+
+    if (format === 'xlsx') {
+      const wb = new ExcelJS.Workbook();
+      wb.creator = 'HIGHFIVE TOURNAMENT';
+      wb.created = new Date();
+
+      const ws = wb.addWorksheet('Joueurs', {
+        views: [{ state: 'frozen', ySplit: 3 }],
+      });
+
+      ws.columns = [
+        { key: 'name',   width: 28 },
+        { key: 'email',  width: 34 },
+        { key: 'club',   width: 28 },
+        { key: 'rating', width: 14 },
+      ];
+
+      // Ligne 1 : titre
+      ws.mergeCells('A1:D1');
+      const titleCell = ws.getCell('A1');
+      titleCell.value = '♞  HIGHFIVE TOURNAMENT — Modèle d’import joueurs';
+      titleCell.font      = { name: 'Calibri', size: 14, bold: true, color: { argb: 'FFFFFFFF' } };
+      titleCell.fill      = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF111114' } };
+      titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+      ws.getRow(1).height = 36;
+
+      // Ligne 2 : sous-titre
+      ws.mergeCells('A2:D2');
+      const subCell = ws.getCell('A2');
+      subCell.value     = 'Colonnes obligatoires : name, rating • Optionnelles : email, club • Remplissez à partir de la ligne 4';
+      subCell.font      = { name: 'Calibri', size: 9, italic: true, color: { argb: 'FFC6963B' } };
+      subCell.fill      = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1C1C20' } };
+      subCell.alignment = { vertical: 'middle', horizontal: 'center' };
+      ws.getRow(2).height = 20;
+
+      // Ligne 3 : en-têtes
+      const headers = ['NOM COMPLET', 'EMAIL', 'CLUB', 'ELO / CLASSEMENT'];
+      headers.forEach((label, i) => {
+        const cell = ws.getCell(3, i + 1);
+        cell.value     = label;
+        cell.font      = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
+        cell.fill      = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFC6963B' } };
+        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        cell.border    = { bottom: { style: 'medium', color: { argb: 'FFA87A2C' } } };
+      });
+      ws.getRow(3).height = 24;
+
+      // Lignes de données
+      players.forEach((p, i) => {
+        const row = ws.addRow([p.name, p.email, p.club, p.rating]);
+        row.height = 20;
+        const bgArgb = i % 2 === 0 ? 'FFFAFAF8' : 'FFFFFFFF';
+        row.eachCell({ includeEmpty: true }, (cell, colNum) => {
+          cell.fill      = { type: 'pattern', pattern: 'solid', fgColor: { argb: bgArgb } };
+          cell.font      = { name: 'Calibri', size: 10, color: { argb: 'FF111114' } };
+          cell.border    = { bottom: { style: 'thin', color: { argb: 'FFE5E5E5' } }, right: { style: 'thin', color: { argb: 'FFE5E5E5' } } };
+          cell.alignment = { vertical: 'middle', horizontal: colNum === 4 ? 'center' : 'left' };
+          if (colNum === 4 && p.rating) {
+            cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FFA87A2C' } };
+          }
+        });
+      });
+
+      // Feuille guide
+      const guide = wb.addWorksheet('📖 Guide');
+      guide.columns = [{ width: 22 }, { width: 58 }];
+      const guideRows: [string, string][] = [
+        ['Champ',             'Description'],
+        ['name',              'Nom complet du joueur. Obligatoire.'],
+        ['email',             'Email. Optionnel. Lie le joueur à un compte ou en crée un.'],
+        ['club',              'Nom du club. Optionnel.'],
+        ['rating',            'Classement Elo. Obligatoire. Entier (ex : 1500). Mettre 0 si non classé.'],
+        ['', ''],
+        ['Formats acceptés', '.xlsx (ce fichier), .csv, .json'],
+        ['Séparateur CSV',   'Virgule (,) ou point-virgule (;)'],
+      ];
+      guideRows.forEach(([a, b], i) => {
+        const row = guide.addRow([a, b]);
+        row.height = 20;
+        if (i === 0) {
+          row.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+          (row as ExcelJS.Row).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF111114' } } as ExcelJS.FillPattern;
+        } else if (a) {
+          row.getCell(1).font = { bold: true, color: { argb: 'FFA87A2C' } };
+        }
+        row.eachCell({ includeEmpty: true }, (cell) => { cell.alignment = { vertical: 'middle' }; });
+      });
+
+      const buffer = await wb.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'modele-joueurs-highfive.xlsx';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      return;
+    }
+
+    // CSV / JSON
+    let content: string;
+    let mime: string;
+    if (format === 'csv') {
+      const BOM = '\uFEFF';
+      const header = 'name,email,club,rating';
+      const csvRows = players.map(p =>
+        [p.name, p.email, p.club, p.rating].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')
+      );
+      content = BOM + [header, ...csvRows].join('\r\n');
+      mime = 'text/csv;charset=utf-8';
+    } else {
+      content = JSON.stringify(players.map(({ name, email, club, rating }) => ({
+        name, ...(email ? { email } : {}), ...(club ? { club } : {}), rating,
+      })), null, 2);
+      mime = 'application/json';
+    }
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([content], { type: mime }));
     a.download = `modele-joueurs.${format}`;
     a.click();
+    URL.revokeObjectURL(a.href);
   };
 
   return (
@@ -198,11 +312,11 @@ export function ImportPlayersModal({
                 <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                   Glissez un fichier ici ou <span className="underline" style={{ color: GOLD }}>parcourir</span>
                 </p>
-                <p className="text-xs text-gray-400">.csv ou .json</p>
+                <p className="text-xs text-gray-400">.xlsx, .csv ou .json</p>
                 <input
                   ref={inputRef}
                   type="file"
-                  accept=".csv,.json"
+                  accept=".csv,.json,.xlsx"
                   className="hidden"
                   onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
                 />
@@ -219,6 +333,8 @@ export function ImportPlayersModal({
               <div className="flex items-center gap-3 rounded-xl border border-gray-100 dark:border-white/10 px-4 py-3">
                 <Download className="h-4 w-4 shrink-0 text-gray-400" />
                 <span className="text-sm text-gray-500 dark:text-gray-400">Télécharger un modèle :</span>
+                <button onClick={() => downloadTemplate('xlsx')} className="text-sm font-semibold underline" style={{ color: GOLD }}>Excel</button>
+                <span className="text-gray-300">·</span>
                 <button onClick={() => downloadTemplate('csv')} className="text-sm font-semibold underline" style={{ color: GOLD }}>CSV</button>
                 <span className="text-gray-300">·</span>
                 <button onClick={() => downloadTemplate('json')} className="text-sm font-semibold underline" style={{ color: GOLD }}>JSON</button>

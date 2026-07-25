@@ -1,4 +1,4 @@
-import { Menu, X, User, Sun, Moon } from 'lucide-react';
+import { Menu, X, User, Sun, Moon, LogOut, ChevronDown, Trophy, Users } from 'lucide-react';
 import { useState } from 'react';
 import { Logo } from '../Logo';
 import { INK, GOLD, PURPLE, NAV_ITEMS } from './tokens';
@@ -9,6 +9,7 @@ export function LandingHeader({
   user,
   onLogin,
   onDashboard,
+  onLogout,
   activeNav,
   onNav,
   theme, 
@@ -17,12 +18,18 @@ export function LandingHeader({
   user: AuthUser | null;
   onLogin: () => void;
   onDashboard: () => void;
+  onLogout?: () => void;
   activeNav: NavItem;
   onNav: (item: NavItem) => void;
   theme: 'dark' | 'light'; 
   onToggleTheme: () => void
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  const isOrganizer = user?.role === 'organizer';
+  const roleColor = isOrganizer ? GOLD : PURPLE;
+  const RoleIcon = isOrganizer ? Trophy : Users;
 
   const handleNav = (item: NavItem) => {
     onNav(item);
@@ -69,19 +76,58 @@ export function LandingHeader({
                 {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
                 {theme === 'dark' ? 'Clair' : 'Sombre'}
               </button>
-              <button
-                onClick={onDashboard}
-                className="flex items-center gap-[0.8em] rounded-full py-[0.55em] pl-[0.55em] pr-[1.8em] text-[1.35em] font-semibold text-white transition-opacity hover:opacity-90"
-                style={{ backgroundColor: INK }}
-              >
-                <span
-                  className="flex h-[2em] w-[2em] items-center justify-center rounded-full text-[0.85em] font-bold"
-                  style={{ backgroundColor: user.role === 'organizer' ? GOLD : PURPLE }}
+              {/* Dropdown utilisateur */}
+              <div className="relative">
+                <button
+                  onClick={() => setUserMenuOpen((v) => !v)}
+                  className="flex items-center gap-[0.8em] rounded-full py-[0.55em] pl-[0.55em] pr-[1.4em] text-[1.35em] font-semibold text-white transition-opacity hover:opacity-90"
+                  style={{ backgroundColor: INK }}
                 >
-                  {user.full_name.slice(0, 1).toUpperCase()}
-                </span>
-                Mon espace
-              </button>
+                  <span
+                    className="flex h-[2em] w-[2em] items-center justify-center rounded-full text-[0.85em] font-bold"
+                    style={{ backgroundColor: roleColor }}
+                  >
+                    {user.full_name.slice(0, 1).toUpperCase()}
+                  </span>
+                  Mon espace
+                  <ChevronDown className="h-[1em] w-[1em] opacity-70" />
+                </button>
+
+                {userMenuOpen && (
+                  <>
+                    <button className="fixed inset-0 z-10 cursor-default" aria-hidden tabIndex={-1} onClick={() => setUserMenuOpen(false)} />
+                    <div className="absolute right-0 z-20 mt-2 w-[22em] overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-card)] shadow-xl">
+                      <div className="border-b border-[color:var(--border)] px-4 py-3">
+                        <p className="truncate text-[1.2em] font-bold dark:text-white" style={{ color: INK }}>{user.full_name}</p>
+                        <p className="truncate text-[1.05em] text-gray-400">{user.email}</p>
+                        <span
+                          className="mt-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.9em] font-bold tracking-wide text-white"
+                          style={{ backgroundColor: roleColor }}
+                        >
+                          <RoleIcon className="h-[1em] w-[1em]" />
+                          {isOrganizer ? 'Organisateur' : 'Joueur'}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => { setUserMenuOpen(false); onDashboard(); }}
+                        className="flex w-full items-center gap-2 px-4 py-3 text-[1.2em] font-medium transition-colors hover:bg-[color:var(--surface-card-strong)] dark:text-gray-200"
+                      >
+                        <RoleIcon className="h-[1.1em] w-[1.1em]" style={{ color: roleColor }} />
+                        Mon espace
+                      </button>
+                      {onLogout && (
+                        <button
+                          onClick={() => { setUserMenuOpen(false); onLogout(); }}
+                          className="flex w-full items-center gap-2 border-t border-[color:var(--border)] px-4 py-3 text-[1.2em] font-medium text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-900/20"
+                        >
+                          <LogOut className="h-[1.1em] w-[1.1em]" />
+                          Se déconnecter
+                        </button>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           ) : (
             <>
