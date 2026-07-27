@@ -47,12 +47,7 @@ function CardContent({
       <h3 className="mt-[1em] text-[2em] font-extrabold leading-[1.15] tracking-[-0.01em]">
         <SplitTitle name={tournament.name} />
       </h3>
-      <span
-        className="mt-[1.1em] inline-block rounded-full px-[1.2em] py-[0.45em] text-[1.05em] font-bold tracking-[0.08em] text-white"
-        style={{ backgroundColor: PURPLE }}
-      >
-        SAISON 1
-      </span>
+
       <div className="mt-[1.4em] space-y-[0.8em] text-left text-[1.2em] text-gray-600">
         {tournament.start_date && (
           <div className="flex items-center gap-[0.8em]">
