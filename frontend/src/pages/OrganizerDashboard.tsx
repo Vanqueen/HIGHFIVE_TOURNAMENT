@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Plus, Calendar, MapPin, ArrowRight, AlertCircle, Trash2, Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Plus, Calendar, MapPin, ArrowRight, AlertCircle, Trash2, Loader2, UserRound } from 'lucide-react';
 import { AppShell } from '../components/AppShell';
 import { OrganizerTeam } from '../components/OrganizerTeam';
 import {
@@ -16,6 +16,7 @@ import {
 import { useAuth } from '../hooks/useAuth';
 import { useOrganizerBoard, type TournamentDesk } from '../hooks/useOrganizerBoard';
 import { api } from '../lib/api';
+import type { NavItem } from '../components/landing/tokens';
 
 const formatDate = (value: string | null) =>
   value
@@ -32,15 +33,17 @@ const STATUS_ACCENT: Record<TournamentDesk['tournament']['status'], string> = {
 
 export function OrganizerDashboard({
   onHome,
+  onNav,
   onNewTournament,
   onOpenTournament,
-  theme, 
+  theme,
   onToggleTheme,
 }: {
   onHome: () => void;
+  onNav?: (item: NavItem) => void;
   onNewTournament: () => void;
   onOpenTournament: (id: string) => void;
-  theme: 'dark' | 'light'; 
+  theme: 'dark' | 'light';
   onToggleTheme: () => void
 }) {
   const { user } = useAuth();
@@ -49,6 +52,28 @@ export function OrganizerDashboard({
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+
+  /* Pool partagé : les tournois viennent de plusieurs organisateurs. On
+     mappe organizer_id → nom pour afficher le créateur sur chaque bloc. */
+  const [creators, setCreators] = useState<Record<string, string>>({});
+  useEffect(() => {
+    api.organizers
+      .list()
+      .then((list) => {
+        const map: Record<string, string> = {};
+        for (const o of list) map[o.id] = o.full_name;
+        setCreators(map);
+      })
+      .catch(() => {
+        /* Sans la liste, on retombe sur « Organisateur » — pas bloquant. */
+      });
+  }, []);
+
+  const creatorName = (organizer_id: string | null) => {
+    if (!organizer_id) return 'Organisateur';
+    if (organizer_id === user?.id) return 'Vous';
+    return creators[organizer_id] ?? 'Organisateur';
+  };
 
   const totalPlayers = desks.reduce((sum, d) => sum + d.players, 0);
   const live = desks.filter((d) => d.tournament.status === 'in_progress').length;
@@ -72,7 +97,7 @@ export function OrganizerDashboard({
   };
 
   return (
-    <AppShell wide onHome={onHome} theme={theme} onToggleTheme={onToggleTheme}>
+    <AppShell wide onHome={onHome} onNav={onNav} onDashboard={() => {}} theme={theme} onToggleTheme={onToggleTheme}>
       <DataBar
         role="Organisateur"
         name={user?.full_name ?? ''}
@@ -125,7 +150,7 @@ export function OrganizerDashboard({
               {/* L'action de création vit au-dessus de la liste qu'elle
                   alimente, comme « Ajouter » au-dessus de l'équipe. */}
               <SectionHead
-                title="Mes tournois"
+                title="Tournois"
                 count={desks.length}
                 action={
                   <button
@@ -172,6 +197,7 @@ export function OrganizerDashboard({
                       <DeskCard
                         key={desk.tournament.id}
                         desk={desk}
+                        creator={creatorName(desk.tournament.organizer_id)}
                         confirming={confirmingId === desk.tournament.id}
                         deleting={deletingId === desk.tournament.id}
                         onOpen={() => onOpenTournament(desk.tournament.id)}
@@ -203,6 +229,7 @@ export function OrganizerDashboard({
    d'une carte à l'autre quelle que soit la longueur du titre. */
 function DeskCard({
   desk,
+  creator,
   confirming,
   deleting,
   onOpen,
@@ -211,6 +238,7 @@ function DeskCard({
   onConfirmDelete,
 }: {
   desk: TournamentDesk;
+  creator: string;
   confirming: boolean;
   deleting: boolean;
   onOpen: () => void;
@@ -265,6 +293,11 @@ function DeskCard({
           <h3 className="mt-1.5 font-display text-xl font-bold uppercase leading-tight">
             {tournament.name}
           </h3>
+
+          <p className="mt-1.5 flex items-center gap-1.5 text-[11px] text-gray-400">
+            <UserRound className="h-3 w-3 shrink-0" style={{ color: GOLD }} />
+            Créé par <span className="font-semibold text-gray-600 dark:text-gray-300">{creator}</span>
+          </p>
 
           <p className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500">
             <span className="flex items-center gap-1.5">

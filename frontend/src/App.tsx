@@ -23,7 +23,6 @@ export default function App() {
 function Router() {
   const { user, initializing } = useAuth();
   const [view, setView] = useState<View>({ name: 'landing' });
-  const [landingNav, setLandingNav] = useState<import('./components/landing/tokens').NavItem | null>(null);
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     if (typeof window === 'undefined') return 'dark';
     const stored = window.localStorage.getItem('theme');
@@ -49,10 +48,8 @@ function Router() {
   }, [user, initializing]);
 
   const goHome = () => setView({ name: 'landing' });
-  const goHomeWithNav = (item: import('./components/landing/tokens').NavItem) => {
-    setLandingNav(item);
-    setView({ name: 'landing' });
-  };
+  const goHomeWithNav = (item: import('./components/landing/tokens').NavItem) =>
+    setView({ name: 'landing', nav: item });
   const goDashboard = () => setView({ name: 'dashboard' });
 
   /* Restauration de session en cours : éviter le flash « déconnecté ». */
@@ -72,8 +69,7 @@ function Router() {
         onDashboard={goDashboard}
         onTournamentClick={(id) => setView({ name: 'detail', tournamentId: id })}
         theme={theme} onToggleTheme={toggleTheme}
-        initialNav={landingNav ?? undefined}
-        onNavConsumed={() => setLandingNav(null)}
+        initialNav={view.nav}
       />
     );
   }
@@ -110,7 +106,7 @@ function Router() {
   if (view.name === 'create') {
     if (user.role !== 'organizer') return <RoleHome onNavigate={setView} />;
     return (
-      <AppShell onHome={goHome} onNav={goHomeWithNav} theme={theme} onToggleTheme={toggleTheme}>
+      <AppShell onHome={goHome} onNav={goHomeWithNav} onDashboard={goDashboard} theme={theme} onToggleTheme={toggleTheme}>
         <TournamentCreatePage
           onBack={goDashboard}
           onCreated={(id) => setView({ name: 'detail', tournamentId: id })}
@@ -123,7 +119,7 @@ function Router() {
     return (
       /* Console de gestion : pleine largeur, pleine hauteur, sans scroll de
          page — seul le panneau actif défile. */
-      <AppShell wide fill onHome={goHome} onNav={goHomeWithNav} theme={theme} onToggleTheme={toggleTheme}>
+      <AppShell wide fill onHome={goHome} onNav={goHomeWithNav} onDashboard={goDashboard} theme={theme} onToggleTheme={toggleTheme}>
         <TournamentDetailPage
           tournamentId={view.tournamentId}
           onBack={goDashboard}
@@ -135,7 +131,7 @@ function Router() {
 
   if (view.name === 'standings') {
     return (
-      <AppShell onHome={goHome} onNav={goHomeWithNav} theme={theme} onToggleTheme={toggleTheme}>
+      <AppShell onHome={goHome} onNav={goHomeWithNav} onDashboard={goDashboard} theme={theme} onToggleTheme={toggleTheme}>
         <StandingsPage
           tournamentId={view.tournamentId}
           onBack={() => setView({ name: 'detail', tournamentId: view.tournamentId })}
@@ -151,6 +147,8 @@ function Router() {
 function RoleHome({ onNavigate }: { onNavigate: (view: View) => void }) {
   const { user } = useAuth();
   const goHome = () => onNavigate({ name: 'landing' });
+  const goSection = (item: import('./components/landing/tokens').NavItem) =>
+    onNavigate({ name: 'landing', nav: item });
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     if (typeof window === 'undefined') return 'dark';
     const stored = window.localStorage.getItem('theme');
@@ -172,6 +170,7 @@ function RoleHome({ onNavigate }: { onNavigate: (view: View) => void }) {
       <OrganizerDashboard
         theme={theme} onToggleTheme={toggleTheme}
         onHome={goHome}
+        onNav={goSection}
         onNewTournament={() => onNavigate({ name: 'create' })}
         onOpenTournament={(id) => onNavigate({ name: 'detail', tournamentId: id })}
       />
@@ -182,6 +181,7 @@ function RoleHome({ onNavigate }: { onNavigate: (view: View) => void }) {
     <PlayerDashboard
       theme={theme} onToggleTheme={toggleTheme}
       onHome={goHome}
+      onNav={goSection}
       onOpenTournament={(id) => onNavigate({ name: 'detail', tournamentId: id })}
     />
   );

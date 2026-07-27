@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { ArrowRight, Trophy, Users, ShieldCheck, Radio, Sparkles } from 'lucide-react';
 import { INK, GOLD, GOLD_DARK, PURPLE, GREEN } from '../components/landing/tokens';
+import { LandingFooter } from '../components/landing/LandingFooter';
 import type { User as AuthUser } from '../types';
-import boardImage from '../assets/image.png';
 import kingCutout from '../assets/image2.png';
 import knightCutout from '../assets/image3.jpg';
 import queenBoard from '../assets/image4.jpg';
@@ -96,13 +96,6 @@ const VALUES = [
   },
 ];
 
-const STATS = [
-  { value: '1K+', label: 'Joueurs inscrits' },
-  { value: '25+', label: 'Tournois arbitrés' },
-  { value: '12', label: 'Pays représentés' },
-  { value: '0', label: 'Feuille perdue' },
-];
-
 const STEPS = [
   {
     year: '2023',
@@ -169,7 +162,7 @@ export function AboutPage({
         <div className="relative mx-auto flex min-h-[82vh] max-w-7xl items-center px-6 py-24 lg:px-12">
           <div className="max-w-2xl">
             <Reveal>
-              <Overline>À propos — VIPP Digital Services</Overline>
+              <Overline>À propos — VIPP DIGITAL SERVICES CHESS CLUB</Overline>
             </Reveal>
 
             <Reveal delay={90}>
@@ -297,44 +290,7 @@ export function AboutPage({
       </section>
 
       {/* ============================================================
-          3 — CHIFFRES (feuille de résultats)
-          ============================================================ */}
-      <section className="relative overflow-hidden" style={{ backgroundColor: INK }}>
-        <img
-          src={boardImage}
-          alt=""
-          aria-hidden
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.14]"
-        />
-        <div className="absolute inset-0" style={{ background: `linear-gradient(90deg, ${INK} 8%, ${INK}bb 50%, ${INK} 92%)` }} />
-
-        <div className="relative mx-auto max-w-7xl px-6 py-20 lg:px-12">
-          <Reveal>
-            <div className="flex items-center gap-4">
-              <Overline>La plateforme en chiffres</Overline>
-              <span className="h-px flex-1 bg-white dark:bg-gray-700/15" />
-            </div>
-          </Reveal>
-
-          <div className="mt-10 grid gap-px overflow-hidden rounded-2xl bg-white dark:bg-gray-700/10 sm:grid-cols-2 lg:grid-cols-4">
-            {STATS.map((stat, i) => (
-              <Reveal key={stat.label} delay={i * 90}>
-                <div className="h-full px-7 py-9" style={{ backgroundColor: INK }}>
-                  <p className="tabular font-mono text-5xl font-semibold" style={{ color: GOLD }}>
-                    {stat.value}
-                  </p>
-                  <p className="mt-3 text-[0.8rem] font-semibold uppercase tracking-[0.18em] text-white/50">
-                    {stat.label}
-                  </p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================
-          4 — VALEURS
+          3 — VALEURS
           ============================================================ */}
       <section className="bg-[#F7F6F4]">
         <div className="mx-auto max-w-7xl px-6 py-24 lg:px-12 lg:py-32">
@@ -444,9 +400,9 @@ export function AboutPage({
       {/* ============================================================
           6 — APPEL FINAL
           ============================================================ */}
-      <section className="px-6 pb-24 lg:px-12">
+      <section className="px-6 pt-24 pb-24 lg:px-12">
         <Reveal>
-          <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2.5rem]" style={{ backgroundColor: INK }}>
+          <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] " style={{ backgroundColor: INK }}>
             <img
               src={queenBoard}
               alt=""
@@ -464,13 +420,6 @@ export function AboutPage({
 
             <div className="relative grid gap-10 px-8 py-16 sm:px-14 lg:grid-cols-[1.1fr_0.9fr] lg:py-20">
               <div>
-                <span
-                  className="inline-flex items-center gap-2 rounded-full px-4 py-2 font-mono text-[0.68rem] uppercase tracking-[0.2em]"
-                  style={{ backgroundColor: `${GOLD}1f`, color: GOLD }}
-                >
-                  <Sparkles className="h-3.5 w-3.5" />
-                  Prochaine ronde
-                </span>
                 <h2 className="mt-7 font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight text-white sm:text-6xl">
                   Une place vous
                   <br />
@@ -503,6 +452,8 @@ export function AboutPage({
           </div>
         </Reveal>
       </section>
+
+      <LandingFooter />
     </div>
   );
 }

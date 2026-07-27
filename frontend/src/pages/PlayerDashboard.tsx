@@ -15,6 +15,7 @@ import { useAuth } from '../hooks/useAuth';
 import { usePlayerBoard, type NextGame, type TournamentBoard } from '../hooks/usePlayerBoard';
 import { api } from '../lib/api';
 import type { Tournament } from '../types';
+import type { NavItem } from '../components/landing/tokens';
 
 const formatDate = (value: string | null) =>
   value
@@ -32,13 +33,15 @@ const formatPoints = (points: number) => {
 
 export function PlayerDashboard({
   onHome,
+  onNav,
   onOpenTournament,
-  theme, 
+  theme,
   onToggleTheme,
 }: {
   onHome: () => void;
+  onNav?: (item: NavItem) => void;
   onOpenTournament: (id: string) => void;
-  theme: 'dark' | 'light'; 
+  theme: 'dark' | 'light';
   onToggleTheme: () => void
 }) {
   const { user } = useAuth();
@@ -64,7 +67,7 @@ export function PlayerDashboard({
   };
 
   return (
-    <AppShell onHome={onHome} theme={theme} onToggleTheme={onToggleTheme}>
+    <AppShell onHome={onHome} onNav={onNav} onDashboard={() => {}} theme={theme} onToggleTheme={onToggleTheme}>
       <DataBar
         role="Joueur"
         name={user?.full_name ?? ''}

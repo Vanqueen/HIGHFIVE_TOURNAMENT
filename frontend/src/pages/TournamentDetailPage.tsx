@@ -71,9 +71,10 @@ export function TournamentDetailPage({
     );
   }
 
-  /* Seul l'organisateur propriétaire pilote le tournoi ; les joueurs le
-     consultent. L'API applique la même règle, ceci n'est que l'affichage. */
-  const canEdit = user?.role === 'organizer' && tournament.organizer_id === user.id;
+  /* Pool partagé : tout organisateur pilote n'importe quel tournoi ; les
+     joueurs le consultent. L'API applique la même règle, ceci n'est que
+     l'affichage. */
+  const canEdit = user?.role === 'organizer';
   const hasPlayoff = tournament.format === 'swiss_playoff';
   const control = canEdit
     ? buildControl(tournament, players, matches, {

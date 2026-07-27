@@ -1,3 +1,5 @@
+import type { NavItem } from '../components/landing/tokens';
+
 export type TournamentStatus = 'registration' | 'in_progress' | 'completed';
 export type MatchResult = 'pending' | 'white' | 'black' | 'draw';
 
@@ -80,7 +82,7 @@ export interface Match {
 }
 
 export type View =
-  | { name: 'landing' }
+  | { name: 'landing'; nav?: NavItem }
   | { name: 'auth' }
   | { name: 'dashboard' }
   | { name: 'list' }

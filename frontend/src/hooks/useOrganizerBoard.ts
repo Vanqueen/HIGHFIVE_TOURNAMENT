@@ -7,7 +7,8 @@ export interface TournamentDesk {
   players: number;
 }
 
-/* Les tournois de l'organisateur connecté, avec leur nombre d'inscrits. */
+/* Pool partagé : tous les tournois de la plateforme, avec leur nombre
+   d'inscrits. Chaque organisateur peut gérer n'importe lequel. */
 export function useOrganizerBoard() {
   const [desks, setDesks] = useState<TournamentDesk[]>([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +16,7 @@ export function useOrganizerBoard() {
 
   const reload = useCallback(async () => {
     try {
-      const tournaments = await api.tournaments.mine();
+      const tournaments = await api.tournaments.list();
 
       const assembled = await Promise.all(
         tournaments.map(async (tournament) => {

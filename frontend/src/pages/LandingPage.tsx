@@ -38,7 +38,7 @@ export function LandingPage({
 }) {
   const { tournaments, loading } = useTournaments();
   const { logout } = useAuth();
-  const [activeNav, setActiveNav] = useState<NavItem>('Accueil');
+  const [activeNav, setActiveNav] = useState<NavItem>(() => initialNav ?? 'Accueil');
   const [featuredIndex, setFeaturedIndex] = useState(0);
   const [prevIndex, setPrevIndex] = useState<number | null>(null);
   const [slideDir, setSlideDir] = useState<'left' | 'right'>('left');
@@ -148,7 +148,7 @@ export function LandingPage({
       )}
 
       {activeNav !== 'Accueil' && (
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
           {activeNav === 'Tournois' && (
             <TournamentListPage onNew={onLogin} onOpen={handleTournamentClick} />
           )}
