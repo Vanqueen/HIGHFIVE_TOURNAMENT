@@ -37,7 +37,7 @@ export function LandingHeader({
   };
 
   return (
-    <header className="relative z-40 flex-none border-b border-black/5 bg-white/95 dark:bg-gradient-to-t dark:from-gray-600 dark:to-gray-800 backdrop-blur-sm">
+    <header className="relative z-40 flex-none border-b border-black/5 bg-white/95 dark:bg-gradient-to-t dark:from-[#342752] dark:to-[#251C3A] backdrop-blur-sm">
       <div className="mx-auto flex h-[8.8em] max-w-[192em] items-center justify-between px-[2.6em] lg:px-[3.2em]">
         <button onClick={() => handleNav('Accueil')}>
           <Logo className="h-[7em] w-auto shrink-0" />
