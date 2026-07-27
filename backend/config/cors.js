@@ -2,6 +2,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { setOrigin } from './setOrigin.js';
+import Origins from './corsOrigin.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
@@ -29,12 +30,16 @@ const getCorsOrigins = () => {
     return configuredOrigins;
   }
 
+  if (process.env.NODE_ENV === 'production' && !process.env.CORS_ORIGIN) {
+    throw new Error('CORS_ORIGIN est requis en production. Ajoutez-le dans les variables Render.');
+  }
+
   const port = getFrontendPort();
   console.log(`⚠️  CORS_ORIGIN non défini : autorisation par défaut pour localhost:${port}`);
-  return [`http://localhost:${port}`, `http://127.0.0.1:${port}`];
+  return [`http://localhost:${port}`, `http://127.0.0.1:${port}`, process.env.CORS_ORIGIN].filter(Boolean);
 };
 
-const allowedOrigins = getCorsOrigins();
+const allowedOrigins = Origins ? Origins : getCorsOrigins();
 
 const corsConfig = {
   origin: setOrigin(allowedOrigins),
