@@ -1,3 +1,5 @@
+/* Les polices sont préchargées dans index.html avec rel="preload" pour
+   ne pas bloquer le rendu — ce @import est conservé en fallback. */
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..900;1,14..32,300..900&family=Barlow+Condensed:wght@500;600;700&family=Geist+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;

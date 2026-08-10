@@ -16,4 +16,7 @@ const matchSchema = new mongoose.Schema({
   created_at: { type: Date, default: Date.now },
 });
 
+matchSchema.index({ tournament_id: 1, round: 1 });
+matchSchema.index({ tournament_id: 1, phase: 1 });
+
 export default mongoose.model('Match', matchSchema);

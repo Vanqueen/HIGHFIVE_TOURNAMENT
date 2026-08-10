@@ -175,5 +175,6 @@ async function recalculatePoints(tournamentId: string, allMatches: Match[]) {
     if (m.black_player_id) points.set(m.black_player_id, (points.get(m.black_player_id) ?? 0) + b);
   }
 
-  await Promise.all(players.map((p) => api.players.update(p.id, { points: points.get(p.id) ?? 0 })));
+  const updates = players.map((p) => ({ id: p.id, points: points.get(p.id) ?? 0 }));
+  await api.players.bulkUpdatePoints(updates);
 }

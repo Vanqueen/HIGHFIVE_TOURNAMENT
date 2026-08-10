@@ -1,16 +1,17 @@
-import { useEffect, useLayoutEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { lazy, Suspense, useEffect, useLayoutEffect, useState } from 'react';
 import { AppShell } from './components/AppShell';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { LandingPage } from './pages/LandingPage';
 import { AuthPage } from './pages/AuthPage';
 import { ChangePasswordPage } from './pages/ChangePasswordPage';
-import { PlayerDashboard } from './pages/PlayerDashboard';
-import { OrganizerDashboard } from './pages/OrganizerDashboard';
-import { TournamentCreatePage } from './pages/TournamentCreatePage';
-import { TournamentDetailPage } from './pages/TournamentDetailPage';
-import { StandingsPage } from './pages/StandingsPage';
 import type { View } from './types';
+import PageLoader from './PageLoader';
+
+const PlayerDashboard = lazy(() => import('./pages/PlayerDashboard').then(m => ({ default: m.PlayerDashboard })));
+const OrganizerDashboard = lazy(() => import('./pages/OrganizerDashboard').then(m => ({ default: m.OrganizerDashboard })));
+const TournamentCreatePage = lazy(() => import('./pages/TournamentCreatePage').then(m => ({ default: m.TournamentCreatePage })));
+const TournamentDetailPage = lazy(() => import('./pages/TournamentDetailPage').then(m => ({ default: m.TournamentDetailPage })));
+const StandingsPage = lazy(() => import('./pages/StandingsPage').then(m => ({ default: m.StandingsPage })));
 
 export default function App() {
   return (
@@ -56,13 +57,7 @@ function Router() {
   const goDashboard = () => setView({ name: 'dashboard' });
 
   /* Restauration de session en cours : éviter le flash « déconnecté ». */
-  if (initializing) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[color:var(--app-bg)] text-[color:var(--text-primary)]">
-        <Loader2 className="h-6 w-6 animate-spin" style={{ color: '#C6963B' }} />
-      </div>
-    );
-  }
+  if (initializing) return <PageLoader />;
 
   if (view.name === 'landing') {
     return (
@@ -79,8 +74,7 @@ function Router() {
   }
 
   if (view.name === 'auth') {
-    /* Déjà connecté : l'écran d'auth n'a plus lieu d'être. */
-    if (user) return <RoleHome onNavigate={setView} />;
+    if (user) return <RoleHome onNavigate={setView} theme={theme} onToggleTheme={toggleTheme} />;
     return (
       <AuthPage
         onBack={goHome}
@@ -97,24 +91,23 @@ function Router() {
     return <ChangePasswordPage onDone={goDashboard} />;
   }
 
-  /* Tout ce qui suit exige une session. */
-  if (!user) {
-    return <AuthPage onBack={goHome} onAuthenticated={goDashboard} />;
-  }
+  if (!user) return <AuthPage onBack={goHome} onAuthenticated={goDashboard} />;
 
   if (view.name === 'dashboard') {
-    return <RoleHome onNavigate={setView} />;
+    return <RoleHome onNavigate={setView} theme={theme} onToggleTheme={toggleTheme} />;
   }
 
   /* Création de tournoi : réservée aux organisateurs. */
   if (view.name === 'create') {
-    if (user.role !== 'organizer') return <RoleHome onNavigate={setView} />;
+    if (user.role !== 'organizer') return <RoleHome onNavigate={setView} theme={theme} onToggleTheme={toggleTheme} />;
     return (
       <AppShell onHome={goHome} onNav={goHomeWithNav} theme={theme} onToggleTheme={toggleTheme}>
-        <TournamentCreatePage
-          onBack={goDashboard}
-          onCreated={(id) => setView({ name: 'detail', tournamentId: id })}
-        />
+        <Suspense fallback={<PageLoader />}>
+          <TournamentCreatePage
+            onBack={goDashboard}
+            onCreated={(id) => setView({ name: 'detail', tournamentId: id })}
+          />
+        </Suspense>
       </AppShell>
     );
   }
@@ -124,11 +117,13 @@ function Router() {
       /* Console de gestion : pleine largeur, pleine hauteur, sans scroll de
          page — seul le panneau actif défile. */
       <AppShell wide fill onHome={goHome} onNav={goHomeWithNav} theme={theme} onToggleTheme={toggleTheme}>
-        <TournamentDetailPage
-          tournamentId={view.tournamentId}
-          onBack={goDashboard}
-          onViewStandings={(id) => setView({ name: 'standings', tournamentId: id })}
-        />
+        <Suspense fallback={<PageLoader />}>
+          <TournamentDetailPage
+            tournamentId={view.tournamentId}
+            onBack={goDashboard}
+            onViewStandings={(id) => setView({ name: 'standings', tournamentId: id })}
+          />
+        </Suspense>
       </AppShell>
     );
   }
@@ -136,53 +131,52 @@ function Router() {
   if (view.name === 'standings') {
     return (
       <AppShell onHome={goHome} onNav={goHomeWithNav} theme={theme} onToggleTheme={toggleTheme}>
-        <StandingsPage
-          tournamentId={view.tournamentId}
-          onBack={() => setView({ name: 'detail', tournamentId: view.tournamentId })}
-        />
+        <Suspense fallback={<PageLoader />}>
+          <StandingsPage
+            tournamentId={view.tournamentId}
+            onBack={() => setView({ name: 'detail', tournamentId: view.tournamentId })}
+          />
+        </Suspense>
       </AppShell>
     );
   }
 
-  return <RoleHome onNavigate={setView} />;
+  return <RoleHome onNavigate={setView} theme={theme} onToggleTheme={toggleTheme} />;
 }
 
 /* Aiguillage vers l'espace correspondant au rôle. */
-function RoleHome({ onNavigate }: { onNavigate: (view: View) => void }) {
+function RoleHome({
+  onNavigate,
+  theme,
+  onToggleTheme,
+}: {
+  onNavigate: (view: View) => void;
+  theme: 'dark' | 'light';
+  onToggleTheme: () => void;
+}) {
   const { user } = useAuth();
   const goHome = () => onNavigate({ name: 'landing' });
-  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    if (typeof window === 'undefined') return 'dark';
-    const stored = window.localStorage.getItem('theme');
-    if (stored === 'dark' || stored === 'light') return stored;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  });
-
-  useLayoutEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-    document.documentElement.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
-    window.localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => setTheme((current) => (current === 'dark' ? 'light' : 'dark'));
-
 
   if (user?.role === 'organizer') {
     return (
-      <OrganizerDashboard
-        theme={theme} onToggleTheme={toggleTheme}
-        onHome={goHome}
-        onNewTournament={() => onNavigate({ name: 'create' })}
-        onOpenTournament={(id) => onNavigate({ name: 'detail', tournamentId: id })}
-      />
+      <Suspense fallback={<PageLoader />}>
+        <OrganizerDashboard
+          theme={theme} onToggleTheme={onToggleTheme}
+          onHome={goHome}
+          onNewTournament={() => onNavigate({ name: 'create' })}
+          onOpenTournament={(id) => onNavigate({ name: 'detail', tournamentId: id })}
+        />
+      </Suspense>
     );
   }
 
   return (
-    <PlayerDashboard
-      theme={theme} onToggleTheme={toggleTheme}
-      onHome={goHome}
-      onOpenTournament={(id) => onNavigate({ name: 'detail', tournamentId: id })}
-    />
+    <Suspense fallback={<PageLoader />}>
+      <PlayerDashboard
+        theme={theme} onToggleTheme={onToggleTheme}
+        onHome={goHome}
+        onOpenTournament={(id) => onNavigate({ name: 'detail', tournamentId: id })}
+      />
+    </Suspense>
   );
 }
