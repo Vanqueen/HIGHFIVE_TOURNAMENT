@@ -13,6 +13,7 @@ export function AppShell({
   children,
   onHome,
   onNav,
+  onDashboard,
   actions,
   wide = false,
   fill = false,
@@ -22,6 +23,9 @@ export function AppShell({
   children: ReactNode;
   onHome: () => void;
   onNav?: (item: NavItem) => void;
+  /* Où renvoie « Mon espace » depuis l'en-tête connecté. À défaut, on
+     retombe sur l'accueil — mais on veut normalement rester dans l'espace. */
+  onDashboard?: () => void;
   actions?: ReactNode;
   wide?: boolean;
   fill?: boolean;
@@ -36,9 +40,9 @@ export function AppShell({
         <LandingHeader
           user={user}
           onLogin={onHome}
-          onDashboard={onHome}
+          onDashboard={onDashboard ?? onHome}
           onLogout={logout}
-          activeNav={'Accueil'}
+          activeNav={null}
           onNav={(item) => { onNav ? onNav(item) : onHome(); }}
           theme={theme}
           onToggleTheme={onToggleTheme}

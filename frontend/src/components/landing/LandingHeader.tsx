@@ -19,7 +19,7 @@ export function LandingHeader({
   onLogin: () => void;
   onDashboard: () => void;
   onLogout?: () => void;
-  activeNav: NavItem;
+  activeNav: NavItem | null;
   onNav: (item: NavItem) => void;
   theme: 'dark' | 'light'; 
   onToggleTheme: () => void

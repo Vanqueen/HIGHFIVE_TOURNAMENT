@@ -57,13 +57,17 @@ export const remove = async (id) => {
   return { players: players.deletedCount, matches: matches.deletedCount };
 };
 
-/* Garde-fou réutilisé par les routes joueurs et matchs : seul
-   l'organisateur propriétaire peut toucher au contenu d'un tournoi. */
+/* Pool partagé : le club VIPP est un noyau interne d'organisateurs de
+   confiance, cooptés. N'importe quel organisateur peut donc gérer
+   n'importe quel tournoi (joueurs, rondes, résultats, suppression).
+   On vérifie seulement que le tournoi existe et que l'utilisateur est
+   bien organisateur — le rôle est déjà garanti par la route, on le
+   revérifie par prudence. Le créateur reste tracé via organizer_id. */
 export const assertOwnership = async (tournament_id, user) => {
   const doc = await Tournament.findById(tournament_id).select('organizer_id');
   if (!doc) throw Object.assign(new Error('Tournoi introuvable'), { status: 404 });
-  if (!doc.organizer_id || doc.organizer_id.toString() !== user.id) {
-    throw Object.assign(new Error("Ce tournoi ne vous appartient pas."), { status: 403 });
+  if (user?.role !== 'organizer') {
+    throw Object.assign(new Error('Réservé aux organisateurs.'), { status: 403 });
   }
   return doc;
 };
