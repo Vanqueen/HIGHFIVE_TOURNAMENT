@@ -14,7 +14,6 @@ import { TournamentListPage } from './TournamentListPage';
 import { AboutPage } from './AboutPage';
 import { CalendarPage } from './CalendarPage';
 import { TournamentRegisterModal } from '../components/TournamentRegisterModal';
-import { INK } from '../components/landing/tokens';
 import type { NavItem } from '../components/landing/tokens';
 
 export function LandingPage({
@@ -101,8 +100,7 @@ export function LandingPage({
 
   return (
     <div
-      className={isHome ? 'landing-scale landing-fixed flex flex-col' : 'landing-scale flex flex-col overflow-hidden'}
-      style={{ color: INK }}
+      className={`${isHome ? 'landing-scale landing-fixed flex flex-col' : 'landing-scale flex flex-col overflow-hidden'} text-[#111114] dark:text-[#F8EFE7]`}
     >
       {registerTournament && (
         <TournamentRegisterModal

@@ -254,9 +254,10 @@ export const changePassword = async (id, current_password, new_password) => {
   const doc = await User.findById(id).select('+password_hash +temp_password_used');
   if (!doc) throw fail('Utilisateur introuvable.', 404);
 
-  /* Si le compte a encore un mdp temporaire non utilisé, on autorise
-     le changement sans vérifier l'ancien mdp. */
-  if (!doc.temp_password_used) {
+  /* Mdp temporaire non encore changé (compte registerAndJoin) : on autorise
+     le changement sans vérifier l'ancien mdp UNIQUEMENT si last_login_at
+     est null, ce qui identifie un compte jamais connecté normalement. */
+  if (!doc.temp_password_used && doc.last_login_at === null) {
     doc.password_hash = await bcrypt.hash(String(new_password), BCRYPT_ROUNDS);
     doc.temp_password_used = true;
     await doc.save();

@@ -207,8 +207,8 @@ export function OrganizerTeam() {
             return (
               <li
                 key={organizer.id}
-                className={i === 0 ? '' : 'border-t'}
-                style={{ borderColor: RULE, backgroundColor: squareTint(i) }}
+                className={`${i === 0 ? '' : 'border-t'} ${squareTint(i)}`}
+                style={{ borderColor: RULE }}
               >
                 {confirming ? (
                   <div className="p-4">

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { ArrowRight, Trophy, Users, ShieldCheck, Radio, Sparkles } from 'lucide-react';
+import { ArrowRight, Trophy, Users, ShieldCheck, Radio } from 'lucide-react';
 import { INK, GOLD, GOLD_DARK, PURPLE, GREEN } from '../components/landing/tokens';
 import { LandingFooter } from '../components/landing/LandingFooter';
 import type { User as AuthUser } from '../types';
@@ -104,7 +104,7 @@ const STEPS = [
   },
   {
     year: '2024',
-    title: 'Le moteur d’appariement',
+    title: 'Le moteur d\u2019appariement',
     text: "Premier système suisse complet : appariements, flottants, départages Buchholz et Sonneborn-Berger. Testé sur des tournois réels, corrigé par des arbitres.",
   },
   {
@@ -114,7 +114,7 @@ const STEPS = [
   },
   {
     year: '2026',
-    title: 'Le club s’ouvre',
+    title: 'Le club s\u2019ouvre',
     text: "Inscriptions en ligne, classements permanents, profils de joueurs. Ce qui était l'outil d'un club d'entreprise accueille désormais les passionnés du dehors.",
   },
 ];
@@ -131,7 +131,7 @@ export function AboutPage({
   onSeeTournaments: () => void;
 }) {
   return (
-    <div style={{ color: INK }}>
+    <div className="text-[#111114] dark:text-[#F8EFE7]">
       {/* ============================================================
           1 — OUVERTURE
           ============================================================ */}
@@ -214,7 +214,7 @@ export function AboutPage({
       {/* ============================================================
           2 — MANIFESTE
           ============================================================ */}
-      <section className="relative overflow-hidden bg-white dark:bg-gray-700">
+      <section className="relative overflow-hidden bg-white dark:bg-[#1e1535]">
         <div className="mx-auto grid max-w-7xl items-center gap-16 px-6 py-24 lg:grid-cols-[1.05fr_0.95fr] lg:px-12 lg:py-32">
           <div>
             <Reveal>
@@ -228,14 +228,14 @@ export function AboutPage({
               </h2>
             </Reveal>
             <Reveal delay={140}>
-              <div className="mt-9 space-y-6 text-[1.05rem] leading-[1.75] text-gray-600">
+              <div className="mt-9 space-y-6 text-[1.05rem] leading-[1.75] text-gray-600 dark:text-[#CBB9D8]">
                 <p>
                   Nos premiers tournois internes tenaient dans un classeur partagé : un collègue
                   recopiait les scores à la main, un autre recomptait les Buchholz le soir venu, et
                   personne ne savait contre qui il jouait avant l&apos;affichage.
                 </p>
                 <p>
-                  <strong className="font-semibold" style={{ color: INK }}>
+                  <strong className="font-semibold text-[#111114] dark:text-[#F8EFE7]">
                     Alors nous avons codé ce qui nous manquait.
                   </strong>{' '}
                   Les appariements sont calculés, les résultats saisis une seule fois, les
@@ -246,13 +246,13 @@ export function AboutPage({
             </Reveal>
 
             <Reveal delay={200}>
-              <div className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-black/10 bg-black/10 sm:grid-cols-3">
+              <div className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-black/10 dark:border-white/10 bg-black/10 dark:bg-white/10 sm:grid-cols-3">
                 {[
                   { k: 'Appariements', v: 'Suisse' },
                   { k: 'Départages', v: 'BH · SB' },
                   { k: 'Diffusion', v: 'Temps réel' },
                 ].map((cell) => (
-                  <div key={cell.k} className="bg-white dark:bg-gray-700 px-5 py-5">
+                  <div key={cell.k} className="bg-white dark:bg-[#1e1535] px-5 py-5">
                     <p className="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-gray-400">{cell.k}</p>
                     <p className="mt-2 font-display text-2xl font-bold uppercase tracking-tight">{cell.v}</p>
                   </div>
@@ -292,7 +292,7 @@ export function AboutPage({
       {/* ============================================================
           3 — VALEURS
           ============================================================ */}
-      <section className="bg-[#F7F6F4]">
+      <section className="bg-[#F7F6F4] dark:bg-[#251C3A]">
         <div className="mx-auto max-w-7xl px-6 py-24 lg:px-12 lg:py-32">
           <Reveal>
             <Overline color={GOLD_DARK}>Ce qui nous tient</Overline>
@@ -304,7 +304,7 @@ export function AboutPage({
           <div className="mt-14 grid gap-6 lg:grid-cols-3">
             {VALUES.map((value, i) => (
               <Reveal key={value.n} delay={i * 110}>
-                <article className="group relative h-full overflow-hidden rounded-[1.75rem] border border-black/5 bg-white dark:bg-gray-700 p-9 shadow-[0_24px_50px_-40px_rgba(17,17,20,0.55)] transition-transform duration-300 hover:-translate-y-1.5">
+                <article className="group relative h-full overflow-hidden rounded-[1.75rem] border border-black/5 dark:border-white/10 bg-white dark:bg-[#1e1535] p-9 shadow-[0_24px_50px_-40px_rgba(17,17,20,0.55)] transition-transform duration-300 hover:-translate-y-1.5">
                   <span
                     className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"
                     style={{ backgroundColor: value.bg }}
@@ -316,10 +316,10 @@ export function AboutPage({
                     >
                       {value.icon}
                     </div>
-                    <span className="tabular font-mono text-4xl font-semibold text-black/[0.07]">{value.n}</span>
+                    <span className="tabular font-mono text-4xl font-semibold text-black/[0.07] dark:text-white/10">{value.n}</span>
                   </div>
                   <h3 className="mt-7 font-display text-3xl font-bold uppercase tracking-tight">{value.title}</h3>
-                  <p className="mt-4 text-[0.95rem] leading-relaxed text-gray-500">{value.text}</p>
+                  <p className="mt-4 text-[0.95rem] leading-relaxed text-gray-500 dark:text-[#CBB9D8]">{value.text}</p>
                 </article>
               </Reveal>
             ))}
@@ -330,7 +330,7 @@ export function AboutPage({
       {/* ============================================================
           5 — PARCOURS
           ============================================================ */}
-      <section className="relative overflow-hidden bg-white dark:bg-gray-700">
+      <section className="relative overflow-hidden bg-white dark:bg-[#1e1535]">
         <div className="mx-auto grid max-w-7xl gap-16 px-6 py-24 lg:grid-cols-[0.85fr_1.15fr] lg:px-12 lg:py-32">
           {/* Roi détouré, en veille sur la colonne de gauche */}
           <Reveal className="relative hidden lg:block">
@@ -373,13 +373,12 @@ export function AboutPage({
                     {/* Rail vertical + pastille */}
                     <div className="relative flex flex-col items-center">
                       <span
-                        className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full font-mono text-[0.7rem] font-semibold text-white"
-                        style={{ backgroundColor: INK }}
+                        className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full font-mono text-[0.7rem] font-semibold text-white bg-[#111114] dark:bg-[#F8EFE7] dark:text-[#111114]"
                       >
                         {String(i + 1).padStart(2, '0')}
                       </span>
                       {i < STEPS.length - 1 && (
-                        <span className="absolute top-12 h-full w-px bg-gradient-to-b from-black/15 to-transparent" />
+                        <span className="absolute top-12 h-full w-px bg-gradient-to-b from-black/15 dark:from-white/15 to-transparent" />
                       )}
                     </div>
                     <div className="pt-1.5">
@@ -387,7 +386,7 @@ export function AboutPage({
                         {step.year}
                       </p>
                       <h3 className="mt-2 font-display text-3xl font-bold uppercase tracking-tight">{step.title}</h3>
-                      <p className="mt-3 max-w-xl text-[0.95rem] leading-relaxed text-gray-500">{step.text}</p>
+                      <p className="mt-3 max-w-xl text-[0.95rem] leading-relaxed text-gray-500 dark:text-[#CBB9D8]">{step.text}</p>
                     </div>
                   </li>
                 </Reveal>
@@ -402,7 +401,7 @@ export function AboutPage({
           ============================================================ */}
       <section className="px-6 pt-24 pb-24 lg:px-12">
         <Reveal>
-          <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] " style={{ backgroundColor: INK }}>
+          <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2.5rem]" style={{ backgroundColor: INK }}>
             <img
               src={queenBoard}
               alt=""

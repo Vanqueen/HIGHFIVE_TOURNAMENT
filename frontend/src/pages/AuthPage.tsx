@@ -45,6 +45,7 @@ export function AuthPage({
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isDark = window.localStorage.getItem('theme') === 'dark';
 
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -128,7 +129,7 @@ export function AuthPage({
 
             <div className="relative flex h-full flex-col justify-end p-8 text-white">
               <div className="flex justify-center pt-65">
-                <Logo className="h-25 w-auto" onDark />
+                <Logo className="h-25 w-auto rounded-lg" onDark={isDark} />
               </div>
 
               {/* <div className="mt-auto mb-8">

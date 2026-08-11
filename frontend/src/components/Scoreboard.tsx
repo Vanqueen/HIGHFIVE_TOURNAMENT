@@ -215,8 +215,8 @@ export function CheckerEdge({ accent = INK, squares = 32 }: { accent?: string; s
       {Array.from({ length: squares }, (_, i) => (
         <span
           key={i}
-          className="h-full flex-1"
-          style={{ backgroundColor: i % 2 === 0 ? accent : INK }}
+          className={`h-full flex-1 ${i % 2 !== 0 ? 'bg-[#111114] dark:bg-white/20' : ''}`}
+          style={i % 2 === 0 ? { backgroundColor: accent } : undefined}
         />
       ))}
     </div>
@@ -225,4 +225,5 @@ export function CheckerEdge({ accent = INK, squares = 32 }: { accent?: string; s
 
 /* Les lignes d'un tableau alternent comme les cases d'une colonne
    d'échiquier. Zébrure fonctionnelle autant que thématique. */
-export const squareTint = (index: number) => (index % 2 === 1 ? '#F6F4F0' : '#FFFFFF');
+export const squareTint = (index: number) =>
+  index % 2 === 1 ? 'bg-[#F6F4F0] dark:bg-white/[0.03]' : 'bg-white dark:bg-transparent';

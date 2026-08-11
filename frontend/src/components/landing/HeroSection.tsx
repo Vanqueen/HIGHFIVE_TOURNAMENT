@@ -61,8 +61,8 @@ export function HeroSection({
           src={chessHeroImage}
           alt="Échiquier et pièces"
           className="h-full w-full object-cover object-[center_46%]"
-          fetchPriority="high"
           decoding="async"
+          loading="eager"
           style={{
             maskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.35) 20%, rgba(0,0,0,0.85) 38%, #000 52%)',
             WebkitMaskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.35) 20%, rgba(0,0,0,0.85) 38%, #000 52%)',

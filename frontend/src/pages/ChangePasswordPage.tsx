@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Eye, EyeOff, KeyRound, Loader2, Lock, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Logo } from '../components/Logo';
 import { api } from '../lib/api';
@@ -46,7 +46,16 @@ const DARK = {
 
 export function ChangePasswordPage({ onDone }: { onDone: () => void }) {
   const { user, refresh } = useAuth();
-  const isDark = window.localStorage.getItem('theme') === 'dark';
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    });
+    observer.observe(document.documentElement, { attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
   const c = isDark ? DARK : LIGHT;
 
   const [form, setForm] = useState({ new_password: '', confirm: '' });
@@ -87,7 +96,7 @@ export function ChangePasswordPage({ onDone }: { onDone: () => void }) {
       style={{ background: c.bg }}
     >
       <div className="w-full max-w-sm">
-        <Logo className="mb-8 h-14 w-auto" onDark={isDark} />
+        <Logo className="mb-8 h-14 w-auto rounded-lg" onDark={isDark} />
 
         {/* Bandeau info mdp temporaire */}
         <div
@@ -134,11 +143,7 @@ export function ChangePasswordPage({ onDone }: { onDone: () => void }) {
                   onChange={set('new_password')}
                   placeholder="8 caractères minimum"
                   autoComplete="new-password"
-                  style={{
-                    background: c.inputBg,
-                    borderColor: c.inputBorder,
-                    color: c.textPrimary,
-                  }}
+                  style={{ background: c.inputBg, borderColor: c.inputBorder, color: c.textPrimary }}
                   className="w-full rounded-xl border py-3 pl-11 pr-11 text-sm outline-none transition-all placeholder:opacity-50"
                   onFocus={e => { e.currentTarget.style.borderColor = c.inputFocus; e.currentTarget.style.boxShadow = `0 0 0 2px ${c.inputFocus}33`; }}
                   onBlur={e => { e.currentTarget.style.borderColor = c.inputBorder; e.currentTarget.style.boxShadow = 'none'; }}
@@ -169,11 +174,7 @@ export function ChangePasswordPage({ onDone }: { onDone: () => void }) {
                   onChange={set('confirm')}
                   placeholder="Répétez le mot de passe"
                   autoComplete="new-password"
-                  style={{
-                    background: c.inputBg,
-                    borderColor: c.inputBorder,
-                    color: c.textPrimary,
-                  }}
+                  style={{ background: c.inputBg, borderColor: c.inputBorder, color: c.textPrimary }}
                   className="w-full rounded-xl border py-3 pl-11 pr-11 text-sm outline-none transition-all placeholder:opacity-50"
                   onFocus={e => { e.currentTarget.style.borderColor = c.inputFocus; e.currentTarget.style.boxShadow = `0 0 0 2px ${c.inputFocus}33`; }}
                   onBlur={e => { e.currentTarget.style.borderColor = c.inputBorder; e.currentTarget.style.boxShadow = 'none'; }}
@@ -196,10 +197,7 @@ export function ChangePasswordPage({ onDone }: { onDone: () => void }) {
               type="submit"
               disabled={loading}
               className="flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-sm font-bold tracking-wide transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-              style={{
-                backgroundColor: c.btnBg,
-                color: isDark ? '#111114' : '#ffffff',
-              }}
+              style={{ backgroundColor: c.btnBg, color: isDark ? '#111114' : '#ffffff' }}
             >
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
               {loading ? 'MISE À JOUR…' : 'ENREGISTRER'}

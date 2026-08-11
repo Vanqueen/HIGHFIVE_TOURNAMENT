@@ -98,7 +98,7 @@ export function RoundsTab({
                 onClick={() => setActiveKey(section.key)}
                 className="focus-ring rounded-lg border px-3 py-1.5 font-mono text-sm font-semibold tabular transition-colors"
                 style={{
-                  backgroundColor: isActive ? accent : '#fff',
+                  backgroundColor: isActive ? accent : 'var(--surface-card-strong)',
                   borderColor: isActive ? accent : RULE,
                   color: isActive ? '#fff' : '#8A8A90',
                 }}
@@ -135,15 +135,15 @@ export function RoundsTab({
           return (
             <li
               key={match.id}
-              className={i === 0 ? '' : 'border-t'}
-              style={{ borderColor: RULE, backgroundColor: squareTint(i) }}
+              className={`${i === 0 ? '' : 'border-t'} ${squareTint(i)}`}
+              style={{ borderColor: RULE }}
             >
               <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:gap-4">
                 {/* Numéro d'échiquier en poule, emplacement dans l'arbre en
                     phase finale — la coordonnée de la rencontre. */}
                 <span
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border font-mono text-sm font-semibold tabular"
-                  style={{ borderColor: RULE, backgroundColor: '#fff' }}
+                  style={{ borderColor: RULE, backgroundColor: 'var(--surface-card-strong)' }}
                   title={isPlayoff ? 'Emplacement dans l’arbre' : 'Échiquier'}
                 >
                   {match.board_number}
@@ -196,8 +196,8 @@ function Side({
     <div
       className="flex items-center gap-2.5 rounded-xl border px-3 py-2"
       style={{
-        borderColor: won ? INK : RULE,
-        backgroundColor: won ? `${GOLD}12` : '#fff',
+        borderColor: won ? 'var(--text-primary)' : RULE,
+        backgroundColor: won ? `${GOLD}12` : 'var(--surface-card-strong)',
       }}
     >
       <span
@@ -211,7 +211,7 @@ function Side({
       <div className="min-w-0 flex-1">
         <p
           className={`truncate text-sm ${won ? 'font-bold' : 'font-medium'}`}
-          style={{ color: lost ? '#B0B0B6' : INK }}
+          style={{ color: lost ? '#B0B0B6' : 'var(--text-primary)' }}
         >
           {player?.name ?? (isBye ? 'Exempt' : '—')}
         </p>
@@ -255,8 +255,8 @@ function ResultPicker({
           }`}
           style={{
             borderColor: RULE,
-            backgroundColor: current === option.value ? INK : '#fff',
-            color: current === option.value ? '#fff' : '#8A8A90',
+            backgroundColor: current === option.value ? 'var(--text-primary)' : 'var(--surface-card-strong)',
+            color: current === option.value ? 'var(--app-bg)' : '#8A8A90',
           }}
         >
           {disabled && current === option.value ? (

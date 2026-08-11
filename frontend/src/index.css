@@ -25,6 +25,10 @@
   --accent-soft-2: rgba(216, 160, 95, 0.18);
   --ring-color: rgba(123, 76, 230, 0.2);
   --shadow-color: rgba(73, 44, 107, 0.18);
+  --bracket-line: #c9c9ce;
+  --bracket-card: #ffffff;
+  --bracket-ink: #111114;
+  --bracket-muted: #a9a9ae;
 }
 
 html.dark,
@@ -47,6 +51,10 @@ html.dark,
   --accent-soft-2: rgba(242, 185, 107, 0.16);
   --ring-color: rgba(157, 124, 255, 0.26);
   --shadow-color: rgba(0, 0, 0, 0.38);
+  --bracket-line: rgba(184, 196, 220, 0.34);
+  --bracket-card: #202532;
+  --bracket-ink: #f4f6fb;
+  --bracket-muted: #8f99ad;
 }
 
 html.dark [class*="bg-white"],

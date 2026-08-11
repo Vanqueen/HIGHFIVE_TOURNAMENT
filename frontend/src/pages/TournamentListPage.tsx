@@ -110,12 +110,11 @@ export function TournamentListPage({ onNew, onOpen, isAdmin }: {
               <button
                 key={val}
                 onClick={() => setFilter(val)}
-                className="rounded-full px-3 py-1.5 text-xs font-semibold transition-colors"
-                style={{
-                  backgroundColor: filter === val ? INK : 'transparent',
-                  color: filter === val ? '#fff' : '#6B7280',
-                  border: `1px solid ${filter === val ? INK : 'rgba(0,0,0,0.1)'}`,
-                }}
+                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors border ${
+                  filter === val
+                    ? 'bg-[#111114] dark:bg-[#F8EFE7] text-white dark:text-[#111114] border-[#111114] dark:border-[#F8EFE7]'
+                    : 'bg-transparent text-gray-500 dark:text-gray-400 border-black/10 dark:border-white/15'
+                }`}
               >
                 {lbl} <span className="ml-1 opacity-60">{counts[val as keyof typeof counts] ?? counts.all}</span>
               </button>
@@ -169,7 +168,7 @@ export function TournamentListPage({ onNew, onOpen, isAdmin }: {
                   </div>
 
                   {/* nom */}
-                  <h3 className="mb-3 text-base font-extrabold leading-snug tracking-tight dark:text-white" style={{ color: INK }}>
+                  <h3 className="mb-3 text-base font-extrabold leading-snug tracking-tight text-gray-700 dark:text-white">
                     {t.name}
                   </h3>
 

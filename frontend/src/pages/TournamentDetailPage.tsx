@@ -89,7 +89,7 @@ export function TournamentDetailPage({
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       {/* ---------------------- Bandeau d'identité ---------------------- */}
-      <header className="flex-none overflow-hidden rounded-2xl border bg-white dark:bg-gray-700 dark:bg-slate-600" style={{ borderColor: RULE }}>
+      <header className="flex-none overflow-hidden rounded-2xl border bg-white dark:bg-[#1e1535]" style={{ borderColor: RULE }}>
         <div className="flex flex-col gap-4 p-4 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex min-w-0 items-center gap-3">
             <button
@@ -142,8 +142,8 @@ export function TournamentDetailPage({
         </div>
 
         {/* Barre de pilotage : le message et l'unique action attendue. */}
-        <div className="flex flex-col gap-3 border-t bg-[#FBFAF9] px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="min-w-0 text-xs text-gray-600 dark:text-gray-50">
+        <div className="flex flex-col gap-3 border-t bg-[#FBFAF9] dark:bg-[#160f2a] px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between">
+          <p className="min-w-0 text-xs text-gray-600 dark:text-[#CBB9D8]">
             {control?.detail ?? 'Consultation seule — vous n’êtes pas l’organisateur de ce tournoi.'}
           </p>
 
@@ -184,7 +184,7 @@ export function TournamentDetailPage({
       )}
 
       {/* --------------------------- Onglets --------------------------- */}
-      <nav className="mt-4 flex flex-none flex-wrap gap-1 border-b" style={{ borderColor: RULE }}>
+      <nav className="mt-4 flex flex-none flex-wrap gap-1 border-b dark:border-white/10" style={{ borderColor: RULE }}>
         <TabLink active={tab === 'players'} onClick={() => setTab('players')} icon={<Users className="h-4 w-4" />} label="Joueurs" />
         <TabLink active={tab === 'pairings'} onClick={() => setTab('pairings')} icon={<ClipboardList className="h-4 w-4" />} label="Appariements" />
         <TabLink active={tab === 'bracket'} onClick={() => setTab('bracket')} icon={<GitBranch className="h-4 w-4" />} label="Arbre" />
@@ -296,7 +296,7 @@ function PhaseChips({ tournament }: { tournament: Tournament }) {
               </span>
               <span
                 className="font-display text-[11px] font-semibold uppercase tracking-[0.1em]"
-                style={{ color: done || live ? INK : '#B0B0B6' }}
+                style={{ color: done || live ? 'var(--text-primary)' : '#B0B0B6' }}
               >
                 {step.label}
               </span>
