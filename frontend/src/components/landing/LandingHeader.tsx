@@ -1,4 +1,4 @@
-import { Menu, X, User, Sun, Moon, LogOut, ChevronDown, Trophy, Users } from 'lucide-react';
+import { Menu, X, User, Sun, Moon, LogOut, LogIn, UserPlus, ChevronDown, Trophy, Users } from 'lucide-react';
 import { useState } from 'react';
 import { Logo } from '../Logo';
 import { INK, GOLD, PURPLE, NAV_ITEMS } from './tokens';
@@ -40,7 +40,7 @@ export function LandingHeader({
   };
 
   return (
-    <header className="relative z-40 flex-none border-b border-black/5 bg-white/95 dark:bg-gradient-to-t dark:from-[#342752] dark:to-[#251C3A] backdrop-blur-sm">
+    <header className="relative z-40 flex-none border-b border-black/5 bg-white/95 dark:bg-gradient-to-t dark:from-[#342752] dark:to-[#251C3A] backdrop-blur-sm overflow-hidden">
       <div className="mx-auto flex h-[8.8em] max-w-[192em] items-center justify-between px-[2.6em] lg:px-[3.2em]">
         <button onClick={() => handleNav('Accueil')}>
           <Logo className="h-[7em] w-auto shrink-0 rounded-lg" onDark={isDark} />
@@ -178,32 +178,43 @@ export function LandingHeader({
                 {item}
               </button>
             ))}
-            <div className="flex gap-[1.2em] border-t border-[color:var(--border)] pt-[1.6em]">
-              {user ? (
+            <div className="flex flex-col gap-[1.2em] border-t border-[color:var(--border)] pt-[1.6em]">
+              <div className="flex items-center justify-between gap-3">
                 <button
-                  onClick={onDashboard}
-                  className="flex-1 rounded-full px-[1.6em] py-[1em] text-[1.4em] font-semibold text-white"
-                  style={{ backgroundColor: INK }}
+                  type="button"
+                  onClick={onToggleTheme}
+                  aria-label={theme === 'dark' ? 'Activer le mode clair' : 'Activer le mode sombre'}
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--border)] bg-[color:var(--surface-card-strong)] text-[color:var(--text-secondary)] transition-all hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]"
                 >
-                  Mon espace
+                  {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
                 </button>
-              ) : (
-                <>
+                {user ? (
                   <button
-                    onClick={onLogin}
-                    className="flex-1 rounded-full border border-gray-300 px-[1.6em] py-[1em] text-[1.4em] font-semibold text-gray-700"
+                    onClick={onDashboard}
+                    aria-label="Mon espace"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--border)] bg-[color:var(--surface-card-strong)] text-[color:var(--text-secondary)] transition-all hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]"
                   >
-                    Se connecter
+                    <User className="h-5 w-5" />
                   </button>
-                  <button
-                    onClick={onLogin}
-                    className="flex-1 rounded-full px-[1.6em] py-[1em] text-[1.4em] font-semibold text-white"
-                    style={{ backgroundColor: INK }}
-                  >
-                    S&apos;inscrire
-                  </button>
-                </>
-              )}
+                ) : (
+                  <>
+                    <button
+                      onClick={onLogin}
+                      aria-label="Se connecter"
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--border)] bg-[color:var(--surface-card-strong)] text-[color:var(--text-secondary)] transition-all hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]"
+                    >
+                      <LogIn className="h-5 w-5" />
+                    </button>
+                    <button
+                      onClick={onLogin}
+                      aria-label="S'inscrire"
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--border)] bg-[color:var(--accent)] text-white transition-all hover:opacity-90"
+                    >
+                      <UserPlus className="h-5 w-5" />
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>

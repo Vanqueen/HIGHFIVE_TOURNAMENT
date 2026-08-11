@@ -127,6 +127,7 @@ body {
   background: var(--app-bg);
   color: var(--text-primary);
   transition: background 240ms ease, color 240ms ease;
+  overflow-x: hidden;
 }
 
 .font-mono { font-family: 'Geist Mono', 'Fira Code', monospace; }
@@ -259,6 +260,12 @@ input:-webkit-autofill:focus {
   background: #ffffff;
 }
 
+@media (min-width: 768px) and (max-width: 1023px) {
+  .landing-scale {
+    font-size: clamp(7px, 1.2vw, 10px);
+  }
+}
+
 @media (min-width: 1024px) {
   .landing-scale {
     font-size: clamp(6px, min(0.965vh, 0.651vw), 12px);
@@ -277,9 +284,12 @@ input:-webkit-autofill:focus {
 }
 
 /* Pages secondaires de la landing : pleine hauteur, pas de scroll de page */
-.landing-scale:not(.landing-fixed) {
-  height: 100dvh;
-  overflow: hidden;
+/* Desktop uniquement — mobile/tablette utilisent le scroll naturel de la page */
+@media (min-width: 1024px) {
+  .landing-scale:not(.landing-fixed) {
+    height: 100dvh;
+    overflow: hidden;
+  }
 }
 
 /* Scaling du header uniquement (espaces connectés) */

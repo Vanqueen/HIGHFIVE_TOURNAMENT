@@ -146,7 +146,7 @@ export function LandingPage({
       )}
 
       {activeNav !== 'Accueil' && (
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+        <div className="flex min-h-0 flex-1 flex-col lg:overflow-y-auto">
           {activeNav === 'Tournois' && (
             <TournamentListPage onNew={onLogin} onOpen={handleTournamentClick} />
           )}

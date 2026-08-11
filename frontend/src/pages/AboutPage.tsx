@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { ArrowRight, Trophy, Users, ShieldCheck, Radio } from 'lucide-react';
+import { ArrowRight, Trophy, Users, ShieldCheck, Radio, User } from 'lucide-react';
 import { INK, GOLD, GOLD_DARK, PURPLE, GREEN } from '../components/landing/tokens';
 import { LandingFooter } from '../components/landing/LandingFooter';
 import type { User as AuthUser } from '../types';
@@ -138,7 +138,7 @@ export function AboutPage({
           ============================================================ */}
       <section className="relative overflow-hidden" style={{ backgroundColor: INK }}>
         {/* Visuel : duel de rois, fondu vers la gauche pour laisser le texte respirer */}
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-full lg:w-[62%]">
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-full md:w-[70%] lg:w-[62%]">
           <img
             src={kingsDuel}
             alt="Roi blanc dressé face à un roi noir renversé"
@@ -160,14 +160,14 @@ export function AboutPage({
           style={boardPattern('#ffffff', 56)}
         />
 
-        <div className="relative mx-auto flex min-h-[82vh] max-w-7xl items-center px-6 py-24 lg:px-12">
+        <div className="relative mx-auto flex min-h-[82vh] max-w-7xl items-center px-6 py-20 md:py-24 lg:px-12">
           <div className="max-w-2xl">
             <Reveal>
               <Overline>À propos — VIPP DIGITAL SERVICES CHESS CLUB</Overline>
             </Reveal>
 
             <Reveal delay={90}>
-              <h1 className="mt-6 font-display text-6xl font-bold uppercase leading-[0.92] tracking-tight text-white sm:text-7xl lg:text-8xl">
+              <h1 className="mt-6 font-display text-4xl font-bold uppercase leading-[0.92] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-8xl">
                 L&apos;échiquier,
                 <br />
                 notre terrain
@@ -190,17 +190,23 @@ export function AboutPage({
               <div className="mt-12 flex flex-wrap gap-3">
                 <button
                   onClick={onSeeTournaments}
-                  className="flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-bold uppercase tracking-[0.08em] transition-transform hover:-translate-y-0.5"
+                  aria-label="Voir les tournois"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[color:var(--surface-card-strong)] px-5 py-3.5 text-sm font-bold uppercase tracking-[0.08em] text-[color:var(--text-primary)] transition-transform hover:-translate-y-0.5"
                   style={{ backgroundColor: GOLD, color: INK }}
                 >
-                  Voir les tournois
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-5 w-5 sm:hidden" />
+                  <span className="hidden sm:inline-flex items-center gap-2">
+                    Voir les tournois
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
                 </button>
                 <button
                   onClick={user ? onDashboard : onLogin}
-                  className="rounded-full border border-white/25 px-7 py-3.5 text-sm font-bold uppercase tracking-[0.08em] text-white transition-colors hover:border-white/60"
+                  aria-label={user ? 'Accéder à mon espace' : 'Rejoindre la plateforme'}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 px-5 py-3.5 text-sm font-bold uppercase tracking-[0.08em] text-white transition-colors hover:border-white/60"
                 >
-                  {user ? 'Mon espace' : 'Rejoindre la plateforme'}
+                  <User className="h-5 w-5 sm:hidden" />
+                  <span className="hidden sm:inline">{user ? 'Mon espace' : 'Rejoindre la plateforme'}</span>
                 </button>
               </div>
             </Reveal>
@@ -215,14 +221,13 @@ export function AboutPage({
           2 — MANIFESTE / POURQUOI LA PLATEFORME ?
           ============================================================ */}
       <section className="relative overflow-hidden bg-white dark:bg-[#1e1535]">
-        <div className="mx-auto grid max-w-7xl items-center gap-16 px-6 py-24 lg:grid-cols-[1.05fr_0.95fr] lg:px-12 lg:py-32">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 py-16 md:gap-16 lg:grid-cols-[1.05fr_0.95fr] lg:px-12 lg:py-32">
           <div>
             <Reveal>
               <Overline>Notre vision</Overline>
-              {/* <Overline>POURQUOI LA PLATEFORME ?</Overline> */}
             </Reveal>
             <Reveal delay={80}>
-              <h2 className="mt-5 font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight sm:text-6xl">
+              <h2 className="mt-5 font-display text-4xl font-bold uppercase leading-[0.95] tracking-tight sm:text-5xl md:text-6xl">
                 Des tournois
                 <br />
                 <span style={{ color: GOLD }}>plus simples, plus fiables</span>
@@ -243,15 +248,15 @@ export function AboutPage({
             </Reveal>
 
             <Reveal delay={200}>
-              <div className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-black/10 dark:border-white/10 bg-black/10 dark:bg-white/10 sm:grid-cols-3">
+              <div className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-black/10 dark:border-white/10 bg-black/10 dark:bg-white/10 grid-cols-3">
                 {[
                   { k: 'Appariements', v: 'Système suisse' },
                   { k: 'Départages', v: 'BH · SB' },
                   { k: 'Diffusion', v: 'Temps réel' },
                 ].map((cell) => (
-                  <div key={cell.k} className="bg-white dark:bg-[#1e1535] px-5 py-5">
-                    <p className="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-gray-400">{cell.k}</p>
-                    <p className="mt-2 font-display text-2xl font-bold uppercase tracking-tight">{cell.v}</p>
+                  <div key={cell.k} className="bg-white dark:bg-[#1e1535] px-3 py-4 md:px-5 md:py-5">
+                    <p className="font-mono text-[0.6rem] md:text-[0.65rem] uppercase tracking-[0.2em] text-gray-400">{cell.k}</p>
+                    <p className="mt-2 font-display text-lg md:text-2xl font-bold uppercase tracking-tight">{cell.v}</p>
                   </div>
                 ))}
               </div>
@@ -290,15 +295,15 @@ export function AboutPage({
           3 — VALEURS / NOS ENGAGEMENTS
           ============================================================ */}
       <section className="bg-[#F7F6F4] dark:bg-[#251C3A]">
-        <div className="mx-auto max-w-7xl px-6 py-24 lg:px-12 lg:py-32">
+        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-12 lg:py-32">
           <Reveal>
             <Overline color={GOLD_DARK}>Ce qui nous guide</Overline>
-            <h2 className="mt-5 max-w-3xl font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight sm:text-6xl">
+            <h2 className="mt-5 max-w-3xl font-display text-4xl font-bold uppercase leading-[0.95] tracking-tight sm:text-5xl md:text-6xl">
               Trois engagements pour chaque tournoi
             </h2>
           </Reveal>
 
-          <div className="mt-14 grid gap-6 lg:grid-cols-3">
+          <div className="mt-14 grid gap-6 md:grid-cols-3">
             {VALUES.map((value, i) => (
               <Reveal key={value.n} delay={i * 110}>
                 <article className="group relative h-full overflow-hidden rounded-[1.75rem] border border-black/5 dark:border-white/10 bg-white dark:bg-[#1e1535] p-9 shadow-[0_24px_50px_-40px_rgba(17,17,20,0.55)] transition-transform duration-300 hover:-translate-y-1.5">
@@ -328,7 +333,7 @@ export function AboutPage({
           4 — PARCOURS
           ============================================================ */}
       <section className="relative overflow-hidden bg-white dark:bg-[#1e1535]">
-        <div className="mx-auto grid max-w-7xl gap-16 px-6 py-24 lg:grid-cols-[0.85fr_1.15fr] lg:px-12 lg:py-32">
+        <div className="mx-auto grid max-w-7xl gap-16 px-6 py-16 lg:grid-cols-[0.85fr_1.15fr] lg:px-12 lg:py-32">
           {/* Roi détouré, en veille sur la colonne de gauche */}
           <Reveal className="relative hidden lg:block">
             <div className="sticky top-24">
@@ -359,14 +364,14 @@ export function AboutPage({
           <div>
             <div className="lg:hidden">
               <Overline>Le parcours</Overline>
-              <h2 className="mt-5 font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight">
+              <h2 className="mt-5 font-display text-4xl font-bold uppercase leading-[0.95] tracking-tight sm:text-5xl">
                 Du club interne à <span style={{ color: GOLD }}> une plateforme dédiée</span>
               </h2>
             </div>
 
             <ol className="mt-10 lg:mt-0">
               {STEPS.map((step, i) => (
-                <Reveal key={step.year} delay={i * 90}>
+                <Reveal key={`${step.year}-${i}`} delay={i * 90}>
                   <li className="relative grid grid-cols-[auto_1fr] gap-6 pb-12 last:pb-0">
                     {/* Rail vertical + pastille */}
                     <div className="relative flex flex-col items-center">
@@ -397,7 +402,7 @@ export function AboutPage({
       {/* ============================================================
           5 — APPEL FINAL
           ============================================================ */}
-      <section className="px-6 pt-24 pb-24 lg:px-12">
+      <section className="px-6 pt-16 pb-16 md:pt-24 md:pb-24 lg:px-12">
         <Reveal>
           <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2.5rem]" style={{ backgroundColor: INK }}>
             <img
@@ -415,7 +420,7 @@ export function AboutPage({
               style={{ background: `radial-gradient(circle at 78% 50%, ${GOLD}2e 0%, transparent 58%)` }}
             />
 
-            <div className="relative grid gap-10 px-8 py-16 sm:px-14 lg:grid-cols-[1.1fr_0.9fr] lg:py-20">
+            <div className="relative grid gap-10 px-8 py-12 sm:px-14 md:py-16 lg:grid-cols-[1.1fr_0.9fr] lg:py-20">
               <div>
                 <h2 className="mt-7 font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight text-white sm:text-6xl">
                   Rejoignez
@@ -436,8 +441,7 @@ export function AboutPage({
                     <Users className="h-4 w-4" />
                     {user ? 'Mon espace' : 'Créer un compte joueur'}
                   </button>
-                  <a
-                    href="mailto:contact@vipp-digital.com"
+                  <a href="mailto:contact@vipp-digital.com" aria-label='Devenir organisateur'
                     className="rounded-full border border-white/25 px-7 py-3.5 text-sm font-bold uppercase tracking-[0.08em] text-white transition-colors hover:border-white/60"
                   >
                     Devenir organisateur
