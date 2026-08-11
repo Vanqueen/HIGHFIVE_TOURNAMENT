@@ -21,6 +21,23 @@
       content="Inscrivez-vous aux tournois, suivez vos parties et vibrez au rythme des plus grandes compétitions."
     />
     <meta name="twitter:card" content="summary" />
+
+    <!-- Préchargement des polices : évite le FOUT (flash de texte non stylisé)
+         sans bloquer le rendu initial. display=swap garantit que le texte
+         est visible immédiatement avec la police système en attendant. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..900;1,14..32,300..900&family=Barlow+Condensed:wght@500;600;700&family=Geist+Mono:wght@400;500;600&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..900;1,14..32,300..900&family=Barlow+Condensed:wght@500;600;700&family=Geist+Mono:wght@400;500;600&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
   </head>
   <body>
     <div id="root"></div>

@@ -1,6 +1,13 @@
 import type { Tournament, Player, Match, Registration, User } from '../types';
 
 const BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:5001/api';
+const BACKEND_ROOT = BASE.replace(/\/api$/, '');
+
+/* Keep-alive : Render endort les services gratuits après ~15 min d'inactivité.
+   Un ping toutes les 14 min évite le cold start de 10-30s pour les visiteurs. */
+if (import.meta.env.PROD) {
+  setInterval(() => fetch(`${BACKEND_ROOT}/health`, { method: 'GET' }).catch(() => {}), 14 * 60 * 1000);
+}
 
 /* Erreur enrichie du code HTTP : les écrans peuvent distinguer un 401
    (session expirée) d'un 409 (déjà inscrit) sans analyser le message. */
@@ -92,6 +99,8 @@ export const api = {
       req<{ created: number; linked: number; anonymous: number; skipped: number; errors: { row: number; name?: string; reason: string }[] }>(
         'POST', `/tournaments/${tournament_id}/players/import`, { players }
       ),
+    bulkUpdatePoints: (updates: { id: string; points: number }[]) =>
+      req<void>('POST', '/players/bulk-points', { updates }),
   },
   podium: {
     get: (tournament_id: string) => req<Player[]>('GET', `/tournaments/${tournament_id}/podium`),

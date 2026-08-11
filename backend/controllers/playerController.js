@@ -30,6 +30,17 @@ export const update = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+export const bulkUpdatePoints = async (req, res, next) => {
+  try {
+    const { updates } = req.body;
+    if (!Array.isArray(updates) || updates.length === 0) {
+      return res.status(400).json({ error: 'updates[] est requis' });
+    }
+    await playerService.bulkUpdatePoints(updates);
+    res.status(204).end();
+  } catch (err) { next(err); }
+};
+
 export const remove = async (req, res, next) => {
   try {
     const player = await playerService.getById(req.params.id);

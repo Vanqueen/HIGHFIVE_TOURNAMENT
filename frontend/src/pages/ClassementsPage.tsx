@@ -58,7 +58,7 @@ function StandingsPanel({ tournament, onBack }: { tournament: Tournament; onBack
             <Trophy className="h-5 w-5" style={{ color: GOLD }} />
           </div>
           <div className="min-w-0 flex-1">
-            <h2 className="text-lg font-extrabold leading-tight tracking-tight dark:text-white" style={{ color: INK }}>{tournament.name}</h2>
+            <h2 className="text-lg font-extrabold leading-tight tracking-tight text-gray-700 dark:text-white">{tournament.name}</h2>
             <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
               <span className="inline-block rounded-full px-2.5 py-0.5 text-[0.68rem] font-bold uppercase tracking-wide text-white" style={{ backgroundColor: badge.color }}>{badge.label}</span>
               {tournament.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" style={{ color: GOLD }} />{tournament.location}</span>}
@@ -271,7 +271,7 @@ export function ClassementsPage({ onTournamentClick }: { onTournamentClick?: (id
                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg" style={{ backgroundColor: `${GOLD}18` }}>
                           <Trophy className="h-4 w-4" style={{ color: GOLD }} />
                         </div>
-                        <h3 className="text-sm font-extrabold leading-snug tracking-tight dark:text-white" style={{ color: INK }}>{t.name}</h3>
+                        <h3 className="text-sm font-extrabold leading-snug tracking-tight text-gray-700 dark:text-white">{t.name}</h3>
                       </div>
 
                       <div className="space-y-1.5 text-xs text-gray-500 dark:text-gray-400">
@@ -287,7 +287,7 @@ export function ClassementsPage({ onTournamentClick }: { onTournamentClick?: (id
                         )}
                       </div>
 
-                      <div className="mt-auto flex items-center justify-between border-t border-black/5 dark:border-white/10 pt-3 text-xs text-gray-400 dark:text-gray-500 mt-4">
+                      <div className="mt-auto flex items-center justify-between border-t border-black/5 dark:border-white/10 pt-3 text-xs text-gray-400 dark:text-gray-500">
                         <span className="font-mono">{t.total_rounds} rondes</span>
                         {t.status === 'in_progress' && (
                           <span className="font-mono font-bold" style={{ color: GOLD_DARK }}>Ronde {t.current_round}/{t.total_rounds}</span>

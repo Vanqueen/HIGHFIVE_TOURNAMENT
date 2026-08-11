@@ -14,9 +14,12 @@ const connectDB = async () => {
     await mongoose.connect(uri, {
       serverApi: ServerApiVersion.v1,
       maxPoolSize: 10,
+      minPoolSize: 2,
       serverSelectionTimeoutMS: 10000,
       socketTimeoutMS: 45000,
+      heartbeatFrequencyMS: 10000,
     });
+    mongoose.set('bufferCommands', false);
     console.log('✅ Connecté à MongoDB avec succès');
   } catch (error) {
     console.error('❌ Erreur de connexion à MongoDB :', error);

@@ -61,7 +61,7 @@ export function Bracket({
           <span className="font-display text-[11px] font-semibold uppercase tracking-[0.16em]" style={{ color: GOLD }}>
             Arbre prévisionnel
           </span>
-          <p className="mt-1 text-gray-600">
+          <p className="mt-1 text-gray-600 dark:text-[#CBB9D8]">
             La poule qualificative n’est pas terminée. Le premier tour affiche les{' '}
             {tournament.qualifiers} joueurs qui seraient qualifiés au classement actuel — l’ordre peut
             encore changer à chaque résultat validé.
@@ -122,7 +122,7 @@ export function Bracket({
                     style={{ gridColumn: r + 1, gridRow: `${rowStart} / span ${span}` }}
                   >
                     {/* Arrivée du connecteur venant du tour précédent. */}
-                    {r > 0 && <span className="my-auto h-px w-4 shrink-0" style={{ backgroundColor: '#C9C9CE' }} />}
+                    {r > 0 && <span className="my-auto h-px w-4 shrink-0" style={{ backgroundColor: 'var(--bracket-line)' }} />}
 
                     <div className="flex min-w-0 flex-1 items-center">
                       <SlotCard slot={slot} current={live && tournament.playoff_round === slot.round} />
@@ -137,7 +137,7 @@ export function Bracket({
                           className={`absolute inset-x-0 border-r ${
                             slot.slot % 2 === 1 ? 'top-1/2 bottom-0 border-t' : 'top-0 bottom-1/2 border-b'
                           }`}
-                          style={{ borderColor: '#C9C9CE' }}
+                          style={{ borderColor: 'var(--bracket-line)' }}
                         />
                       </span>
                     )}
@@ -159,8 +159,8 @@ export function Bracket({
             <p className="font-display text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: GOLD }}>
               Vainqueur du tournoi
             </p>
-            <p className="font-display text-2xl font-bold uppercase leading-tight">{champion.name}</p>
-            {champion.club && <p className="text-xs text-gray-500">{champion.club}</p>}
+            <p className="font-display text-2xl font-bold uppercase leading-tight dark:text-[#F8EFE7]">{champion.name}</p>
+            {champion.club && <p className="text-xs text-gray-500 dark:text-[#CBB9D8]">{champion.club}</p>}
           </div>
         </div>
       )}
@@ -173,7 +173,7 @@ export function Bracket({
    le seul endroit où l'on agit sur une rencontre. */
 function SlotCard({ slot, current }: { slot: BracketSlot; current: boolean }) {
   const decided = slot.winnerId !== null;
-  const border = current && !decided ? GOLD : '#C9C9CE';
+  const border = current && !decided ? GOLD : 'var(--bracket-line)';
 
   return (
     /* Deux boîtes distinctes, séparées : la disposition des feuilles
@@ -223,8 +223,8 @@ function Side({
     <div
       className="flex items-stretch overflow-hidden rounded-md border"
       style={{
-        borderColor: isWinner ? INK : border,
-        backgroundColor: isWinner ? `${GOLD}14` : '#fff',
+        borderColor: isWinner ? 'var(--bracket-ink)' : border,
+        backgroundColor: isWinner ? `${GOLD}14` : 'var(--bracket-card)',
       }}
     >
       <div className="flex min-w-0 flex-1 items-center gap-2 px-3 py-2.5">
@@ -239,14 +239,14 @@ function Side({
         />
         <span
           className={`min-w-0 flex-1 truncate text-sm ${isWinner ? 'font-bold' : 'font-medium'}`}
-          style={{ color: eliminated ? '#B0B0B6' : INK }}
+          style={{ color: eliminated ? 'var(--bracket-muted)' : 'var(--bracket-ink)' }}
         >
           {player?.name ?? <span className="text-gray-300">À déterminer</span>}
         </span>
         {player && (
           <span
             className="shrink-0 font-mono text-[11px] tabular"
-            style={{ color: eliminated ? '#C4C4C8' : '#A9A9AE' }}
+            style={{ color: 'var(--bracket-muted)' }}
           >
             {player.rating || '—'}
           </span>
@@ -256,7 +256,7 @@ function Side({
       {/* Case de score, comme sur une feuille d'arbre. */}
       <div
         className="flex w-10 shrink-0 items-center justify-center border-l font-mono text-sm font-semibold tabular"
-        style={{ borderColor: isWinner ? INK : border, color: isWinner ? INK : '#C4C4C8' }}
+        style={{ borderColor: isWinner ? 'var(--bracket-ink)' : border, color: isWinner ? 'var(--bracket-ink)' : 'var(--bracket-muted)' }}
       >
         {score}
       </div>

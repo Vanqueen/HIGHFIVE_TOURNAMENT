@@ -26,6 +26,9 @@ export function LandingHeader({
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  // const isDark = window.localStorage.getItem('theme') === 'dark';
+
+  const isDark = theme === 'dark';
 
   const isOrganizer = user?.role === 'organizer';
   const roleColor = isOrganizer ? GOLD : PURPLE;
@@ -40,7 +43,7 @@ export function LandingHeader({
     <header className="relative z-40 flex-none border-b border-black/5 bg-white/95 dark:bg-gradient-to-t dark:from-[#342752] dark:to-[#251C3A] backdrop-blur-sm">
       <div className="mx-auto flex h-[8.8em] max-w-[192em] items-center justify-between px-[2.6em] lg:px-[3.2em]">
         <button onClick={() => handleNav('Accueil')}>
-          <Logo className="h-[7em] w-auto shrink-0" />
+          <Logo className="h-[7em] w-auto shrink-0 rounded-lg" onDark={isDark} />
         </button>
 
         <nav className="hidden items-center gap-[2.6em] lg:flex">

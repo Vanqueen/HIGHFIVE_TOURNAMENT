@@ -1,5 +1,4 @@
-import logoImage from '../assets/logo.png';
-import logoDarkImage from '../assets/logo4.png';
+import ChessLogo from '../assets/ChessLogo.png';
 
 /* Le logo porte déjà son propre texte : on ne lui accole jamais de
    wordmark, sinon deux noms cohabitent dans le même bloc.
@@ -14,7 +13,7 @@ export function Logo({
   onDark?: boolean;
 }) {
   const image = (
-    <img src={onDark ? logoDarkImage : logoImage} alt="VIPP Digital Services" className={className} draggable={false} />
+    <img src={onDark ? ChessLogo : ChessLogo} alt="VIPP Digital Services" className={className} draggable={false} />
   );
 
   return image;

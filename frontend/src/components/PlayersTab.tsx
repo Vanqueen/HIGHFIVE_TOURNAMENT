@@ -199,7 +199,7 @@ function AddPlayerForm({
   };
 
   return (
-    <form onSubmit={submit} className="mb-5 rounded-2xl border bg-white dark:bg-gray-700 p-5" style={{ borderColor: RULE }}>
+    <form onSubmit={submit} className="mb-5 rounded-2xl border bg-white dark:bg-[#1e1535] p-5" style={{ borderColor: RULE }}>
       <p className="mb-4 font-display text-[11px] font-semibold uppercase tracking-[0.16em] text-gray-400">
         Nouveau joueur — dossard <span className="font-mono">{seed}</span>
       </p>

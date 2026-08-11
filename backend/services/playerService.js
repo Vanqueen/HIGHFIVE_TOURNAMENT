@@ -37,6 +37,16 @@ export const update = async (id, data) => {
   return fmt(doc);
 };
 
+/* Met à jour les points de plusieurs joueurs en une seule opération bulk
+   au lieu de N requêtes individuelles. */
+export const bulkUpdatePoints = async (updates) => {
+  if (!updates.length) return;
+  const ops = updates.map(({ id, points }) => ({
+    updateOne: { filter: { _id: id }, update: { $set: { points } } },
+  }));
+  await Player.bulkWrite(ops, { ordered: false });
+};
+
 export const remove = async (id) => {
   const doc = await Player.findByIdAndDelete(id);
   if (!doc) throw Object.assign(new Error('Joueur introuvable'), { status: 404 });

@@ -52,6 +52,7 @@ router.delete('/tournaments/:id/register', ...playerOnly, player.unregisterSelf)
 router.get('/players', player.getByTournament);
 router.get('/tournaments/:tournament_id/podium', player.getTop);
 router.post('/players', ...organizerOnly, player.create);
+router.post('/players/bulk-points', ...organizerOnly, player.bulkUpdatePoints);
 router.post('/tournaments/:tournament_id/players/import', ...organizerOnly, player.bulkImport);
 router.patch('/players/:id', ...organizerOnly, player.update);
 router.delete('/players/:id', ...organizerOnly, player.remove);
