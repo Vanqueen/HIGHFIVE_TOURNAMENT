@@ -3,8 +3,9 @@ import { AppShell } from './components/AppShell';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { LandingPage } from './pages/LandingPage';
 import { AuthPage } from './pages/AuthPage';
-import { ChangePasswordPage } from './pages/ChangePasswordPage';
 import type { View } from './types';
+import { NAV_ITEMS } from './components/landing/tokens';
+import type { NavItem } from './components/landing/tokens';
 import PageLoader from './PageLoader';
 
 const PlayerDashboard = lazy(() => import('./pages/PlayerDashboard').then(m => ({ default: m.PlayerDashboard })));
@@ -23,7 +24,7 @@ export default function App() {
 
 function Router() {
   const { user, initializing } = useAuth();
-  const [view, setView] = useState<View>({ name: 'landing' });
+  const [view, setView] = useState<View>(() => readViewFromUrl());
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     if (typeof window === 'undefined') return 'dark';
     const stored = window.localStorage.getItem('theme');
@@ -39,19 +40,35 @@ function Router() {
 
   const toggleTheme = () => setTheme((current) => (current === 'dark' ? 'light' : 'dark'));
 
+  const navigate = (next: View, replace = false) => {
+    const path = pathForView(next);
+    if (window.location.pathname + window.location.search !== path) {
+      window.history[replace ? 'replaceState' : 'pushState']({}, '', path);
+    }
+    setView(next);
+  };
+
+  useEffect(() => {
+    const handlePopState = () => setView(readViewFromUrl());
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   /* À la déconnexion, on ne peut plus rester sur un écran protégé. */
   useEffect(() => {
     if (!user && !initializing) {
-      setView((current) =>
-        current.name === 'landing' || current.name === 'auth' ? current : { name: 'landing' }
-      );
+      setView((current) => {
+        if (current.name === 'landing' || current.name === 'auth') return current;
+        window.history.replaceState({}, '', '/');
+        return { name: 'landing' };
+      });
     }
   }, [user, initializing]);
 
-  const goHome = () => setView({ name: 'landing' });
+  const goHome = () => navigate({ name: 'landing' });
   const goHomeWithNav = (item: import('./components/landing/tokens').NavItem) =>
-    setView({ name: 'landing', nav: item });
-  const goDashboard = () => setView({ name: 'dashboard' });
+    navigate({ name: 'landing', nav: item });
+  const goDashboard = () => navigate({ name: 'dashboard' });
 
   /* Restauration de session en cours : éviter le flash « déconnecté ». */
   if (initializing) return <PageLoader />;
@@ -60,9 +77,9 @@ function Router() {
     return (
       <LandingPage
         user={user}
-        onLogin={() => setView({ name: 'auth' })}
+        onLogin={() => navigate({ name: 'auth' })}
         onDashboard={goDashboard}
-        onTournamentClick={(id) => setView({ name: 'detail', tournamentId: id })}
+        onTournamentClick={(id) => navigate({ name: 'detail', tournamentId: id })}
         theme={theme} onToggleTheme={toggleTheme}
         initialNav={view.nav}
       />
@@ -70,12 +87,12 @@ function Router() {
   }
 
   if (view.name === 'auth') {
-    if (user) return <RoleHome onNavigate={setView} theme={theme} onToggleTheme={toggleTheme} />;
+    if (user) return <RoleHome onNavigate={navigate} theme={theme} onToggleTheme={toggleTheme} />;
     return (
       <AuthPage
         onBack={goHome}
         onAuthenticated={(u) => {
-          if (u.must_change_password) setView({ name: 'change-password' });
+          if (u.must_change_password) navigate({ name: 'change-password' });
           else goDashboard();
         }}
       />
@@ -84,24 +101,31 @@ function Router() {
 
   if (view.name === 'change-password') {
     if (!user) return <AuthPage onBack={goHome} onAuthenticated={goDashboard} />;
-    return <ChangePasswordPage onDone={goDashboard} />;
+    return (
+      <AuthPage
+        initialMode="change-password"
+        onBack={goDashboard}
+        onAuthenticated={goDashboard}
+        onPasswordChanged={goDashboard}
+      />
+    );
   }
 
   if (!user) return <AuthPage onBack={goHome} onAuthenticated={goDashboard} />;
 
   if (view.name === 'dashboard') {
-    return <RoleHome onNavigate={setView} theme={theme} onToggleTheme={toggleTheme} />;
+    return <RoleHome onNavigate={navigate} theme={theme} onToggleTheme={toggleTheme} />;
   }
 
   /* Création de tournoi : réservée aux organisateurs. */
   if (view.name === 'create') {
-    if (user.role !== 'organizer') return <RoleHome onNavigate={setView} theme={theme} onToggleTheme={toggleTheme} />;
+    if (user.role !== 'organizer') return <RoleHome onNavigate={navigate} theme={theme} onToggleTheme={toggleTheme} />;
     return (
       <AppShell onHome={goHome} onNav={goHomeWithNav} onDashboard={goDashboard} theme={theme} onToggleTheme={toggleTheme}>
         <Suspense fallback={<PageLoader />}>
           <TournamentCreatePage
             onBack={goDashboard}
-            onCreated={(id) => setView({ name: 'detail', tournamentId: id })}
+            onCreated={(id) => navigate({ name: 'detail', tournamentId: id })}
           />
         </Suspense>
       </AppShell>
@@ -117,7 +141,7 @@ function Router() {
           <TournamentDetailPage
             tournamentId={view.tournamentId}
             onBack={goDashboard}
-            onViewStandings={(id) => setView({ name: 'standings', tournamentId: id })}
+            onViewStandings={(id) => navigate({ name: 'standings', tournamentId: id })}
           />
         </Suspense>
       </AppShell>
@@ -130,14 +154,48 @@ function Router() {
         <Suspense fallback={<PageLoader />}>
           <StandingsPage
             tournamentId={view.tournamentId}
-            onBack={() => setView({ name: 'detail', tournamentId: view.tournamentId })}
+            onBack={() => navigate({ name: 'detail', tournamentId: view.tournamentId })}
           />
         </Suspense>
       </AppShell>
     );
   }
 
-  return <RoleHome onNavigate={setView} theme={theme} onToggleTheme={toggleTheme} />;
+  return <RoleHome onNavigate={navigate} theme={theme} onToggleTheme={toggleTheme} />;
+}
+
+function readViewFromUrl(): View {
+  const { pathname, searchParams } = new URL(window.location.href);
+  const path = pathname.replace(/\/+$/, '') || '/';
+
+  if (path === '/login') return { name: 'auth' };
+  if (path === '/dashboard') return { name: 'dashboard' };
+  if (path === '/change-password') return { name: 'change-password' };
+  if (path === '/tournaments/new') return { name: 'create' };
+  if (path === '/tournaments') return { name: 'landing', nav: 'Tournois' };
+
+  const standings = path.match(/^\/tournaments\/([^/]+)\/standings$/);
+  if (standings) return { name: 'standings', tournamentId: decodeURIComponent(standings[1]) };
+
+  const detail = path.match(/^\/tournaments\/([^/]+)$/);
+  if (detail) return { name: 'detail', tournamentId: decodeURIComponent(detail[1]) };
+
+  const nav = searchParams.get('section');
+  if (nav && NAV_ITEMS.includes(nav as NavItem)) return { name: 'landing', nav: nav as NavItem };
+  return { name: 'landing' };
+}
+
+function pathForView(view: View): string {
+  switch (view.name) {
+    case 'auth': return '/login';
+    case 'dashboard': return '/dashboard';
+    case 'change-password': return '/change-password';
+    case 'create': return '/tournaments/new';
+    case 'detail': return `/tournaments/${encodeURIComponent(view.tournamentId)}`;
+    case 'standings': return `/tournaments/${encodeURIComponent(view.tournamentId)}/standings`;
+    case 'landing': return view.nav ? `/?section=${encodeURIComponent(view.nav)}` : '/';
+    case 'list': return '/?section=Tournois';
+  }
 }
 
 /* Aiguillage vers l'espace correspondant au rôle. */

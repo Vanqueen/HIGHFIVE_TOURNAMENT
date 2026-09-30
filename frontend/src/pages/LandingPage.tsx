@@ -82,6 +82,15 @@ export function LandingPage({
   }, [activeNav]);
 
   useEffect(() => {
+    const url = activeNav === 'Accueil'
+      ? '/'
+      : `/?section=${encodeURIComponent(activeNav)}`;
+    if (window.location.pathname + window.location.search !== url) {
+      window.history.replaceState(window.history.state, '', url);
+    }
+  }, [activeNav]);
+
+  useEffect(() => {
     if (tournaments.length <= 1) return;
     const timer = setInterval(() => {
       setFeaturedIndex((i) => {

@@ -50,9 +50,13 @@ export interface RegisterPayload {
 
 export interface NewOrganizerPayload {
   email: string;
-  password: string;
   full_name: string;
   organization?: string;
+}
+
+export interface CreatedOrganizer {
+  user: User;
+  initial_password: string;
 }
 
 export const api = {
@@ -72,7 +76,7 @@ export const api = {
   /* Cooptation : réservé aux organisateurs connectés. */
   organizers: {
     list: () => req<User[]>('GET', '/organizers'),
-    create: (body: NewOrganizerPayload) => req<{ user: User }>('POST', '/organizers', body),
+    create: (body: NewOrganizerPayload) => req<CreatedOrganizer>('POST', '/organizers', body),
     delete: (id: string) => req<void>('DELETE', `/organizers/${id}`),
   },
   tournaments: {

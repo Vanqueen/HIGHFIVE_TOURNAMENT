@@ -20,7 +20,7 @@ const TRAINING = [
 
 export function LandingFooter() {
   return (
-    <footer className="flex-none overflow-hidden bg-white dark:bg-gradient-to-t dark:from-[#342752] dark:to-[#251C3A]">
+    <footer className="mt-[1.6em] flex-none overflow-hidden bg-white dark:bg-gradient-to-t dark:from-[#342752] dark:to-[#251C3A]">
       <div className="mx-auto flex flex-row justify-between gap-4 px-6 py-4 lg-py-6 lg:flex-row lg:items-center lg:justify-between lg:px-12 lg:py-5">
 
         {/* Valeurs */}
@@ -28,9 +28,9 @@ export function LandingFooter() {
           <span className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-[#CBB9D8]">
             Nos valeurs
           </span>
-          <div className="flex flex-col gap-x-3 gap-y-2 lg-gap-x-5">
+          <div className="flex flex-nowrap gap-x-3 overflow-x-auto lg:gap-x-5">
             {VALUES.map(({ label, Icon }) => (
-              <div key={label} className="flex items-center gap-1.5">
+              <div key={label} className="flex shrink-0 items-center gap-1.5 whitespace-nowrap">
                 <Icon className="h-4 w-4 shrink-0 text-[#C6963B] dark:text-[#F2B96B]" strokeWidth={1.6} />
                 <span className="text-xs font-extrabold tracking-[0.1em] text-[#111114] dark:text-[#F8EFE7]">
                   {label}

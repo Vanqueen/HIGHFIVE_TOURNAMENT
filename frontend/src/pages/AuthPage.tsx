@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Logo } from '../components/Logo';
 import { useAuth } from '../hooks/useAuth';
+import { api } from '../lib/api';
 import type { User } from '../types';
 import chessHeroImage from '../assets/image.png';
 import pageBackgroundImage from '../assets/image8.jpg';
@@ -22,24 +23,27 @@ const INK = '#111114';
 const GOLD = '#C6963B';
 const PURPLE = '#5B3E96';
 
-type Mode = 'login' | 'register';
+type Mode = 'login' | 'register' | 'change-password';
 
 export function AuthPage({
   initialMode = 'login',
   onBack,
   onAuthenticated,
+  onPasswordChanged,
 }: {
   initialMode?: Mode;
   onBack: () => void;
   onAuthenticated: (user: User) => void;
+  onPasswordChanged?: () => void;
 }) {
-  const { login, register } = useAuth();
+  const { user, login, register } = useAuth();
 
   const [mode, setMode] = useState<Mode>(initialMode);
   const [form, setForm] = useState({
     full_name: '',
     email: '',
     password: '',
+    confirm: '',
     club: '',
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -61,7 +65,16 @@ export function AuthPage({
 
     /* Validation côté client : confort d'usage seulement — le serveur
        revalide tout, c'est lui qui fait autorité. */
-    if (!form.email.trim() || !form.password) {
+    if (mode === 'change-password') {
+      if (form.password.length < 8) {
+        setError('Le mot de passe doit contenir au moins 8 caractères.');
+        return;
+      }
+      if (form.password !== form.confirm) {
+        setError('Les deux mots de passe ne correspondent pas.');
+        return;
+      }
+    } else if (!form.email.trim() || !form.password) {
       setError('Renseignez votre e-mail et votre mot de passe.');
       return;
     }
@@ -78,6 +91,12 @@ export function AuthPage({
 
     setLoading(true);
     try {
+      if (mode === 'change-password') {
+        await api.auth.changePassword('', form.password);
+        setLoading(false);
+        onPasswordChanged?.();
+        return;
+      }
       const user =
         mode === 'login'
           ? await login(form.email.trim(), form.password)
@@ -168,13 +187,13 @@ export function AuthPage({
           {/* Colonne droite - formulaire */}
           <div className="relative flex h-full flex-1 flex-col items-center justify-center p-8 md:p-12 backdrop-blur-xl">
             {/* Bouton fermer */}
-            <button
+            {mode !== 'change-password' && <button
               onClick={onBack}
               className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-[color:var(--surface-card-strong)] text-[color:var(--text-secondary)] transition-colors hover:bg-[color:var(--border)] hover:text-[color:var(--text-primary)]"
               aria-label="Fermer"
             >
               <ArrowLeft className="h-4 w-4" />
-            </button>
+            </button>}
 
             {/* Logo mobile */}
             <div className="mb-6 md:hidden">
@@ -184,10 +203,14 @@ export function AuthPage({
             {/* En-tête */}
             <div className="w-full max-w-md text-center">
               <h1 className="text-3xl font-extrabold tracking-tight text-white">
-                {mode === 'login' ? 'Content de vous revoir' : 'Créer un compte'}
+                {mode === 'change-password'
+                  ? `Bienvenue, ${user?.full_name.split(' ')[0] ?? ''} !`
+                  : mode === 'login' ? 'Content de vous revoir' : 'Créer un compte'}
               </h1>
               <p className="mt-3 text-base text-white/80">
-                {mode === 'login'
+                {mode === 'change-password'
+                  ? 'Vous vous êtes connecté avec un mot de passe temporaire. Choisissez un nouveau mot de passe pour continuer.'
+                  : mode === 'login'
                   ? 'Connectez-vous pour accéder à votre espace'
                   : 'Créez votre compte joueur en moins d\'une minute'}
               </p>
@@ -196,7 +219,7 @@ export function AuthPage({
             {/* Contenu du formulaire */}
             <div className="w-full max-w-md">
               {/* Bascule connexion / inscription */}
-              <div className="flex rounded-full bg-white/20 p-1">
+              {mode !== 'change-password' && <div className="flex rounded-full bg-white/20 p-1">
                 {(['login', 'register'] as Mode[]).map((value) => (
                   <button
                     key={value}
@@ -212,7 +235,7 @@ export function AuthPage({
                     {value === 'login' ? 'Connexion' : 'Inscription'}
                   </button>
                 ))}
-              </div>
+              </div>}
 
               <form onSubmit={submit} className="mt-8 space-y-5">
                 {mode === 'register' && (
@@ -228,7 +251,7 @@ export function AuthPage({
                   </>
                 )}
 
-                <TextField
+                {mode !== 'change-password' && <TextField
                   label="Adresse e-mail"
                   icon={<Mail className="h-4 w-4" />}
                   type="email"
@@ -236,15 +259,15 @@ export function AuthPage({
                   onChange={set('email')}
                   placeholder="vous@exemple.com"
                   autoComplete="email"
-                />
+                />}
 
                 <TextField
-                  label="Mot de passe"
+                  label={mode === 'change-password' ? 'Nouveau mot de passe' : 'Mot de passe'}
                   icon={<Lock className="h-4 w-4" />}
                   type={showPassword ? 'text' : 'password'}
                   value={form.password}
                   onChange={set('password')}
-                  placeholder={mode === 'register' ? '8 caractères minimum' : '••••••••'}
+                  placeholder={mode === 'login' ? '••••••••' : '8 caractères minimum'}
                   autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                   trailing={
                     <button
@@ -257,6 +280,16 @@ export function AuthPage({
                     </button>
                   }
                 />
+
+                {mode === 'change-password' && <TextField
+                  label="Confirmer le mot de passe"
+                  icon={<Lock className="h-4 w-4" />}
+                  type={showPassword ? 'text' : 'password'}
+                  value={form.confirm}
+                  onChange={set('confirm')}
+                  placeholder="Confirmez le nouveau mot de passe"
+                  autoComplete="new-password"
+                />}
 
                 {mode === 'register' && (
                   <TextField
@@ -289,14 +322,14 @@ export function AuthPage({
                   {loading
                     ? mode === 'login'
                       ? 'CONNEXION…'
-                      : 'CRÉATION DU COMPTE…'
+                      : mode === 'register' ? 'CRÉATION DU COMPTE…' : 'MISE À JOUR…'
                     : mode === 'login'
                       ? 'SE CONNECTER'
-                      : 'CRÉER MON COMPTE'}
+                      : mode === 'register' ? 'CRÉER MON COMPTE' : 'ENREGISTRER'}
                 </button>
               </form>
 
-              <p className="mt-6 text-center text-sm text-white/80">
+              {mode !== 'change-password' && <p className="mt-6 text-center text-sm text-white/80">
                 {mode === 'login' ? 'Pas encore de compte ? ' : 'Vous avez déjà un compte ? '}
                 <button
                   type="button"
@@ -305,7 +338,7 @@ export function AuthPage({
                 >
                   {mode === 'login' ? 'Inscrivez-vous' : 'Connectez-vous'}
                 </button>
-              </p>
+              </p>}
             </div>
           </div>
         </div>
