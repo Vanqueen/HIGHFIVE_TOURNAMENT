@@ -7,6 +7,7 @@ const Origins = [
   'http://localhost:5173',
   'http://localhost:8101',
   'https://chessclubvds.netlify.app',
+  'http://localhost:4173',
   // Ajoutez d'autres origines autorisées ici
 ];
 
