@@ -104,7 +104,7 @@ export function HeroSection({
             </button>
           </div>
 
-          <div className="mt-[3.4em] flex items-center">
+          <div className="mt-[3.4em] flex flex-wrap items-center gap-x-0 gap-y-[1.2em]">
             <StatItem icon={<Users className="h-[2.4em] w-[2.4em]" />} value="PLUSIEURS" label="JOUEURS" />
             <Divider />
             <StatItem icon={<Trophy className="h-[2.4em] w-[2.4em]" />} value="1er" label="TOURNOIS" />

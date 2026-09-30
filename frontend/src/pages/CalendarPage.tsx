@@ -187,7 +187,7 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
       style={{
         fontSize: '16px',
         color: INK,
-        height: '100%',
+        minHeight: '100%',
         backgroundImage: `url(${bgImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -240,13 +240,11 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
         </div>
       </section>
 
-      {/* ============================================================
-          Grille + panneau latéral — remplit tout l'espace restant
-          ============================================================ */}
-      <div className="relative z-10 min-h-0 flex-1 overflow-hidden">
-        <div className="h-full w-full px-6 py-4 lg:px-10">
-          <div className="grid h-full gap-4 lg:grid-cols-[1.5fr_1fr]">
-          {/* ---------------------------- Mois ---------------------------- */}
+      {/* Grille + panneau latéral */}
+      <div className="relative z-10 lg:min-h-0 lg:flex-1 lg:overflow-hidden">
+        <div className="w-full px-6 py-4 lg:h-full lg:px-10">
+          <div className="flex flex-col gap-4 lg:grid lg:h-full lg:grid-cols-[1.5fr_1fr]">
+          {/* Mois */}
           <div className="flex flex-col overflow-hidden rounded-[1.75rem] border border-black/5 dark:border-white/10 bg-white dark:bg-gray-800/90 shadow-[0_30px_60px_-45px_rgba(17,17,20,0.7)]">
             <div className="flex items-center justify-between border-b border-black/5 dark:border-white/10 px-5 py-3">
               <div>
@@ -293,7 +291,7 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
             </div>
 
             {/* Cellules */}
-            <div key={`${year}-${month}`} className="grid flex-1 grid-cols-7 gap-1 p-2" style={{ gridTemplateRows: 'repeat(6, 1fr)' }}>
+            <div key={`${year}-${month}`} className="grid grid-cols-7 gap-1 p-2" style={{ gridTemplateRows: 'repeat(6, minmax(2.5rem, 1fr))' }}>
               {cells.map((date, i) => {
                 const key = dayKey(date);
                 const outside = date.getMonth() !== month;
@@ -372,7 +370,7 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
             </div>
           </div>
 
-          {/* -------------------------- Panneau -------------------------- */}
+          {/* Panneau latéral */}
           <aside className="overflow-y-auto space-y-5 pb-4">
             {loading ? (
               <>

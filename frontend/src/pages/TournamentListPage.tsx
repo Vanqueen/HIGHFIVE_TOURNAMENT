@@ -43,8 +43,8 @@ export function TournamentListPage({ onNew, onOpen, isAdmin }: {
 
   return (
     <div
-      className="relative flex flex-col overflow-hidden"
-      style={{ fontSize: '16px', height: '100%', backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+      className="relative flex flex-col overflow-hidden lg:overflow-hidden"
+      style={{ fontSize: '16px', minHeight: '100%', backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
     >
       {/* overlay */}
       <div className="pointer-events-none absolute inset-0 bg-white/60 dark:bg-black/65" style={{ backdropFilter: 'blur(5px)' }} />
@@ -124,7 +124,7 @@ export function TournamentListPage({ onNew, onOpen, isAdmin }: {
       </div>
 
       {/* contenu */}
-      <div className="relative z-10 min-h-0 flex-1 overflow-y-auto px-8 py-6 lg:px-12">
+      <div className="relative z-10 flex-1 overflow-y-auto px-8 py-6 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:px-12">
         {loading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {[0,1,2,3,4,5].map((i) => <div key={i} className="skeleton h-48 rounded-2xl" />)}

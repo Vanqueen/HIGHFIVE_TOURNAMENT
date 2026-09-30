@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { ArrowRight, Trophy, Users, ShieldCheck, Radio, User } from 'lucide-react';
+import { ArrowRight, Trophy, Users, ShieldCheck, Radio } from 'lucide-react';
 import { INK, GOLD, GOLD_DARK, PURPLE, GREEN } from '../components/landing/tokens';
 import { LandingFooter } from '../components/landing/LandingFooter';
 import type { User as AuthUser } from '../types';
@@ -8,7 +8,6 @@ import kingCutout from '../assets/image2.png';
 import knightCutout from '../assets/image3.jpg';
 import queenBoard from '../assets/image4.jpg';
 import kingsDuel from '../assets/image5.jpg';
-import KingGold from '../assets/GoldChessKing.png'
 
 /* Motif d'échiquier — sert de texture de fond, jamais de décor isolé. */
 function boardPattern(color: string, size = 28) {
@@ -76,16 +75,16 @@ const VALUES = [
     accent: GOLD_DARK,
     bg: GOLD,
     icon: <Trophy className="h-5 w-5 text-white" />,
-    title: 'Des règles respectées',
-    text: "Appariements, départages et résultats sont gérés selon les principes utilisés dans l’organisation des tournois. Chaque information affichée doit être fiable et cohérente.",
+    title: 'La règle avant tout',
+    text: "Appariements suisses, départages, feuille de match : la plateforme applique les usages de l'arbitrage sans raccourci. Ce qui est affiché fait foi.",
   },
   {
     n: '02',
     accent: PURPLE,
     bg: PURPLE,
     icon: <Radio className="h-5 w-5 text-white" />,
-    title: 'Une information en temps réel',
-    text: "Dès qu’un résultat est enregistré, il est immédiatement pris en compte dans le classement, le tableau du tournoi et l’espace du joueur. Tous les participants disposent ainsi de la même information.",
+    title: 'Le direct, sans latence',
+    text: "Un résultat saisi par l'arbitre apparaît dans la seconde sur le classement, le tableau et l'espace de chaque joueur. La salle et le public voient la même chose.",
   },
   {
     n: '03',
@@ -93,30 +92,30 @@ const VALUES = [
     bg: GREEN,
     icon: <ShieldCheck className="h-5 w-5 text-white" />,
     title: 'Chacun sa place',
-    text: "L’inscription est accessible aux joueurs tandis que la création et la gestion des tournois restent réservées aux organisateurs autorisés. Chacun dispose ainsi d’un rôle clairement défini.",
+    text: "L'inscription est ouverte aux joueurs. La création de tournoi reste entre les mains des organisateurs accrédités : la confiance ne se déclare pas, elle se coopte.",
   },
 ];
 
 const STEPS = [
   {
-    year: '2024',
+    year: '2023',
     title: 'Les premières parties',
-    text: "Quelques collaborateurs de VIPP Digital Services commencent à se retrouver autour de l’échiquier. Ces premières parties font naître l’idée de créer un véritable espace dédié aux passionnés d’échecs au sein de l’entreprise.",
+    text: "Quelques collaborateurs de VIPP Digital Services posent un échiquier entre deux réunions. Le club est né ; ses tournois tiennent encore dans un tableur.",
+  },
+  {
+    year: '2024',
+    title: 'Le moteur d\u2019appariement',
+    text: "Premier système suisse complet : appariements, flottants, départages Buchholz et Sonneborn-Berger. Testé sur des tournois réels, corrigé par des arbitres.",
   },
   {
     year: '2025',
-    title: 'Les débuts du club',
-    text: "L’idée prend forme : plusieurs collaborateurs se réunissent et s’organisent pour donner vie au club d’échecs de VIPP Digital Services. Les premières habitudes de jeu et de rencontre commencent à s’installer.",
-  },
-  {
-    year: '2025',
-    title: 'Le premier tournoi',
-    text: "Le club franchit une nouvelle étape avec l’organisation de son premier tournoi. Cette première compétition permet de structurer l’organisation des parties et pose les bases des futurs tournois du club.",
+    title: 'La salle connectée',
+    text: "Les joueurs suivent leur ronde depuis leur téléphone, le public depuis l'écran de la salle. Le tableau final se génère tout seul.",
   },
   {
     year: '2026',
-    title: 'Une plateforme ouverte',
-    text: "L’aventure évolue avec la création d’une plateforme dédiée à la gestion des tournois, aux inscriptions et au suivi des joueurs. Le projet ne se limite plus à l’organisation interne du club et commence à s’ouvrir à une communauté plus large de passionnés.",
+    title: 'Le club s\u2019ouvre',
+    text: "Inscriptions en ligne, classements permanents, profils de joueurs. Ce qui était l'outil d'un club d'entreprise accueille désormais les passionnés du dehors.",
   },
 ];
 
@@ -138,7 +137,7 @@ export function AboutPage({
           ============================================================ */}
       <section className="relative overflow-hidden" style={{ backgroundColor: INK }}>
         {/* Visuel : duel de rois, fondu vers la gauche pour laisser le texte respirer */}
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-full md:w-[70%] lg:w-[62%]">
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-full lg:w-[62%]">
           <img
             src={kingsDuel}
             alt="Roi blanc dressé face à un roi noir renversé"
@@ -160,19 +159,19 @@ export function AboutPage({
           style={boardPattern('#ffffff', 56)}
         />
 
-        <div className="relative mx-auto flex min-h-[82vh] max-w-7xl items-center px-6 py-20 md:py-24 lg:px-12">
+        <div className="relative mx-auto flex min-h-[82vh] max-w-7xl items-center px-6 py-24 lg:px-12">
           <div className="max-w-2xl">
             <Reveal>
               <Overline>À propos — VIPP DIGITAL SERVICES CHESS CLUB</Overline>
             </Reveal>
 
             <Reveal delay={90}>
-              <h1 className="mt-6 font-display text-4xl font-bold uppercase leading-[0.92] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-8xl">
-                L&apos;échiquier,
+              <h1 className="mt-6 font-display text-6xl font-bold uppercase leading-[0.92] tracking-tight text-white sm:text-7xl lg:text-8xl">
+                L&apos;échiquier
                 <br />
-                notre terrain
+                comme terrain
                 <br />
-                <span style={{ color: GOLD }}> de jeu</span>
+                <span style={{ color: GOLD }}>de vérité</span>
               </h1>
             </Reveal>
 
@@ -180,8 +179,9 @@ export function AboutPage({
               <div className="mt-10 flex gap-5">
                 <span className="mt-1 h-16 w-[3px] shrink-0 rounded-full" style={{ backgroundColor: GOLD }} />
                 <p className="max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
-                  Nous sommes le club d&apos;échecs des collaborateurs de VIPP Digital Services. 
-                  Né de l&apos;envie de partager notre passion pour les échecs, le club s&apos;est progressivement doté de sa propre plateforme pour simplifier l’organisation des tournois, automatiser les appariements et permettre à chacun de suivre les résultats en direct.
+                  Nous sommes le club d&apos;échecs des collaborateurs de VIPP Digital Services. Faute
+                  d&apos;outil à notre goût, nous avons construit le nôtre : une plateforme où un
+                  tournoi se crée en dix minutes, s&apos;arbitre sans tableur et se suit en direct.
                 </p>
               </div>
             </Reveal>
@@ -190,23 +190,17 @@ export function AboutPage({
               <div className="mt-12 flex flex-wrap gap-3">
                 <button
                   onClick={onSeeTournaments}
-                  aria-label="Voir les tournois"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[color:var(--surface-card-strong)] px-5 py-3.5 text-sm font-bold uppercase tracking-[0.08em] text-[color:var(--text-primary)] transition-transform hover:-translate-y-0.5"
+                  className="flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-bold uppercase tracking-[0.08em] transition-transform hover:-translate-y-0.5"
                   style={{ backgroundColor: GOLD, color: INK }}
                 >
-                  <ArrowRight className="h-5 w-5 sm:hidden" />
-                  <span className="hidden sm:inline-flex items-center gap-2">
-                    Voir les tournois
-                    <ArrowRight className="h-4 w-4" />
-                  </span>
+                  Voir les tournois
+                  <ArrowRight className="h-4 w-4" />
                 </button>
                 <button
                   onClick={user ? onDashboard : onLogin}
-                  aria-label={user ? 'Accéder à mon espace' : 'Rejoindre la plateforme'}
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 px-5 py-3.5 text-sm font-bold uppercase tracking-[0.08em] text-white transition-colors hover:border-white/60"
+                  className="rounded-full border border-white/25 px-7 py-3.5 text-sm font-bold uppercase tracking-[0.08em] text-white transition-colors hover:border-white/60"
                 >
-                  <User className="h-5 w-5 sm:hidden" />
-                  <span className="hidden sm:inline">{user ? 'Mon espace' : 'Rejoindre la plateforme'}</span>
+                  {user ? 'Mon espace' : 'Rejoindre la plateforme'}
                 </button>
               </div>
             </Reveal>
@@ -218,45 +212,49 @@ export function AboutPage({
       </section>
 
       {/* ============================================================
-          2 — MANIFESTE / POURQUOI LA PLATEFORME ?
+          2 — MANIFESTE
           ============================================================ */}
       <section className="relative overflow-hidden bg-white dark:bg-[#1e1535]">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 py-16 md:gap-16 lg:grid-cols-[1.05fr_0.95fr] lg:px-12 lg:py-32">
+        <div className="mx-auto grid max-w-7xl items-center gap-16 px-6 py-24 lg:grid-cols-[1.05fr_0.95fr] lg:px-12 lg:py-32">
           <div>
             <Reveal>
-              <Overline>Notre vision</Overline>
+              <Overline>Le manifeste</Overline>
             </Reveal>
             <Reveal delay={80}>
-              <h2 className="mt-5 font-display text-4xl font-bold uppercase leading-[0.95] tracking-tight sm:text-5xl md:text-6xl">
-                Des tournois
+              <h2 className="mt-5 font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight sm:text-6xl">
+                Un tournoi n&apos;est pas
                 <br />
-                <span style={{ color: GOLD }}>plus simples, plus fiables</span>
+                <span style={{ color: GOLD }}>un fichier Excel</span>
               </h2>
             </Reveal>
             <Reveal delay={140}>
               <div className="mt-9 space-y-6 text-[1.05rem] leading-[1.75] text-gray-600 dark:text-[#CBB9D8]">
                 <p>
-                  Nos premiers tournois internes reposaient sur des outils classiques : fichiers partagés, saisie manuelle des résultats et calculs des départages. À mesure que le nombre de participants augmentait, ces méthodes devenaient plus difficiles à gérer.
+                  Nos premiers tournois internes tenaient dans un classeur partagé : un collègue
+                  recopiait les scores à la main, un autre recomptait les Buchholz le soir venu, et
+                  personne ne savait contre qui il jouait avant l&apos;affichage.
                 </p>
                 <p>
                   <strong className="font-semibold text-[#111114] dark:text-[#F8EFE7]">
-                    Nous avons donc créé notre propre plateforme pour centraliser l’organisation des compétitions.
+                    Alors nous avons codé ce qui nous manquait.
                   </strong>{' '}
-                  Les appariements sont calculés automatiquement, les résultats sont saisis une seule fois et les classements sont mis à jour en temps réel. L&apos;organisateur peut ainsi se concentrer sur l&apos;essentiel : faire vivre le tournoi.
+                  Les appariements sont calculés, les résultats saisis une seule fois, les
+                  classements recalculés à l&apos;instant. Ce qui reste à l&apos;organisateur, c&apos;est le
+                  tournoi lui-même.
                 </p>
               </div>
             </Reveal>
 
             <Reveal delay={200}>
-              <div className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-black/10 dark:border-white/10 bg-black/10 dark:bg-white/10 grid-cols-3">
+              <div className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-black/10 dark:border-white/10 bg-black/10 dark:bg-white/10 sm:grid-cols-3">
                 {[
-                  { k: 'Appariements', v: 'Système suisse' },
+                  { k: 'Appariements', v: 'Suisse' },
                   { k: 'Départages', v: 'BH · SB' },
                   { k: 'Diffusion', v: 'Temps réel' },
                 ].map((cell) => (
-                  <div key={cell.k} className="bg-white dark:bg-[#1e1535] px-3 py-4 md:px-5 md:py-5">
-                    <p className="font-mono text-[0.6rem] md:text-[0.65rem] uppercase tracking-[0.2em] text-gray-400">{cell.k}</p>
-                    <p className="mt-2 font-display text-lg md:text-2xl font-bold uppercase tracking-tight">{cell.v}</p>
+                  <div key={cell.k} className="bg-white dark:bg-[#1e1535] px-5 py-5">
+                    <p className="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-gray-400">{cell.k}</p>
+                    <p className="mt-2 font-display text-2xl font-bold uppercase tracking-tight">{cell.v}</p>
                   </div>
                 ))}
               </div>
@@ -292,18 +290,18 @@ export function AboutPage({
       </section>
 
       {/* ============================================================
-          3 — VALEURS / NOS ENGAGEMENTS
+          3 — VALEURS
           ============================================================ */}
       <section className="bg-[#F7F6F4] dark:bg-[#251C3A]">
-        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-12 lg:py-32">
+        <div className="mx-auto max-w-7xl px-6 py-24 lg:px-12 lg:py-32">
           <Reveal>
-            <Overline color={GOLD_DARK}>Ce qui nous guide</Overline>
-            <h2 className="mt-5 max-w-3xl font-display text-4xl font-bold uppercase leading-[0.95] tracking-tight sm:text-5xl md:text-6xl">
-              Trois engagements pour chaque tournoi
+            <Overline color={GOLD_DARK}>Ce qui nous tient</Overline>
+            <h2 className="mt-5 max-w-3xl font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight sm:text-6xl">
+              Trois principes, jamais négociés
             </h2>
           </Reveal>
 
-          <div className="mt-14 grid gap-6 md:grid-cols-3">
+          <div className="mt-14 grid gap-6 lg:grid-cols-3">
             {VALUES.map((value, i) => (
               <Reveal key={value.n} delay={i * 110}>
                 <article className="group relative h-full overflow-hidden rounded-[1.75rem] border border-black/5 dark:border-white/10 bg-white dark:bg-[#1e1535] p-9 shadow-[0_24px_50px_-40px_rgba(17,17,20,0.55)] transition-transform duration-300 hover:-translate-y-1.5">
@@ -330,21 +328,20 @@ export function AboutPage({
       </section>
 
       {/* ============================================================
-          4 — PARCOURS
+          5 — PARCOURS
           ============================================================ */}
       <section className="relative overflow-hidden bg-white dark:bg-[#1e1535]">
-        <div className="mx-auto grid max-w-7xl gap-16 px-6 py-16 lg:grid-cols-[0.85fr_1.15fr] lg:px-12 lg:py-32">
+        <div className="mx-auto grid max-w-7xl gap-16 px-6 py-24 lg:grid-cols-[0.85fr_1.15fr] lg:px-12 lg:py-32">
           {/* Roi détouré, en veille sur la colonne de gauche */}
           <Reveal className="relative hidden lg:block">
             <div className="sticky top-24">
-              <Overline>Notre parcours</Overline>
-              {/* <Overline>NOTRE HISTOIRE</Overline> */}
+              <Overline>Le parcours</Overline>
               <h2 className="mt-5 font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight">
-                Du club interne
+                Quatre ans
                 <br />
-                <span style={{ color: GOLD }}>à une plateforme</span>
+                <span style={{ color: GOLD }}>à corriger</span>
                 <br />
-                dédiée
+                la copie
               </h2>
               <div className="relative mt-10 h-80">
                 <div
@@ -352,8 +349,8 @@ export function AboutPage({
                   style={{ background: `radial-gradient(circle at 50% 60%, ${GOLD}22 0%, transparent 64%)` }}
                 />
                 <img
-                  src={KingGold}
-                  alt="Roi or"
+                  src={kingCutout}
+                  alt="Roi noir"
                   className="relative h-full w-full object-contain"
                   style={{ mixBlendMode: 'multiply' }}
                 />
@@ -364,14 +361,14 @@ export function AboutPage({
           <div>
             <div className="lg:hidden">
               <Overline>Le parcours</Overline>
-              <h2 className="mt-5 font-display text-4xl font-bold uppercase leading-[0.95] tracking-tight sm:text-5xl">
-                Du club interne à <span style={{ color: GOLD }}> une plateforme dédiée</span>
+              <h2 className="mt-5 font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight">
+                Quatre ans à <span style={{ color: GOLD }}>corriger la copie</span>
               </h2>
             </div>
 
             <ol className="mt-10 lg:mt-0">
               {STEPS.map((step, i) => (
-                <Reveal key={`${step.year}-${i}`} delay={i * 90}>
+                <Reveal key={step.year} delay={i * 90}>
                   <li className="relative grid grid-cols-[auto_1fr] gap-6 pb-12 last:pb-0">
                     {/* Rail vertical + pastille */}
                     <div className="relative flex flex-col items-center">
@@ -400,9 +397,9 @@ export function AboutPage({
       </section>
 
       {/* ============================================================
-          5 — APPEL FINAL
+          6 — APPEL FINAL
           ============================================================ */}
-      <section className="px-6 pt-16 pb-16 md:pt-24 md:pb-24 lg:px-12">
+      <section className="px-6 pt-24 pb-24 lg:px-12">
         <Reveal>
           <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2.5rem]" style={{ backgroundColor: INK }}>
             <img
@@ -420,16 +417,17 @@ export function AboutPage({
               style={{ background: `radial-gradient(circle at 78% 50%, ${GOLD}2e 0%, transparent 58%)` }}
             />
 
-            <div className="relative grid gap-10 px-8 py-12 sm:px-14 md:py-16 lg:grid-cols-[1.1fr_0.9fr] lg:py-20">
+            <div className="relative grid gap-10 px-8 py-16 sm:px-14 lg:grid-cols-[1.1fr_0.9fr] lg:py-20">
               <div>
                 <h2 className="mt-7 font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight text-white sm:text-6xl">
-                  Rejoignez
-                  <span style={{ color: GOLD }}> la partie</span>
+                  Une place vous
+                  <br />
+                  <span style={{ color: GOLD }}>attend à la table</span>
                 </h2>
                 <p className="mt-6 max-w-lg text-base leading-relaxed text-white/60">
-                  Que vous soyez joueur ou organisateur, la plateforme vous permet de participer à des tournois et de suivre votre progression simplement.
-                  <br/>
-                  Créez votre compte joueur en quelques instants et inscrivez-vous au prochain tournoi. Vous souhaitez organiser une compétition ? Contactez-nous pour découvrir les modalités d’accès aux fonctionnalités organisateur.
+                  Créez votre compte joueur en une minute et inscrivez-vous au prochain tournoi. Pour
+                  organiser une compétition, écrivez-nous : les accès organisateur s&apos;ouvrent au cas
+                  par cas.
                 </p>
 
                 <div className="mt-10 flex flex-wrap gap-3">
@@ -441,7 +439,8 @@ export function AboutPage({
                     <Users className="h-4 w-4" />
                     {user ? 'Mon espace' : 'Créer un compte joueur'}
                   </button>
-                  <a href="mailto:contact@vipp-digital.com" aria-label='Devenir organisateur'
+                  <a
+                    href="mailto:contact@vipp-digital.com"
                     className="rounded-full border border-white/25 px-7 py-3.5 text-sm font-bold uppercase tracking-[0.08em] text-white transition-colors hover:border-white/60"
                   >
                     Devenir organisateur

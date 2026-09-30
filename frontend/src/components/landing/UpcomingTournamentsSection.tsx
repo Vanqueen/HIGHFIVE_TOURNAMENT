@@ -19,7 +19,7 @@ export function UpcomingTournamentsSection({
   const upcoming = tournaments.slice(0, 4);
 
   return (
-    <section id="prochains-tournois" className="flex-none px-[2.6em] lg:px-[3.2em]">
+    <section id="prochains-tournois" className="mt-[1.6em] flex-none px-[2.6em] lg:px-[3.2em]">
       <div className="relative mx-auto max-w-[192em] rounded-[1.6em] border border-black/5 bg-[#FBFAF9] dark:bg-[#251c3a] px-[2em] py-[1.6em]">
         <div className="mb-[1.4em] flex items-center justify-between">
           <h2 className="flex items-center gap-[0.4em] text-[1.7em] font-extrabold tracking-[-0.01em] text-gray-700 dark:text-gray-200">

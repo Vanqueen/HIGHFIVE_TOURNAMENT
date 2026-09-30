@@ -6,10 +6,11 @@ import {
   CheckCircle2,
   X,
   Mail,
-  Lock,
   User as UserIcon,
   Building2,
   Trash2,
+  Clipboard,
+  Check,
 } from 'lucide-react';
 import { api } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
@@ -26,10 +27,11 @@ export function OrganizerTeam() {
   const [formOpen, setFormOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [created, setCreated] = useState<string | null>(null);
+  const [created, setCreated] = useState<{ email: string; password: string } | null>(null);
+  const [copied, setCopied] = useState(false);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [removingId, setRemovingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ full_name: '', email: '', password: '', organization: '' });
+  const [form, setForm] = useState({ full_name: '', email: '', organization: '' });
 
   const load = useCallback(async () => {
     try {
@@ -56,18 +58,16 @@ export function OrganizerTeam() {
 
     if (form.full_name.trim().length < 2) return setError('Indiquez le nom complet.');
     if (!form.email.trim()) return setError('Indiquez une adresse e-mail.');
-    if (form.password.length < 8) return setError('Le mot de passe doit contenir au moins 8 caractères.');
-
     setSaving(true);
     try {
-      const { user: newOrganizer } = await api.organizers.create({
+      const { user: newOrganizer, initial_password } = await api.organizers.create({
         full_name: form.full_name.trim(),
         email: form.email.trim(),
-        password: form.password,
         organization: form.organization.trim() || undefined,
       });
-      setCreated(newOrganizer.email);
-      setForm({ full_name: '', email: '', password: '', organization: '' });
+      setCreated({ email: newOrganizer.email, password: initial_password });
+      setCopied(false);
+      setForm({ full_name: '', email: '', organization: '' });
       setFormOpen(false);
       await load();
     } catch (err) {
@@ -125,10 +125,27 @@ export function OrganizerTeam() {
           style={{ borderColor: '#86EFAC', backgroundColor: '#F0FDF4', color: '#15803D' }}
         >
           <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
-          <span>
-            Compte créé pour <strong>{created}</strong>. Communiquez-lui son mot de passe : il pourra se
-            connecter immédiatement.
-          </span>
+          <div className="min-w-0 flex-1">
+            <p>Compte créé pour <strong>{created.email}</strong>. Transmettez-lui ce mot de passe initial ; il devra le changer à sa première connexion.</p>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <code className="select-all break-all rounded bg-white/70 px-2 py-1 font-mono text-sm">{created.password}</code>
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(created.password);
+                    setCopied(true);
+                  } catch {
+                    setError('Copie automatique impossible. Sélectionnez le mot de passe pour le copier manuellement.');
+                  }
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-green-700/20 px-2.5 py-1.5 text-xs font-semibold hover:bg-green-100"
+              >
+                {copied ? <Check className="h-3.5 w-3.5" /> : <Clipboard className="h-3.5 w-3.5" />}
+                {copied ? 'Copié' : 'Copier'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -165,14 +182,6 @@ export function OrganizerTeam() {
             placeholder="marie@club.com"
           />
           <Field
-            label="Mot de passe initial"
-            icon={<Lock className="h-4 w-4" />}
-            type="text"
-            value={form.password}
-            onChange={set('password')}
-            placeholder="8 caractères minimum"
-          />
-          <Field
             label="Organisation (facultatif)"
             icon={<Building2 className="h-4 w-4" />}
             value={form.organization}
@@ -190,8 +199,7 @@ export function OrganizerTeam() {
             {saving ? 'Création…' : 'Créer le compte'}
           </button>
           <p className="text-[11px] text-gray-400">
-            Le mot de passe reste affiché en clair pour que vous puissiez le transmettre. Le nouvel
-            organisateur pourra le changer depuis son espace.
+            Un mot de passe initial aléatoire sera généré et affiché après la création pour que vous puissiez le copier et le transmettre.
           </p>
         </form>
       )}

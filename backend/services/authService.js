@@ -42,7 +42,7 @@ export const verifyToken = (token) => {
 
 /* Fabrique commune aux deux voies de création de compte. Le rôle n'est
    jamais lu depuis le corps de la requête : chaque appelant le fixe. */
-const createAccount = async ({ email, password, full_name, role, club, rating, organization, created_by }) => {
+const createAccount = async ({ email, password, full_name, role, club, rating, organization, created_by, temp_password_used = false }) => {
   email = String(email ?? '').trim().toLowerCase();
   password = String(password ?? '');
   full_name = String(full_name ?? '').trim();
@@ -63,6 +63,7 @@ const createAccount = async ({ email, password, full_name, role, club, rating, o
     rating: role === 'player' ? Number(rating) || 0 : 0,
     organization: role === 'organizer' ? organization?.trim() || null : null,
     created_by: created_by ?? null,
+    temp_password_used,
   });
 
   return fmt(doc);
@@ -71,15 +72,24 @@ const createAccount = async ({ email, password, full_name, role, club, rating, o
 /* Inscription publique : réservée aux joueurs. Les comptes organisateurs
    ne s'obtiennent que par cooptation (voir createOrganizer). */
 export const register = async (data) => {
-  const doc = await createAccount({ ...data, role: 'player' });
+  const doc = await createAccount({ ...data, role: 'player', temp_password_used: true });
   await User.updateOne({ _id: doc.id }, { last_login_at: new Date() });
   return doc;
 };
 
-/* Cooptation : un organisateur en crée un autre. Le premier compte de la
-   base est créé hors ligne par `npm run create-organizer`. */
-export const createOrganizer = async (data, creator) =>
-  createAccount({ ...data, role: 'organizer', created_by: creator.id });
+/* Cooptation : génère un mot de passe temporaire à transmettre au nouvel
+   organisateur. Il devra le changer à sa première connexion. */
+export const createOrganizer = async (data, creator) => {
+  const initial_password = crypto.randomBytes(12).toString('base64url');
+  const user = await createAccount({
+    ...data,
+    password: initial_password,
+    role: 'organizer',
+    created_by: creator.id,
+    temp_password_used: false,
+  });
+  return { user, initial_password };
+};
 
 /* Amorçage : crée un organisateur sans cooptant. Réservé à la ligne de
    commande — aucune route HTTP n'expose cette fonction, sinon n'importe
@@ -153,17 +163,10 @@ export const login = async (data) => {
     return { ...fmt(doc), must_change_password: true };
   }
 
-  /* Compte avec mdp temporaire déjà utilisé une fois (last_login_at renseigné
-     par la 1ère connexion) mais mdp pas encore changé : on bloque. */
-  if (!doc.temp_password_used && doc.last_login_at !== null) {
-    /* Vérifie que ce compte vient bien de registerAndJoin et non d'une
-       inscription directe. L'inscription directe met temp_password_used
-       à false aussi (valeur par défaut), mais elle renseigne last_login_at
-       immédiatement — ce qui est déjà géré par la branche au-dessus.
-       Ici on est dans le cas : 1ère connexion faite, mdp pas changé. */
-    throw fail('Vous devez changer votre mot de passe temporaire avant de vous reconnecter.', 401);
-  }
-
+  /* Une reconnexion reste autorisée même si le mot de passe temporaire n'a
+     pas encore été remplacé. Le champ temp_password_used vaut aussi false
+     pour les comptes créés avec leur propre mot de passe, il ne doit donc
+     pas servir à bloquer une nouvelle session. */
   doc.last_login_at = new Date();
   await doc.save();
 
@@ -254,10 +257,9 @@ export const changePassword = async (id, current_password, new_password) => {
   const doc = await User.findById(id).select('+password_hash +temp_password_used');
   if (!doc) throw fail('Utilisateur introuvable.', 404);
 
-  /* Mdp temporaire non encore changé (compte registerAndJoin) : on autorise
-     le changement sans vérifier l'ancien mdp UNIQUEMENT si last_login_at
-     est null, ce qui identifie un compte jamais connecté normalement. */
-  if (!doc.temp_password_used && doc.last_login_at === null) {
+  /* Mot de passe temporaire non encore remplacé : la session authentifiée
+     a déjà validé ce mot de passe à la connexion. */
+  if (!doc.temp_password_used) {
     doc.password_hash = await bcrypt.hash(String(new_password), BCRYPT_ROUNDS);
     doc.temp_password_used = true;
     await doc.save();

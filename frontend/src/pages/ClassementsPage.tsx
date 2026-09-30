@@ -43,7 +43,7 @@ function StandingsPanel({ tournament, onBack }: { tournament: Tournament; onBack
   ];
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+    <div className="flex flex-col lg:min-h-0 lg:flex-1 lg:overflow-hidden">
 
       {/* barre retour + infos tournoi */}
       <div className="flex-none border-b border-black/5 dark:border-white/10 bg-white/75 dark:bg-gray-900/75 backdrop-blur-sm px-8 py-4 lg:px-12">
@@ -71,7 +71,7 @@ function StandingsPanel({ tournament, onBack }: { tournament: Tournament; onBack
       </div>
 
       {/* corps */}
-      <div className="min-h-0 flex-1 overflow-hidden px-8 py-6 lg:px-12">
+      <div className="px-8 py-6 lg:min-h-0 lg:flex-1 lg:overflow-hidden lg:px-12">
         {loading ? (
           <div className="flex justify-center py-16">
             <div className="h-10 w-10 animate-spin rounded-full border-2 border-gray-200 border-t-gray-800 dark:border-gray-700 dark:border-t-gray-200" />
@@ -82,7 +82,7 @@ function StandingsPanel({ tournament, onBack }: { tournament: Tournament; onBack
             <p className="text-sm text-gray-400">Aucun joueur inscrit à ce tournoi.</p>
           </div>
         ) : (
-          <div className="grid h-full gap-4 lg:grid-cols-[1fr_1.4fr]">
+          <div className="flex flex-col gap-4 lg:grid lg:h-full lg:grid-cols-[1fr_1.4fr]">
 
             {/* ---- PODIUM VISUEL ---- */}
             <div className="overflow-hidden rounded-3xl border border-black/5 dark:border-white/10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-[0_16px_48px_-24px_rgba(17,17,20,0.18)] flex flex-col">
@@ -190,8 +190,8 @@ export function ClassementsPage({ onTournamentClick }: { onTournamentClick?: (id
 
   return (
     <div
-      className="relative flex flex-col overflow-hidden"
-      style={{ fontSize: '16px', height: '100%', backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+      className="relative flex flex-col"
+      style={{ fontSize: '16px', minHeight: '100%', backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
     >
       {/* overlay */}
       <div className="pointer-events-none absolute inset-0 bg-white/60 dark:bg-black/65" style={{ backdropFilter: 'blur(5px)' }} />
@@ -228,11 +228,11 @@ export function ClassementsPage({ onTournamentClick }: { onTournamentClick?: (id
       </section>
 
       {/* contenu */}
-      <div className="relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden">
+      <div className="relative z-10 flex flex-col lg:min-h-0 lg:flex-1 lg:overflow-hidden">
         {selected ? (
           <StandingsPanel tournament={selected} onBack={() => setSelected(null)} />
         ) : (
-          <div className="min-h-0 flex-1 overflow-y-auto px-8 py-6 lg:px-12">
+          <div className="flex-1 overflow-y-auto px-8 py-6 lg:min-h-0 lg:px-12">
             {loading ? (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {[0,1,2,3,4,5].map((i) => <div key={i} className="skeleton h-48 rounded-2xl" />)}

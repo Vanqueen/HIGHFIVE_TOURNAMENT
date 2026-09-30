@@ -19,7 +19,8 @@ export const register = async (req, res, next) => {
    c'est le nouveau compte qui se connectera lui-même. */
 export const createOrganizer = async (req, res, next) => {
   try {
-    res.status(201).json({ user: await authService.createOrganizer(req.body, req.user) });
+    const created = await authService.createOrganizer(req.body, req.user);
+    res.status(201).json({ user: created.user, initial_password: created.initial_password });
   } catch (err) { next(err); }
 };
 
