@@ -23,6 +23,9 @@ router.post('/auth/logout', auth.logout);
 router.get('/auth/me', auth.me);
 router.patch('/auth/profile', requireAuth, auth.updateProfile);
 router.post('/auth/password', requireAuth, auth.changePassword);
+router.post('/auth/password-reset/request', auth.requestPasswordReset);
+router.post('/auth/password-reset/verify', auth.verifyPasswordResetCode);
+router.post('/auth/password-reset/confirm', auth.resetPassword);
 /* Inscription au tournoi depuis la landing (crée un compte + inscrit + envoie mdp par mail) */
 router.post('/auth/register-and-join/:tournamentId', auth.registerAndJoin);
 

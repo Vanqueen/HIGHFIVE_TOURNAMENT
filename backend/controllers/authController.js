@@ -74,6 +74,25 @@ export const changePassword = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+export const requestPasswordReset = async (req, res, next) => {
+  try {
+    res.json(await authService.requestPasswordReset(req.body.email));
+  } catch (err) { next(err); }
+};
+
+export const verifyPasswordResetCode = async (req, res, next) => {
+  try {
+    res.json(await authService.verifyPasswordResetCode(req.body.email, req.body.code));
+  } catch (err) { next(err); }
+};
+
+export const resetPassword = async (req, res, next) => {
+  try {
+    await authService.resetPassword(req.body.reset_token, req.body.new_password);
+    res.status(204).end();
+  } catch (err) { next(err); }
+};
+
 export const registerAndJoin = async (req, res, next) => {
   try {
     const user = await authService.registerAndJoin({

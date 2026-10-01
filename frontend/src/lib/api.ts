@@ -70,6 +70,12 @@ export const api = {
       req<{ user: User }>('PATCH', '/auth/profile', body),
     changePassword: (current_password: string, new_password: string) =>
       req<void>('POST', '/auth/password', { current_password, new_password }),
+    requestPasswordReset: (email: string) =>
+      req<{ message: string }>('POST', '/auth/password-reset/request', { email }),
+    verifyPasswordResetCode: (email: string, code: string) =>
+      req<{ reset_token: string }>('POST', '/auth/password-reset/verify', { email, code }),
+    resetPassword: (reset_token: string, new_password: string) =>
+      req<void>('POST', '/auth/password-reset/confirm', { reset_token, new_password }),
     registerAndJoin: (tournamentId: string, body: { email: string; full_name: string; club?: string; rating?: number }) =>
       req<{ user: User }>('POST', `/auth/register-and-join/${tournamentId}`, body),
   },

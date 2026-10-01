@@ -72,9 +72,18 @@ const authLimiter = rateLimit({
   skipSuccessfulRequests: true,
   message: { error: 'Trop de tentatives de connexion. Réessayez dans quelques minutes.' },
 });
+
+const passwordResetLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: isProd ? 10 : 50,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Trop de tentatives de réinitialisation. Réessayez dans quelques minutes.' },
+});
  
 app.use('/api', apiLimiter);
 app.use(['/api/auth/login', '/api/auth/register', '/api/auth/password'], authLimiter);
+app.use('/api/auth/password-reset', passwordResetLimiter);
 app.use('/api', apiRoutes);
 
 app.get('/health', (req, res) => {

@@ -39,3 +39,29 @@ export const sendTempPassword = async ({ to, full_name, tournamentName, tempPass
     `,
   });
 };
+
+export const sendPasswordResetCode = async ({ to, full_name, code }) => {
+  const safeName = String(full_name).replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  })[character]);
+  await transporter.sendMail({
+    from: FROM,
+    to,
+    subject: 'Votre code de réinitialisation HIGHFIVE Tournament',
+    html: `
+      <div style="font-family:sans-serif;max-width:520px;margin:auto;padding:32px">
+        <h2 style="color:#C6963B">Réinitialisation du mot de passe</h2>
+        <p>Bonjour ${safeName},</p>
+        <p>Utilisez ce code pour vérifier votre adresse e-mail :</p>
+        <div style="background:#f4f4f4;border-radius:8px;padding:16px;margin:16px 0;text-align:center">
+          <strong style="font-size:28px;letter-spacing:6px">${code}</strong>
+        </div>
+        <p>Ce code expire dans 10 minutes. Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail.</p>
+      </div>
+    `,
+  });
+};

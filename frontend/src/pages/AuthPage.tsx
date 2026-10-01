@@ -19,7 +19,7 @@ import kingCutout from '../assets/image14.png';
 
 const INK = '#111114';
 
-type Mode = 'login' | 'register' | 'change-password';
+type Mode = 'login' | 'register' | 'change-password' | 'forgot-password';
 
 export function AuthPage({
   initialMode = 'login',
@@ -38,6 +38,7 @@ export function AuthPage({
   const [form, setForm] = useState({
     full_name: '',
     email: '',
+    code: '',
     password: '',
     confirm: '',
     club: '',
@@ -45,6 +46,9 @@ export function AuthPage({
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [resetStep, setResetStep] = useState<'email' | 'code' | 'password'>('email');
+  const [resetToken, setResetToken] = useState<string | null>(null);
   const isDark = window.localStorage.getItem('theme') === 'dark';
 
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -53,6 +57,9 @@ export function AuthPage({
   const switchMode = (next: Mode) => {
     setMode(next);
     setError(null);
+    setNotice(null);
+    setResetStep('email');
+    setResetToken(null);
   };
 
   const submit = async (e: React.FormEvent) => {
@@ -61,13 +68,22 @@ export function AuthPage({
 
     /* Validation côté client : confort d'usage seulement — le serveur
        revalide tout, c'est lui qui fait autorité. */
-    if (mode === 'change-password') {
+    if (mode === 'change-password' || (mode === 'forgot-password' && resetStep === 'password')) {
       if (form.password.length < 8) {
         setError('Le mot de passe doit contenir au moins 8 caractères.');
         return;
       }
       if (form.password !== form.confirm) {
         setError('Les deux mots de passe ne correspondent pas.');
+        return;
+      }
+    } else if (mode === 'forgot-password') {
+      if (!form.email.trim()) {
+        setError('Renseignez votre adresse e-mail.');
+        return;
+      }
+      if (resetStep === 'code' && !/^\d{6}$/.test(form.code)) {
+        setError('Saisissez le code à 6 chiffres reçu par e-mail.');
         return;
       }
     } else if (!form.email.trim() || !form.password) {
@@ -91,6 +107,28 @@ export function AuthPage({
         await api.auth.changePassword('', form.password);
         setLoading(false);
         onPasswordChanged?.();
+        return;
+      }
+      if (mode === 'forgot-password') {
+        if (resetStep === 'email') {
+          const response = await api.auth.requestPasswordReset(form.email.trim());
+          setNotice(response.message);
+          setResetStep('code');
+        } else if (resetStep === 'code') {
+          const response = await api.auth.verifyPasswordResetCode(form.email.trim(), form.code);
+          setResetToken(response.reset_token);
+          setResetStep('password');
+          setNotice(null);
+        } else {
+          if (!resetToken) throw new Error('La vérification a expiré. Recommencez la procédure.');
+          await api.auth.resetPassword(resetToken, form.password);
+          setMode('login');
+          setResetStep('email');
+          setResetToken(null);
+          setForm((current) => ({ ...current, code: '', password: '', confirm: '' }));
+          setNotice('Votre mot de passe a été modifié. Vous pouvez vous connecter.');
+        }
+        setLoading(false);
         return;
       }
       const user =
@@ -201,11 +239,19 @@ export function AuthPage({
               <h1 className="text-3xl font-extrabold tracking-tight text-white">
                 {mode === 'change-password'
                   ? `Bienvenue, ${user?.full_name.split(' ')[0] ?? ''} !`
-                  : mode === 'login' ? 'Content de vous revoir' : 'Créer un compte'}
+                  : mode === 'forgot-password'
+                    ? resetStep === 'email' ? 'Mot de passe oublié' : resetStep === 'code' ? 'Vérifiez votre e-mail' : 'Nouveau mot de passe'
+                    : mode === 'login' ? 'Content de vous revoir' : 'Créer un compte'}
               </h1>
               <p className="mt-3 text-base text-white/80">
                 {mode === 'change-password'
                   ? 'Vous vous êtes connecté avec un mot de passe temporaire. Choisissez un nouveau mot de passe pour continuer.'
+                  : mode === 'forgot-password'
+                    ? resetStep === 'email'
+                      ? 'Nous vous enverrons un code de vérification à l’adresse associée à votre compte.'
+                      : resetStep === 'code'
+                        ? 'Saisissez le code à 6 chiffres envoyé à votre adresse e-mail.'
+                        : 'Choisissez un nouveau mot de passe pour votre compte.'
                   : mode === 'login'
                   ? 'Connectez-vous pour accéder à votre espace'
                   : 'Créez votre compte joueur en moins d\'une minute'}
@@ -215,7 +261,7 @@ export function AuthPage({
             {/* Contenu du formulaire */}
             <div className="w-full max-w-md">
               {/* Bascule connexion / inscription */}
-              {mode !== 'change-password' && <div className="flex rounded-full bg-white/20 p-1">
+              {(mode === 'login' || mode === 'register') && <div className="flex rounded-full bg-white/20 p-1">
                 {(['login', 'register'] as Mode[]).map((value) => (
                   <button
                     key={value}
@@ -255,10 +301,22 @@ export function AuthPage({
                   onChange={set('email')}
                   placeholder="vous@exemple.com"
                   autoComplete="email"
+                  readOnly={mode === 'forgot-password' && resetStep !== 'email'}
                 />}
 
-                <TextField
-                  label={mode === 'change-password' ? 'Nouveau mot de passe' : 'Mot de passe'}
+                {mode === 'forgot-password' && resetStep === 'code' && <TextField
+                  label="Code de vérification"
+                  icon={<Lock className="h-4 w-4" />}
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  value={form.code}
+                  onChange={set('code')}
+                  placeholder="123456"
+                />}
+
+                {(mode !== 'forgot-password' || resetStep === 'password') && <TextField
+                  label={mode === 'change-password' || (mode === 'forgot-password' && resetStep === 'password') ? 'Nouveau mot de passe' : 'Mot de passe'}
                   icon={<Lock className="h-4 w-4" />}
                   type={showPassword ? 'text' : 'password'}
                   value={form.password}
@@ -275,9 +333,9 @@ export function AuthPage({
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   }
-                />
+                />}
 
-                {mode === 'change-password' && <TextField
+                {(mode === 'change-password' || (mode === 'forgot-password' && resetStep === 'password')) && <TextField
                   label="Confirmer le mot de passe"
                   icon={<Lock className="h-4 w-4" />}
                   type={showPassword ? 'text' : 'password'}
@@ -308,6 +366,8 @@ export function AuthPage({
                   </div>
                 )}
 
+                {notice && <p role="status" className="text-sm text-white/90">{notice}</p>}
+
                 <button
                   type="submit"
                   disabled={loading}
@@ -318,14 +378,43 @@ export function AuthPage({
                   {loading
                     ? mode === 'login'
                       ? 'CONNEXION…'
-                      : mode === 'register' ? 'CRÉATION DU COMPTE…' : 'MISE À JOUR…'
+                      : mode === 'register'
+                        ? 'CRÉATION DU COMPTE…'
+                        : mode === 'forgot-password' && resetStep !== 'password' ? 'VÉRIFICATION…' : 'MISE À JOUR…'
                     : mode === 'login'
                       ? 'SE CONNECTER'
-                      : mode === 'register' ? 'CRÉER MON COMPTE' : 'ENREGISTRER'}
+                      : mode === 'register'
+                        ? 'CRÉER MON COMPTE'
+                        : mode === 'forgot-password'
+                          ? resetStep === 'email' ? 'ENVOYER LE CODE' : resetStep === 'code' ? 'VÉRIFIER LE CODE' : 'MODIFIER LE MOT DE PASSE'
+                          : 'ENREGISTRER'}
                 </button>
               </form>
 
-              {mode !== 'change-password' && <p className="mt-6 text-center text-sm text-white/80">
+              {mode === 'login' && <p className="mt-4 text-center text-sm">
+                <button
+                  type="button"
+                  onClick={() => switchMode('forgot-password')}
+                  className="font-bold text-white underline-offset-4 hover:underline"
+                >
+                  Mot de passe oublié ?
+                </button>
+              </p>}
+
+              {mode === 'forgot-password' && <div className="mt-5 flex justify-center gap-5 text-sm text-white/80">
+                {resetStep !== 'email' && <button
+                  type="button"
+                  onClick={() => { setResetStep('email'); setResetToken(null); setNotice(null); setError(null); }}
+                  className="underline-offset-4 hover:underline"
+                >
+                  Modifier l’adresse e-mail
+                </button>}
+                <button type="button" onClick={() => switchMode('login')} className="underline-offset-4 hover:underline">
+                  Retour à la connexion
+                </button>
+              </div>}
+
+              {(mode === 'login' || mode === 'register') && <p className="mt-6 text-center text-sm text-white/80">
                 {mode === 'login' ? 'Pas encore de compte ? ' : 'Vous avez déjà un compte ? '}
                 <button
                   type="button"

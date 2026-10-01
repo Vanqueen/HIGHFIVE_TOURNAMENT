@@ -23,6 +23,13 @@ const userSchema = new mongoose.Schema({
   /* true tant que le mot de passe temporaire n'a pas été changé */
   temp_password_used: { type: Boolean, default: false },
 
+  password_reset_code_hash: { type: String, default: null, select: false },
+  password_reset_code_expires_at: { type: Date, default: null, select: false },
+  password_reset_code_attempts: { type: Number, default: 0, select: false },
+  password_reset_requested_at: { type: Date, default: null, select: false },
+  password_reset_token_hash: { type: String, default: null, select: false },
+  password_reset_token_expires_at: { type: Date, default: null, select: false },
+
   created_at: { type: Date, default: Date.now },
   last_login_at: { type: Date, default: null },
 });

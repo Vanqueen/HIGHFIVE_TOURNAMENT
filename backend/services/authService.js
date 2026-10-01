@@ -5,10 +5,13 @@ import User, { ROLES } from '../models/User.js';
 import Tournament from '../models/Tournament.js';
 import Player from '../models/Player.js';
 import { getJwtSecret, TOKEN_TTL_SECONDS } from '../utils/authConfig.js';
-import { sendTempPassword } from './emailService.js';
+import { sendPasswordResetCode, sendTempPassword } from './emailService.js';
 
 const BCRYPT_ROUNDS = 12;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const RESET_CODE_TTL_MS = 10 * 60 * 1000;
+const RESET_TOKEN_TTL_MS = 10 * 60 * 1000;
+const RESET_CODE_MAX_ATTEMPTS = 5;
 
 const fail = (message, status = 400) => Object.assign(new Error(message), { status });
 
@@ -271,4 +274,141 @@ export const changePassword = async (id, current_password, new_password) => {
   }
   doc.password_hash = await bcrypt.hash(String(new_password), BCRYPT_ROUNDS);
   await doc.save();
+};
+
+const resetDigest = (purpose, value) =>
+  crypto.createHmac('sha256', getJwtSecret()).update(`${purpose}:${value}`).digest('hex');
+
+const digestMatches = (expected, actual) => {
+  const expectedBytes = Buffer.from(expected, 'hex');
+  const actualBytes = Buffer.from(actual, 'hex');
+  return expectedBytes.length === actualBytes.length && crypto.timingSafeEqual(expectedBytes, actualBytes);
+};
+
+export const requestPasswordReset = async (email) => {
+  const normalizedEmail = String(email ?? '').trim().toLowerCase();
+  const genericResponse = { message: 'Si un compte correspond à cette adresse, un code de vérification vient d’être envoyé.' };
+  if (!EMAIL_RE.test(normalizedEmail)) return genericResponse;
+
+  const doc = await User.findOne({ email: normalizedEmail }).select('_id email full_name');
+  if (!doc) return genericResponse;
+
+  const now = Date.now();
+  const code = String(crypto.randomInt(100000, 1000000));
+  const codeHash = resetDigest(`code:${doc.id}`, code);
+  const issued = await User.findOneAndUpdate(
+    {
+      _id: doc._id,
+      $or: [
+        { password_reset_requested_at: null },
+        { password_reset_requested_at: { $lt: new Date(now - 60_000) } },
+      ],
+    },
+    {
+      $set: {
+        password_reset_code_hash: codeHash,
+        password_reset_code_expires_at: new Date(now + RESET_CODE_TTL_MS),
+        password_reset_code_attempts: 0,
+        password_reset_requested_at: new Date(now),
+        password_reset_token_hash: null,
+        password_reset_token_expires_at: null,
+      },
+    },
+    { new: true }
+  ).select('_id email full_name');
+  if (!issued) return genericResponse;
+
+  void sendPasswordResetCode({ to: issued.email, full_name: issued.full_name, code }).catch(async (err) => {
+    await User.updateOne(
+      { _id: issued._id, password_reset_code_hash: codeHash },
+      { $set: {
+        password_reset_code_hash: null,
+        password_reset_code_expires_at: null,
+        password_reset_requested_at: null,
+      } }
+    );
+    console.error('[email] Échec envoi du code de réinitialisation:', err.message);
+  });
+
+  return genericResponse;
+};
+
+export const verifyPasswordResetCode = async (email, code) => {
+  const normalizedEmail = String(email ?? '').trim().toLowerCase();
+  const doc = await User.findOne({ email: normalizedEmail }).select(
+    '+password_reset_code_hash +password_reset_code_expires_at +password_reset_code_attempts'
+  );
+  const invalid = () => fail('Code invalide ou expiré. Demandez un nouveau code.', 400);
+  if (!doc || !doc.password_reset_code_hash || !doc.password_reset_code_expires_at) throw invalid();
+
+  if (doc.password_reset_code_expires_at.getTime() <= Date.now() || doc.password_reset_code_attempts >= RESET_CODE_MAX_ATTEMPTS) {
+    await User.updateOne(
+      { _id: doc._id, password_reset_code_hash: doc.password_reset_code_hash },
+      { $set: { password_reset_code_hash: null, password_reset_code_expires_at: null } }
+    );
+    throw invalid();
+  }
+
+  if (!digestMatches(doc.password_reset_code_hash, resetDigest(`code:${doc.id}`, String(code ?? '')))) {
+    const update = { $inc: { password_reset_code_attempts: 1 } };
+    if (doc.password_reset_code_attempts + 1 >= RESET_CODE_MAX_ATTEMPTS) {
+      update.$set = { password_reset_code_hash: null, password_reset_code_expires_at: null };
+    }
+    await User.updateOne(
+      {
+        _id: doc._id,
+        password_reset_code_hash: doc.password_reset_code_hash,
+        password_reset_code_expires_at: { $gt: new Date() },
+        password_reset_code_attempts: { $lt: RESET_CODE_MAX_ATTEMPTS },
+      },
+      update
+    );
+    throw invalid();
+  }
+
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  const result = await User.updateOne(
+    {
+      _id: doc._id,
+      password_reset_code_hash: doc.password_reset_code_hash,
+      password_reset_code_expires_at: { $gt: new Date() },
+      password_reset_code_attempts: { $lt: RESET_CODE_MAX_ATTEMPTS },
+    },
+    {
+      $set: {
+        password_reset_code_hash: null,
+        password_reset_code_expires_at: null,
+        password_reset_code_attempts: 0,
+        password_reset_token_hash: resetDigest('token', resetToken),
+        password_reset_token_expires_at: new Date(Date.now() + RESET_TOKEN_TTL_MS),
+      },
+    }
+  );
+  if (result.modifiedCount !== 1) throw invalid();
+  return { reset_token: resetToken };
+};
+
+export const resetPassword = async (resetToken, newPassword) => {
+  if (String(newPassword ?? '').length < 8) {
+    throw fail('Le nouveau mot de passe doit contenir au moins 8 caractères.');
+  }
+  const token = String(resetToken ?? '');
+  if (!/^[a-f0-9]{64}$/.test(token)) throw fail('Lien de réinitialisation invalide ou expiré.', 400);
+
+  const result = await User.updateOne(
+    {
+      password_reset_token_hash: resetDigest('token', token),
+      password_reset_token_expires_at: { $gt: new Date() },
+    },
+    {
+      $set: {
+        password_hash: await bcrypt.hash(String(newPassword), BCRYPT_ROUNDS),
+        temp_password_used: true,
+        password_reset_token_hash: null,
+        password_reset_token_expires_at: null,
+        password_reset_requested_at: null,
+      },
+    }
+  );
+  if (result.modifiedCount !== 1) throw fail('Lien de réinitialisation invalide ou expiré.', 400);
 };
