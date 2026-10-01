@@ -189,13 +189,20 @@ export function LandingHeader({
                   {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
                 </button>
                 {user ? (
-                  <button
-                    onClick={onDashboard}
-                    aria-label="Mon espace"
-                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--border)] bg-[color:var(--surface-card-strong)] text-[color:var(--text-secondary)] transition-all hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]"
-                  >
-                    <User className="h-5 w-5" />
-                  </button>
+                  <div className='flex gap-2'>
+                    <button
+                      onClick={onDashboard}
+                      aria-label="Mon espace"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--border)] bg-[color:var(--surface-card-strong)] text-[color:var(--text-secondary)] transition-all hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]"
+                    >
+                      <User className="h-4 w-4" />
+                    </button>
+                    {onLogout && 
+                      <div className='inline-flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--border)] bg-[color:var(--surface-card-strong)] text-[color:var(--text-secondary)] transition-all hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]'>
+                        <LogOut onClick={() => { setUserMenuOpen(false); onLogout(); }} className="h-4 w-4 text-red-500" />
+                      </div>
+                    }
+                  </div>
                 ) : (
                   <>
                     <button
