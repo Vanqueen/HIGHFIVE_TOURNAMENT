@@ -4,7 +4,6 @@ import { ArrowRight, Trophy, Users, ShieldCheck, Radio, User } from 'lucide-reac
 import { INK, GOLD, GOLD_DARK, PURPLE, GREEN } from '../components/landing/tokens';
 import { LandingFooter } from '../components/landing/LandingFooter';
 import type { User as AuthUser } from '../types';
-import kingCutout from '../assets/image2.png';
 import knightCutout from '../assets/image3.jpg';
 import queenBoard from '../assets/image4.jpg';
 import kingsDuel from '../assets/image5.jpg';

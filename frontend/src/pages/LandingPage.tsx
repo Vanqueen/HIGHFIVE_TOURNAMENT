@@ -9,7 +9,6 @@ import { UpcomingTournamentsSection } from '../components/landing/UpcomingTourna
 import { AccessCardsSection } from '../components/landing/AccessCardsSection';
 import { LandingFooter } from '../components/landing/LandingFooter';
 import { ClassementsPage } from './ClassementsPage';
-import { JoueursPage } from './JoueursPage';
 import { TournamentListPage } from './TournamentListPage';
 import { AboutPage } from './AboutPage';
 import { CalendarPage } from './CalendarPage';
@@ -60,7 +59,7 @@ export function LandingPage({
       setActiveNav(initialNav);
       onNavConsumed?.();
     }
-  }, [initialNav]);
+  }, [initialNav, onNavConsumed]);
 
   const goTo = (next: number, dir: 'left' | 'right' = 'left') => {
     if (animating || next === featuredIndex || tournaments.length <= 1) return;
@@ -163,7 +162,7 @@ export function LandingPage({
             <CalendarPage onTournamentClick={handleTournamentClick} />
           )}
           {activeNav === 'Classements' && (
-            <ClassementsPage onTournamentClick={onTournamentClick} />
+            <ClassementsPage />
           )}
           {activeNav === 'À propos' && (
             <AboutPage

@@ -1,5 +1,5 @@
 import { Calendar, MapPin, ArrowRight, Trophy } from 'lucide-react';
-import { GOLD, PURPLE, INK } from './tokens';
+import { GOLD, INK } from './tokens';
 import type { Tournament } from '../../types';
 
 function SplitTitle({ name }: { name: string }) {

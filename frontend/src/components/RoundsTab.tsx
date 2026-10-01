@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { shortRoundLabel } from '../lib/bracket';
-import { INK, GOLD, RULE, squareTint } from './Scoreboard';
+import { INK, GOLD, RULE } from './Scoreboard';
 import type { Match, Phase, Player, Tournament } from '../types';
+import { squareTint } from '../lib/score';
 
 interface Section {
   key: string;

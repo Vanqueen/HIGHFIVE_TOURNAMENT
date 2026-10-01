@@ -1,4 +1,4 @@
-import { Trophy, Users, Globe2, Calendar, ChevronRight, MapPin } from 'lucide-react';
+import { Trophy, Users, Calendar, MapPin } from 'lucide-react';
 import { INK, GOLD } from './tokens';
 import { FeaturedCarousel } from './FeaturedCarousel';
 import type { Tournament } from '../../types';

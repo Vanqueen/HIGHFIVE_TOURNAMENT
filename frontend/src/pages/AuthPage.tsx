@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   ArrowLeft,
-  ArrowRight,
   Eye,
   EyeOff,
   Loader2,
@@ -15,13 +14,10 @@ import { Logo } from '../components/Logo';
 import { useAuth } from '../hooks/useAuth';
 import { api } from '../lib/api';
 import type { User } from '../types';
-import chessHeroImage from '../assets/image.png';
 import pageBackgroundImage from '../assets/image8.jpg';
 import kingCutout from '../assets/image14.png';
 
 const INK = '#111114';
-const GOLD = '#C6963B';
-const PURPLE = '#5B3E96';
 
 type Mode = 'login' | 'register' | 'change-password';
 

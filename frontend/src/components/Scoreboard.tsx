@@ -222,8 +222,3 @@ export function CheckerEdge({ accent = INK, squares = 32 }: { accent?: string; s
     </div>
   );
 }
-
-/* Les lignes d'un tableau alternent comme les cases d'une colonne
-   d'échiquier. Zébrure fonctionnelle autant que thématique. */
-export const squareTint = (index: number) =>
-  index % 2 === 1 ? 'bg-[#F6F4F0] dark:bg-white/[0.03]' : 'bg-white dark:bg-transparent';

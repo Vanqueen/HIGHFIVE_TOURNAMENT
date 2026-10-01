@@ -35,6 +35,11 @@ export function generateSwissPairing({
 }: PairingInput): PairingOutput[] {
   const active = players.filter((p) => p !== undefined);
   if (active.length === 0) return [];
+  // if (active.length === 1) {
+  //   // Special case: odd number of players — give first player a bye.
+  //   return [{ whiteId: active[0].id, blackId: null, boardNumber: 1 }];
+  // }
+  console.log('round:', round);
 
   // Sort by points desc, then rating desc — standard Swiss seeding.
   const ranked = [...active].sort(

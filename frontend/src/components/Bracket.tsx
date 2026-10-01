@@ -1,4 +1,4 @@
-import { Crown, Loader2 } from 'lucide-react';
+import { Crown } from 'lucide-react';
 import {
   bracketRounds,
   buildBracket,

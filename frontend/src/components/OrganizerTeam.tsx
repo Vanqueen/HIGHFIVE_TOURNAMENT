@@ -14,8 +14,9 @@ import {
 } from 'lucide-react';
 import { api } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
-import { SectionHead, squareTint, INK, GOLD, RULE } from './Scoreboard';
+import { SectionHead, INK, GOLD, RULE } from './Scoreboard';
 import type { User } from '../types';
+import { squareTint } from '../lib/score';
 
 /* Cooptation des organisateurs : il n'existe aucune inscription publique
    vers ce rôle, tout nouvel accès passe par ce panneau. Conçu pour tenir

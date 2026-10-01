@@ -1,12 +1,13 @@
 import { lazy, Suspense, useEffect, useLayoutEffect, useState } from 'react';
 import { AppShell } from './components/AppShell';
-import { AuthProvider, useAuth } from './hooks/useAuth';
+import { useAuth } from './hooks/useAuth';
 import { LandingPage } from './pages/LandingPage';
 import { AuthPage } from './pages/AuthPage';
 import type { View } from './types';
 import { NAV_ITEMS } from './components/landing/tokens';
 import type { NavItem } from './components/landing/tokens';
 import PageLoader from './PageLoader';
+import { AuthProvider } from './provider/AuthContext';
 
 const PlayerDashboard = lazy(() => import('./pages/PlayerDashboard').then(m => ({ default: m.PlayerDashboard })));
 const OrganizerDashboard = lazy(() => import('./pages/OrganizerDashboard').then(m => ({ default: m.OrganizerDashboard })));

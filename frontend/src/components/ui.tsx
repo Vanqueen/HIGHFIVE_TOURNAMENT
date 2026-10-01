@@ -1,10 +1,6 @@
 import type { ReactNode } from 'react';
 import { ArrowLeft, Moon, Swords, Sun } from 'lucide-react';
 
-export const inputCls = [
-  'w-full rounded-2xl border px-4 py-3 text-sm outline-none transition-all duration-200 theme-input',
-].join(' ');
-
 export function Header({ theme, onToggleTheme }: { theme: 'dark' | 'light'; onToggleTheme: () => void }) {
   return (
     <header className="sticky top-0 z-50 border-b border-[color:var(--border)] bg-[color:var(--surface-card)]/80 backdrop-blur-xl">

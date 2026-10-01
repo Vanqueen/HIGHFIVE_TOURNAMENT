@@ -1,6 +1,5 @@
 import { Target, Users, Scale, Shield, HeartHandshake, ExternalLink } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { INK, GOLD } from './tokens';
 
 /* Les valeurs de VIPP Digital Services — la colonne vertébrale du club,
    affichée en pied de chaque page publique. */

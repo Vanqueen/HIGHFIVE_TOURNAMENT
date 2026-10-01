@@ -184,7 +184,7 @@ function StandingsPanel({ tournament, onBack }: { tournament: Tournament; onBack
   );
 }
 
-export function ClassementsPage({ onTournamentClick }: { onTournamentClick?: (id: string) => void }) {
+export function ClassementsPage() {
   const { tournaments, loading } = useTournaments();
   const [selected, setSelected] = useState<Tournament | null>(null);
 

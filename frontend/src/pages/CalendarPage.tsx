@@ -163,7 +163,7 @@ export function CalendarPage({ onTournamentClick }: { onTournamentClick: (id: st
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
   const offset = (new Date(year, month, 1).getDay() + 6) % 7;
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  // const daysInMonth = new Date(year, month + 1, 0).getDate();
   const cells: Date[] = [];
   for (let i = 0; i < 42; i++) cells.push(new Date(year, month, i + 1 - offset));
 

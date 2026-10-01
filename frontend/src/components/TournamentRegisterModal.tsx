@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { X, Trophy, Loader2, CheckCircle2, AlertCircle, Lock } from 'lucide-react';
 import { api, ApiError } from '../lib/api';
-import { inputCls, Field } from './ui';
+import { Field } from './ui';
 import type { Tournament } from '../types';
 import { GOLD, INK } from './landing/tokens';
+import { inputCls } from '../lib/inputUI';
 
 type Step = 'form' | 'success' | 'exists';
 
